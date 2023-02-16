@@ -1,0 +1,57 @@
+version: "3"
+
+# database layer
+services:
+  postgres-db:
+    container_name: mdapp-database
+    build:
+      context: ./database
+    env_file:
+      - ./database/.env
+    image: fantix/postgres-ssl:13.1
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./database/pgsql-data:/var/lib/postgresql/data:rw
+    networks:
+      - application-network
+
+  # backend layer
+  backend:
+    container_name: mdapp-backend
+    build:
+      context: ./backend
+    env_file:
+      - ./backend/.env
+    expose:
+      - "3001"
+    ports:
+      - "3420:3001"
+    volumes:
+      - ./backend/src:/home/backend/src
+    depends_on:
+      - postgres-db
+    networks:
+      - application-network
+
+  # frontend layer
+  frontend:
+    container_name: mdapp-frontend
+    build:
+      context: ./frontend
+    env_file:
+      - ./frontend/.env
+    expose:
+      - "3000"
+    ports:
+      - "80:3000"
+    volumes:
+      - ./frontend/src:/home/frontend/src
+    networks:
+      - application-network
+
+networks:
+  application-network:
+
+volumes:
+  psql-data:
