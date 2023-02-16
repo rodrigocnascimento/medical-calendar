@@ -6,6 +6,6 @@ Este projeto é desenvolvido utilizando as seguintes ferramentas:
 - NodeJS v18.13.0
 - Typescript v4.9.5
 - Docker
-- PostgreSQL
+- PostgreSQL v13.1
 - NestJS
 - React
