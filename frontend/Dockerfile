@@ -1,5 +1,6 @@
 FROM node:18 AS builder
 WORKDIR /home/frontend
+COPY . ./
 RUN npm install
 
 

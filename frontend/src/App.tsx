@@ -2,24 +2,25 @@ import React, { useEffect, useState } from "react";
 import logo from "./assets/logo-pebmed.png";
 import "./App.css";
 
-const serverEndpoint = process.env.SERVER_ENDPOINT || "http://localhost";
+const serverEndpoint =
+  process.env.REACT_APP_SERVER_ENDPOINT || "http://localhost";
 
 function App() {
   const [serverResponse, setServerResponse] = useState<string>();
 
   async function handleServerShake() {
-    fetch(serverEndpoint)
-      .then((response: any) => {
-        setServerResponse(response);
-      })
-      .catch((error: Error) => {
-        setServerResponse(error.message);
-      });
+    const response = await fetch(serverEndpoint);
+
+    setServerResponse(await response.text());
+
+    if (!response.ok) {
+      setServerResponse(response.statusText);
+    }
   }
 
   useEffect(() => {
     handleServerShake();
-  }, [serverResponse]);
+  }, []);
 
   return (
     <div className="App">

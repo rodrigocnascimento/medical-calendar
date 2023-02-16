@@ -8,13 +8,10 @@ services:
       context: ./database
     env_file:
       - ./database/.env
-    image: fantix/postgres-ssl:13.1
     ports:
       - "15432:5432"
     volumes:
       - ./database/pgsql-data:/var/lib/postgresql/data:rw
-    networks:
-      - application-network
 
   # backend layer
   backend:
@@ -29,7 +26,7 @@ services:
       - "3420:3001"
     volumes:
       - ./backend/src:/home/backend/src
-    depends_on:
+    links:
       - postgres-db
     networks:
       - application-network
@@ -47,6 +44,8 @@ services:
       - "80:3000"
     volumes:
       - ./frontend/src:/home/frontend/src
+    depends_on:
+      - backend
     networks:
       - application-network
 

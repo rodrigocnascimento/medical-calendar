@@ -1,5 +1,8 @@
 FROM node:18 AS builder
 WORKDIR /home/backend
+
+COPY . ./
+
 RUN npm install
 RUN npm run build
 

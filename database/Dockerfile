@@ -1,0 +1,1 @@
+FROM fantix/postgres-ssl:13.1
