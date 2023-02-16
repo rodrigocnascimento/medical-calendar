@@ -1,0 +1,3 @@
+# Ignoring storage files, but not the directory itself
+!pgsql-data/
+pgsql-data/*
