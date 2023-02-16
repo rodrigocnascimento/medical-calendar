@@ -1,12 +1,12 @@
 {
   "name": "pebmed",
   "version": "1.0.0",
-  "description": "",
+  "description": "Medical appointments calendar web application",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Rodrigo Nascimento <hello@rodrigo.world> (https://rodrigo.world/)",
   "license": "ISC"
 }
