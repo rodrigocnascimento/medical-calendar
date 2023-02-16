@@ -25,9 +25,14 @@
 
 ### Obrigatórios
 
-- Deve usar o padrão de API REST (HTTP/JSON);
-- Pode ser feito em node.js (javascript ou typescript) ou PHP (laravel);
+✅ Deve usar o padrão de API REST (HTTP/JSON);
+
+✅ Pode ser feito em node.js (javascript ou typescript) ou PHP (laravel);
+
+- Sistema desenvolvido em NodeJS, com Typescript e o Framework NestJS
+
 - Documentação da interface da API gerada (swagger, open-api, RAML ou postman);
+
 - Os dados devem ser validados (existência e formatos) na inserção/atualização para
   garantir consistência da base;
 - Implementar testes unitários e/ou de integração e/ou documentação de testes (casos
@@ -36,10 +41,22 @@
 ### Desejáveis
 
 - Documentação da modelagem do banco de dados (diagrama ER ou de classe);
-- Para o banco de dados pode usar MySQL ou PostgreSQL, podendo optar ou não
-  pelo uso de ORM;
-- Setup de ambiente de desenvolvimento usando docker / docker-compose;
+<p align="center">
+    <img width="650" src="./database/database-der.png" alt="Database EDR Diagram">
+</p>
+
+✅ Para o banco de dados pode usar MySQL ou PostgreSQL, podendo optar ou não
+pelo uso de ORM;
+
+- Banco de dados utilizado é o PostgreSQL
+- ORM Typeorm
+
+✅ Setup de ambiente de desenvolvimento usando docker / docker-compose;
+
 - Hospedar em um ambiente cloud a sua escolha (Heroku, AWS EBS, IBM Cloud, etc)
+
 - Garantir autenticação e/ou autorização (login/logout, token JWT, roles)
+
 - Implementar alguma ferramenta de lint ou qualidade (sonar, code-quality, eslint, etc)
+
 - Deploy automatizado via pipeline (gitlab-ci, bitbucket pipeline, github actions, etc)
