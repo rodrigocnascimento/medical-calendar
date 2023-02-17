@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { PatientsModule } from './patients/patient.module';
+import { PatientsModule } from './patients/patients.module';
 import { setEnvironment } from './env';
 import typeormConfig from './database/typeorm.config';
 

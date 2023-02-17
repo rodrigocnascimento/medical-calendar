@@ -17,7 +17,9 @@
   - Cadastrar ✅
   - Listar ✅
   - Editar ✅
-- Eu, como médico, quero poder gerneciar os agendamentos de consulta para um
+  - Testes:
+    - Unitários ✅
+- Eu, como médico, quero poder gereneciar os agendamentos de consulta para um
   paciente.
   - Cadastrar
   - Listar
@@ -49,7 +51,7 @@
   - Swagger ✅
 
 - Os dados devem ser validados (existência e formatos) na inserção/atualização para
-  garantir consistência da base;
+  garantir consistência da base ✅
 - Implementar testes unitários e/ou de integração e/ou documentação de testes (casos
   de teste / script de teste);
 
