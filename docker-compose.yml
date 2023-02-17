@@ -26,6 +26,7 @@ services:
       - "3001"
     ports:
       - "3420:3001"
+      - "9229:9229"
     volumes:
       - ./backend/src:/home/backend/src
     links:

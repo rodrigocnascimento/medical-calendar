@@ -1,0 +1,60 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Docker: Debug tests",
+            "request": "attach",
+            "type": "node",
+            "address": "127.0.0.1",
+            "port": 9229,
+            "trace": true,
+            "restart": true,
+            "timeout": 10000,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/home/backend",
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ],
+            "internalConsoleOptions": "neverOpen",
+            "continueOnAttach": true,
+        },
+        {
+            "name": "Debug Jest Tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/.bin/jest",
+                "--runInBand"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "port": 9229,
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**/*.js",
+                "<node_internals>/**/*.js"
+            ]
+        },
+        {
+            "name": "Debug NestJS",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "src/main.ts"
+            ],
+            "runtimeArgs": [
+                "-r",
+                "ts-node/register",
+                "-r",
+                "tsconfig-paths/register"
+            ],
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+            "internalConsoleOptions": "openOnSessionStart",
+            "envFile": "${workspaceFolder}/.env",
+            "sourceMaps": true,
+            "console": "internalConsole",
+            "outputCapture": "std"
+        }
+    ]
+}
