@@ -4,12 +4,25 @@
 
 ### Obrigatórios
 
-- Eu, como médico, quero poder cadastrar um paciente com os seguintes dados:
-  nome, telefone, email, data de nascimento, sexo, altura e peso.
-- Eu, como médico, quero poder listar e editar o perfil dos pacientes cadastrados.
-- Eu, como médico, quero poder cadastrar um agendamento de consulta para um
+- Eu, como médico, quero poder cadastrar um paciente ✅
+  - Dados
+    - nome
+    - telefone
+    - email
+    - data de nascimento
+    - sexo
+    - altura
+    - peso
+- Eu, como médico, quero poder gerenciar o perfil dos pacientes cadastrados.
+  - Cadastrar ✅
+  - Listar ✅
+  - Editar ✅
+- Eu, como médico, quero poder gerneciar os agendamentos de consulta para um
   paciente.
-- Eu, como médico, quero poder listar, alterar e excluir os agendamentos de consulta.
+  - Cadastrar
+  - Listar
+  - Alterar
+  - Excluir
 - Eu, como médico, quero poder anotar uma observação durante a consulta.
 - Eu, como médico, quero poder visualizar as anotações das consultas dos pacientes.
 
@@ -25,13 +38,15 @@
 
 ### Obrigatórios
 
-✅ Deve usar o padrão de API REST (HTTP/JSON);
+- Deve usar o padrão de API REST (HTTP/JSON) ✅
 
-✅ Pode ser feito em node.js (javascript ou typescript) ou PHP (laravel);
+- Pode ser feito em node.js (javascript ou typescript) ou PHP (laravel) ✅
 
-- Sistema desenvolvido em NodeJS, com Typescript e o Framework NestJS
+  - Sistema desenvolvido em NodeJS, com Typescript e o Framework NestJS
 
 - Documentação da interface da API gerada (swagger, open-api, RAML ou postman);
+
+  - Swagger ✅
 
 - Os dados devem ser validados (existência e formatos) na inserção/atualização para
   garantir consistência da base;

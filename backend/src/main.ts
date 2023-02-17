@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 const serverPort = process.env.PORT || 3000;
+const version = process.env.npm_package_version;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +26,17 @@ async function bootstrap() {
       },
     }),
   );
+
+  //Swagger configurations
+  const options = new DocumentBuilder()
+    .setTitle('PEBMED - MedApp Medical Appointments')
+    .setDescription('Sistema de prontuário eletrônico Médico')
+    .setVersion(version)
+    .build();
+
+  SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, options));
+
   await app.listen(serverPort);
 }
+
 bootstrap();
