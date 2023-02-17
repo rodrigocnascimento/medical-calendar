@@ -12,6 +12,8 @@ services:
       - "15432:5432"
     volumes:
       - ./database/pgsql-data:/var/lib/postgresql/data:rw
+    networks:
+      - application-network
 
   # backend layer
   backend:
