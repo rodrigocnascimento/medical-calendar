@@ -19,13 +19,14 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 
-import { PatientsVM } from './patients.vm';
 import { NotFoundError } from '../errors/NotFound.error';
 import { BadRequestError } from '../errors/BadRequest.error';
 import { PatientsService } from './patients.service';
 import { CreatePatientDTO } from './dto/create.dto';
 import { UpdatePatientDTO } from './dto/update.dto';
+import { PatientsDTO } from './dto/patient.dto';
 import { UpdateResult } from 'typeorm';
+import { Patient } from './patient.entity';
 
 @ApiTags('Patients')
 @Controller('patients')
@@ -41,15 +42,16 @@ export class PatientsController {
     type: Number,
     description: 'O Id do paciente',
   })
-  @ApiOkResponse({ description: 'Paciente encontrado.', type: PatientsVM })
+  @ApiOkResponse({
+    description: 'Paciente encontrado.',
+    type: PatientsDTO,
+  })
   @ApiNotFoundResponse({
     description: 'Paciente não econtrado.',
     type: NotFoundError,
   })
-  async get(@Param('id') id: string): Promise<PatientsVM> {
-    const patient = await this.patientService.findOne(id);
-
-    return PatientsVM.toViewModel(patient);
+  async get(@Param('id') id: string): Promise<Patient> {
+    return this.patientService.findOne(id);
   }
 
   @Get()
@@ -58,12 +60,10 @@ export class PatientsController {
   })
   @ApiOkResponse({
     description: 'Todos os pacientes encontrados.',
-    type: [PatientsVM],
+    type: [PatientsDTO],
   })
-  async getAll(): Promise<PatientsVM[]> {
-    const patients = await this.patientService.findAll();
-
-    return patients.map((patient) => PatientsVM.toViewModel(patient));
+  async getAll(): Promise<Patient[]> {
+    return this.patientService.findAll();
   }
 
   @Post()
@@ -84,12 +84,10 @@ export class PatientsController {
   })
   async createPatient(
     @Body() createPatient: CreatePatientDTO,
-  ): Promise<PatientsVM> {
-    const newPatient = await this.patientService.save(
-      PatientsVM.fromViewModel<CreatePatientDTO>(createPatient),
-    );
+  ): Promise<Patient> {
+    const newPatient = await this.patientService.save(createPatient);
 
-    return PatientsVM.toViewModel(newPatient);
+    return newPatient;
   }
 
   @Patch()
@@ -110,15 +108,7 @@ export class PatientsController {
   })
   async updatePatient(
     @Body() updatePatient: UpdatePatientDTO,
-  ): Promise<PatientsVM | UpdateResult> {
-    const affectedPatient = await this.patientService.update(
-      PatientsVM.fromViewModel(updatePatient),
-    );
-
-    if (affectedPatient instanceof PatientsVM) {
-      return PatientsVM.toViewModel(affectedPatient);
-    }
-
-    return affectedPatient as UpdateResult;
+  ): Promise<Patient | UpdateResult> {
+    return this.patientService.update(updatePatient);
   }
 }

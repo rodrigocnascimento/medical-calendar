@@ -69,6 +69,7 @@ describe('PatientsService', () => {
       where: {
         id: patient.id,
       },
+      relations: ['appointments'],
     });
   });
 

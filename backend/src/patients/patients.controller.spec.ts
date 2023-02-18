@@ -6,7 +6,7 @@ import { build as patientMock } from '../test/mocks/patients.mock';
 import { Patient } from './patient.entity';
 import { CreatePatientDTO } from './dto/create.dto';
 import { UpdatePatientDTO } from './dto/update.dto';
-import { PatientsVM } from './patients.vm';
+
 describe('PatientsController', () => {
   let controller: PatientsController;
   let service: PatientsService;
@@ -83,7 +83,7 @@ describe('PatientsController', () => {
 
       const returnedPatient = (await controller.updatePatient(
         patient_,
-      )) as PatientsVM;
+      )) as Patient;
 
       expect(service.update).toBeCalledWith(patient_);
       expect(returnedPatient.name).toEqual(patient_.name);

@@ -27,6 +27,7 @@ export class PatientsService {
         where: {
           id,
         },
+        relations: ['appointments'],
       });
     } catch (error) {
       throw new NotFoundException('Paciente não encontrado.');

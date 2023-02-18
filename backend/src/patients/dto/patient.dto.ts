@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { plainToClass, Expose } from 'class-transformer';
+import { Expose } from 'class-transformer';
+import { Genre } from '../patient.entity';
+import { MedicalAppointmentDto } from '../../medical_appointments/dto/medical_appointments.dto';
 
-import { Patient, Genre } from './patient.entity';
-
-export class PatientsVM {
+export class PatientsDTO {
   @Expose()
   @ApiProperty({
     description: 'O ID do paciente.',
@@ -64,11 +64,11 @@ export class PatientsVM {
   @ApiProperty({ description: 'A data de criação do paciente.' })
   createdAt: Date;
 
-  static toViewModel(patient: Patient): PatientsVM {
-    return plainToClass(PatientsVM, patient, { excludeExtraneousValues: true });
-  }
-
-  static fromViewModel<T extends Patient>(vm: T): PatientsVM {
-    return PatientsVM.toViewModel(vm);
-  }
+  @Expose()
+  @ApiProperty({
+    description: 'A data de criação do paciente.',
+    type: MedicalAppointmentDto,
+    isArray: true,
+  })
+  appointments: MedicalAppointmentDto[];
 }
