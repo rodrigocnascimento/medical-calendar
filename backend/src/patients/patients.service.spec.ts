@@ -9,7 +9,6 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreatePatientDTO } from './dto/create.dto';
-import { async } from 'rxjs';
 import { UpdateResult } from 'typeorm';
 import { UpdatePatientDTO } from './dto/update.dto';
 

@@ -1,6 +1,3 @@
-import { join } from 'path';
-// import { Patient } from 'src/patients/patient.entity';
-
 import { DataSourceOptions } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
