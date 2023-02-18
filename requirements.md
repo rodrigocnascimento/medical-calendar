@@ -19,12 +19,12 @@
   - Editar ✅
   - Testes:
     - Unitários ✅
-- Eu, como médico, quero poder gereneciar os agendamentos de consulta para um
+- Eu, como médico, quero poder gerenciar os agendamentos de consulta para um
   paciente.
-  - Cadastrar
-  - Listar
-  - Alterar
-  - Excluir
+  - Cadastrar ✅
+  - Listar ✅
+  - Alterar ✅
+  - Excluir ✅
 - Eu, como médico, quero poder anotar uma observação durante a consulta.
 - Eu, como médico, quero poder visualizar as anotações das consultas dos pacientes.
 

@@ -1,8 +1,10 @@
+import { MedicalAppointment } from '../medical_appointments/medical_appointments.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 /**
@@ -51,4 +53,10 @@ export class Patient {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
+
+  @OneToMany(
+    () => MedicalAppointment,
+    (appointments: MedicalAppointment) => appointments.patient,
+  )
+  appointments?: MedicalAppointment[];
 }

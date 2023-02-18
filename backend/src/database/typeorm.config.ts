@@ -16,6 +16,7 @@ export default {
   entities: ['dist/**/*.entity{.js,.ts}'],
   migrations: ['dist/database/migrations/*{.js,.ts}'],
   autoLoadEntities: true,
+  logging: true,
   cli: {
     migrationsDir: 'src/database/migrations',
   },
