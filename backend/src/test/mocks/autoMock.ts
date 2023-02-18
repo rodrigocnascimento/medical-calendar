@@ -50,3 +50,7 @@ export function createMockData<T>(
   }
   return quantityToGenerate > 1 ? mockedData : mockedData.shift();
 }
+
+export type MockType<T> = {
+  [P in keyof T]: jest.Mock<any>;
+};

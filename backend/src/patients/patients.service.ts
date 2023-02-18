@@ -29,7 +29,7 @@ export class PatientsService {
         },
       });
     } catch (error) {
-      throw new NotFoundException('Paciente não encontrado');
+      throw new NotFoundException('Paciente não encontrado.');
     }
   }
 
@@ -41,7 +41,9 @@ export class PatientsService {
     const emailAlreadyRegistered = await this.getEmailOrFail(patient.email);
 
     if (emailAlreadyRegistered) {
-      throw new UnprocessableEntityException('Email já existe');
+      throw new UnprocessableEntityException(
+        'Email de paciente já cadastrado.',
+      );
     }
 
     return this.patientsRepository.save(patient);
@@ -63,7 +65,7 @@ export class PatientsService {
       patient,
     );
 
-    if (wasPatientUpdated) {
+    if (wasPatientUpdated.affected) {
       return this.patientsRepository.findOne({
         where: {
           id: patient.id,

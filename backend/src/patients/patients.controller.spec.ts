@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { PatientsController } from '../patients.controller';
-import { PatientsService } from '../patients.service';
-import { build as patientMock } from '../../test/mocks/patients.mock';
-import { Patient } from '../patient.entity';
-import { CreatePatientDTO } from '../dto/create.dto';
-import { UpdatePatientDTO } from '../dto/update.dto';
-import { PatientsVM } from '../patients.vm';
+import { PatientsController } from './patients.controller';
+import { PatientsService } from './patients.service';
+import { build as patientMock } from '../test/mocks/patients.mock';
+import { Patient } from './patient.entity';
+import { CreatePatientDTO } from './dto/create.dto';
+import { UpdatePatientDTO } from './dto/update.dto';
+import { PatientsVM } from './patients.vm';
 describe('PatientsController', () => {
   let controller: PatientsController;
   let service: PatientsService;
