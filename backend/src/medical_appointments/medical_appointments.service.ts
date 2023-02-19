@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MedicalAppointmentRepository } from './medical_appointments.repository';
 import { MedicalAppointment } from './medical_appointments.entity';
 import { UUIDVersion } from 'class-validator';
-import { MedicalAppointmentDto } from './dto/medical_appointments.dto';
+import { MedicalAppointmentDTO } from './dto/medical_appointments.dto';
 
 @Injectable()
 export class MedicalAppointmentsService {
@@ -27,7 +27,7 @@ export class MedicalAppointmentsService {
     }
 
     return this.medicalAppointmentRepo.save(
-      createMedicalAppointmentDto as unknown as MedicalAppointmentDto,
+      createMedicalAppointmentDto as unknown as MedicalAppointmentDTO,
     );
   }
 
@@ -40,5 +40,11 @@ export class MedicalAppointmentsService {
 
   remove(id: UUIDVersion) {
     return this.medicalAppointmentRepo.delete(id);
+  }
+
+  findAll() {
+    return this.medicalAppointmentRepo.find({
+      relations: ['medicalRegistries', 'patient'],
+    });
   }
 }

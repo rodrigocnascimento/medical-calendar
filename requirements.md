@@ -25,8 +25,8 @@
   - Listar ✅
   - Alterar ✅
   - Excluir ✅
-- Eu, como médico, quero poder anotar uma observação durante a consulta.
-- Eu, como médico, quero poder visualizar as anotações das consultas dos pacientes.
+- Eu, como médico, quero poder anotar uma observação durante a consulta.✅
+- Eu, como médico, quero poder visualizar as anotações das consultas dos pacientes.✅
 
 ### Desejaveis
 
@@ -62,18 +62,21 @@
     <img width="650" src="./database/database-der.png" alt="Database EDR Diagram">
 </p>
 
-✅ Para o banco de dados pode usar MySQL ou PostgreSQL, podendo optar ou não
-pelo uso de ORM;
+- Para o banco de dados pode usar MySQL ou PostgreSQL, podendo optar ou não
+  pelo uso de ORM; ✅
 
-- Banco de dados utilizado é o PostgreSQL
-- ORM Typeorm
+  - Banco de dados utilizado é o PostgreSQL
+  - ORM Typeorm
 
-✅ Setup de ambiente de desenvolvimento usando docker / docker-compose;
+- Setup de ambiente de desenvolvimento usando docker / docker-compose; ✅
 
 - Hospedar em um ambiente cloud a sua escolha (Heroku, AWS EBS, IBM Cloud, etc)
 
 - Garantir autenticação e/ou autorização (login/logout, token JWT, roles)
 
-- Implementar alguma ferramenta de lint ou qualidade (sonar, code-quality, eslint, etc)
+- Implementar alguma ferramenta de lint ou qualidade (sonar, code-quality, eslint, etc) ✅
+
+  - Eslint
+  - Prettier
 
 - Deploy automatizado via pipeline (gitlab-ci, bitbucket pipeline, github actions, etc)

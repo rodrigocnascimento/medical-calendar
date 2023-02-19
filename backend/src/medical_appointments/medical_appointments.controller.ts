@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Get,
+} from '@nestjs/common';
 import { MedicalAppointmentsService } from './medical_appointments.service';
 import { CreateMedicalAppointmentDto } from './dto/create.dto';
 import { UpdateMedicalAppointmentDto } from './dto/update.dto';
@@ -10,7 +18,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { NotFoundError } from '../errors/NotFound.error';
-import { MedicalAppointmentDto } from './dto/medical_appointments.dto';
+import { MedicalAppointmentDTO } from './dto/medical_appointments.dto';
 import { UUIDVersion } from 'class-validator';
 
 @ApiTags('MedicalAppointments')
@@ -26,7 +34,7 @@ export class MedicalAppointmentsController {
   })
   @ApiCreatedResponse({
     description: 'Reserva da consulta.',
-    type: MedicalAppointmentDto,
+    type: MedicalAppointmentDTO,
   })
   @ApiNotFoundResponse({
     description: 'Paciente não econtrado.',
@@ -47,7 +55,7 @@ export class MedicalAppointmentsController {
   })
   @ApiCreatedResponse({
     description: 'Reserva da consulta.',
-    type: MedicalAppointmentDto,
+    type: MedicalAppointmentDTO,
   })
   @ApiNotFoundResponse({
     description: 'Paciente não econtrado.',
@@ -69,7 +77,7 @@ export class MedicalAppointmentsController {
   })
   @ApiParam({
     name: 'id',
-    type: MedicalAppointmentDto['id'],
+    type: MedicalAppointmentDTO['id'],
     example: '296317cd-e432-4f97-82b0-eadcfb02d642',
     description: 'O Id da consulta',
   })
@@ -79,5 +87,10 @@ export class MedicalAppointmentsController {
   })
   remove(@Param('id') id: UUIDVersion) {
     return this.medicalAppointmentsService.remove(id);
+  }
+
+  @Get()
+  findAll() {
+    return this.medicalAppointmentsService.findAll();
   }
 }

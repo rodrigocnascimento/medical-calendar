@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { Genre } from '../patient.entity';
-import { MedicalAppointmentDto } from '../../medical_appointments/dto/medical_appointments.dto';
+import { MedicalAppointmentDTO } from '../../medical_appointments/dto/medical_appointments.dto';
 
 export class PatientsDTO {
   @Expose()
@@ -67,8 +67,8 @@ export class PatientsDTO {
   @Expose()
   @ApiProperty({
     description: 'A data de criação do paciente.',
-    type: MedicalAppointmentDto,
+    type: MedicalAppointmentDTO,
     isArray: true,
   })
-  appointments: MedicalAppointmentDto[];
+  appointments: MedicalAppointmentDTO[];
 }

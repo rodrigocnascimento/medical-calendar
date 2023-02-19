@@ -1,3 +1,4 @@
+import { MedicalRegistry } from '../medical_registries/medical_registry.entity';
 import { Patient } from '../patients/patient.entity';
 import {
   Column,
@@ -6,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('medical_appointments')
@@ -24,4 +26,10 @@ export class MedicalAppointment {
 
   @ManyToOne(() => Patient, (patient: Patient) => patient.appointments)
   patient: Patient;
+
+  @OneToMany(
+    () => MedicalRegistry,
+    (records: MedicalRegistry) => records.medicalAppointment,
+  )
+  medicalRegistries?: MedicalRegistry[];
 }
