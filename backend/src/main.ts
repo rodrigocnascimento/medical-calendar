@@ -32,6 +32,10 @@ async function bootstrap() {
     .setTitle('PEBMED - MedApp Medical Appointments')
     .setDescription('Sistema de prontuário eletrônico Médico')
     .setVersion(version)
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
 
   SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, options));
