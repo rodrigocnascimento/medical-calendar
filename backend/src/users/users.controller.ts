@@ -7,6 +7,7 @@ import {
   Delete,
   Get,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,6 +18,7 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { BadRequestError } from '../errors/BadRequest.error';
@@ -28,6 +30,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { User } from './user.entity';
 import { UUIDVersion } from 'class-validator';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -59,6 +62,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Recupera um usuário.',
   })
@@ -85,6 +90,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Edita um usuário.',
   })
@@ -115,7 +122,10 @@ export class UsersController {
     return this.userService.update(userId, updatedUser);
   }
 
+  // Here also needs to be an administrator do delete aa user
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: 'Edita um usuário.',
   })

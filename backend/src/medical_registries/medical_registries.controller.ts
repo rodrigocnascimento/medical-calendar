@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { MedicalRegistriesService } from './medical_registries.service';
 import { CreateMedicalRegistryDTO } from './dto/create.dto';
 import { UpdateMedicalRegistryDTO } from './dto/update.dto';
@@ -10,12 +18,16 @@ import {
   ApiProperty,
   ApiTags,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { NotFoundError } from '../errors/NotFound.error';
 import { UUIDVersion } from 'class-validator';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @ApiTags('MedicalRegistries')
 @Controller('medical-registries')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class MedicalRegistriesController {
   constructor(
     private readonly medicalRegistriesService: MedicalRegistriesService,

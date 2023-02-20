@@ -72,7 +72,7 @@
 
 - Hospedar em um ambiente cloud a sua escolha (Heroku, AWS EBS, IBM Cloud, etc)
 
-- Garantir autenticação e/ou autorização (login/logout, token JWT, roles)
+- Garantir autenticação e/ou autorização (login/logout, token JWT, roles) ✅
 
 - Implementar alguma ferramenta de lint ou qualidade (sonar, code-quality, eslint, etc) ✅
 

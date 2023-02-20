@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Get,
+  UseGuards,
 } from '@nestjs/common';
 import { MedicalAppointmentsService } from './medical_appointments.service';
 import { CreateMedicalAppointmentDto } from './dto/create.dto';
@@ -17,14 +18,17 @@ import {
   ApiTags,
   ApiParam,
   ApiResponse,
-  OmitType,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { NotFoundError } from '../errors/NotFound.error';
 import { MedicalAppointmentDTO } from './dto/medical_appointments.dto';
 import { UUIDVersion } from 'class-validator';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @ApiTags('MedicalAppointments')
 @Controller('medical-appointments')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class MedicalAppointmentsController {
   constructor(
     private readonly medicalAppointmentsService: MedicalAppointmentsService,

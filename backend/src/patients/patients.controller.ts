@@ -6,6 +6,7 @@ import {
   Body,
   Patch,
   UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,6 +18,7 @@ import {
   ApiOkResponse,
   ApiNotFoundResponse,
   ApiResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { NotFoundError } from '../errors/NotFound.error';
@@ -27,9 +29,12 @@ import { UpdatePatientDTO } from './dto/update.dto';
 import { PatientsDTO } from './dto/patient.dto';
 import { UpdateResult } from 'typeorm';
 import { Patient } from './patient.entity';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @ApiTags('Patients')
 @Controller('patients')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class PatientsController {
   constructor(private readonly patientService: PatientsService) {}
 
