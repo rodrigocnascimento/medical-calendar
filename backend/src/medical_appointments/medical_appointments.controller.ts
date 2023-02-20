@@ -23,7 +23,7 @@ import {
 import { NotFoundError } from '../errors/NotFound.error';
 import { MedicalAppointmentDTO } from './dto/medical_appointments.dto';
 import { UUIDVersion } from 'class-validator';
-import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiTags('MedicalAppointments')
 @Controller('medical-appointments')

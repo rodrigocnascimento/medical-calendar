@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MedicalAppointmentsController } from './medical_appointments.controller';
 import { MedicalAppointmentsService } from './medical_appointments.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { MedicalAppointment } from './medical_appointments.entity';
+
 import { MedicalAppointmentRepository } from './medical_appointments.repository';
 
 describe('MedicalAppointmentsController', () => {

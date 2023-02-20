@@ -29,7 +29,7 @@ import { UpdatePatientDTO } from './dto/update.dto';
 import { PatientsDTO } from './dto/patient.dto';
 import { UpdateResult } from 'typeorm';
 import { Patient } from './patient.entity';
-import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiTags('Patients')
 @Controller('patients')

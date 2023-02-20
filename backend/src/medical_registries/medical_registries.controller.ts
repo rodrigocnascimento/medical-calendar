@@ -22,7 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { NotFoundError } from '../errors/NotFound.error';
 import { UUIDVersion } from 'class-validator';
-import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiTags('MedicalRegistries')
 @Controller('medical-registries')
