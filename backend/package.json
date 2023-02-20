@@ -11,6 +11,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "test": "jest --verbose",
+    "test:file": "jest --verbose --watch --detectOpenHandles -- $npm_config_file",
     "test:watch": "jest --verbose --watchAll --runInBand",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
