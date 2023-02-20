@@ -30,7 +30,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { User } from './user.entity';
 import { UUIDVersion } from 'class-validator';
-import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @ApiTags('Users')
 @Controller('users')
