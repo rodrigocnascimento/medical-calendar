@@ -15,7 +15,7 @@ export class MedicalAppointmentDTO {
   @ApiProperty({
     description: 'O ID do paciente.',
     example: '296317cd-e432-4f97-82b0-eadcfb02d642',
-    type: Object,
+    type: Patient,
   })
   patient: Patient;
 

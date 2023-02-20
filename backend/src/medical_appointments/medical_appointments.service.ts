@@ -1,34 +1,36 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateMedicalAppointmentDto } from './dto/create.dto';
 import { UpdateMedicalAppointmentDto } from './dto/update.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { MedicalAppointmentRepository } from './medical_appointments.repository';
-import { MedicalAppointment } from './medical_appointments.entity';
 import { UUIDVersion } from 'class-validator';
 import { MedicalAppointmentDTO } from './dto/medical_appointments.dto';
 
 @Injectable()
 export class MedicalAppointmentsService {
-  constructor(
-    @InjectRepository(MedicalAppointment)
-    private medicalAppointmentRepo: MedicalAppointmentRepository,
-  ) {}
+  constructor(private medicalAppointmentRepo: MedicalAppointmentRepository) {}
   async create(createMedicalAppointmentDto: CreateMedicalAppointmentDto) {
-    const foundPatient = await this.medicalAppointmentRepo.findOne({
-      where: {
-        patient: {
-          id: createMedicalAppointmentDto.patient,
-        },
-      },
-    });
+    try {
+      await this.medicalAppointmentRepo.alreadyHasAppointment(
+        createMedicalAppointmentDto.date,
+      );
 
-    if (!foundPatient) {
+      return await this.medicalAppointmentRepo.save(
+        createMedicalAppointmentDto as unknown as MedicalAppointmentDTO,
+      );
+    } catch (error) {
+      console.log(error);
+      if (error instanceof UnprocessableEntityException) {
+        throw new UnprocessableEntityException(
+          'Já tem uma consulta nesse horário.',
+        );
+      }
+
       throw new NotFoundException('Paciente não encontrado.');
     }
-
-    return this.medicalAppointmentRepo.save(
-      createMedicalAppointmentDto as unknown as MedicalAppointmentDTO,
-    );
   }
 
   update(

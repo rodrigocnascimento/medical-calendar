@@ -39,7 +39,7 @@ export class PatientsController {
   })
   @ApiParam({
     name: 'id',
-    type: Number,
+    type: String,
     description: 'O Id do paciente',
   })
   @ApiOkResponse({

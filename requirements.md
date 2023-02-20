@@ -31,7 +31,7 @@
 ### Desejaveis
 
 - Eu como médico, quero que o sistema valide a minha agenda, não deixando eu
-  cadastrar mais de um paciente na mesma hora.
+  cadastrar mais de um paciente na mesma hora. ✅
 - Eu, como médico, quero poder excluir os dados pessoais do paciente por causa das
   novas regras do LGPD, mas mantendo o histórico de consulta por questões de
   contabilidade.
@@ -76,7 +76,7 @@
 
 - Implementar alguma ferramenta de lint ou qualidade (sonar, code-quality, eslint, etc) ✅
 
-  - Eslint
-  - Prettier
+  - Eslint✅
+  - Prettier✅
 
 - Deploy automatizado via pipeline (gitlab-ci, bitbucket pipeline, github actions, etc)

@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { MedicalRegistriesService } from './medical_registries.service';
 import { CreateMedicalRegistryDTO } from './dto/create.dto';
 import { UpdateMedicalRegistryDTO } from './dto/update.dto';
@@ -17,6 +9,7 @@ import {
   ApiNotFoundResponse,
   ApiProperty,
   ApiTags,
+  ApiParam,
 } from '@nestjs/swagger';
 import { NotFoundError } from '../errors/NotFound.error';
 import { UUIDVersion } from 'class-validator';
@@ -49,6 +42,23 @@ export class MedicalRegistriesController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Atualiza um registro médico para um paciente.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'O Id do registro.',
+    example: 'ae9b25d0-5f9f-4b28-99cb-999cc4cd4a60',
+  })
+  @ApiCreatedResponse({
+    description: 'Registro médico da consulta atualizado.',
+    type: MedicalRegistryDTO,
+  })
+  @ApiNotFoundResponse({
+    description: 'Consulta não econtrada.',
+    type: NotFoundError,
+  })
   update(
     @Param('id') id: UUIDVersion,
     @Body() updateMedicalRegistryDto: UpdateMedicalRegistryDTO,
@@ -57,6 +67,23 @@ export class MedicalRegistriesController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Remove um registro médico para um paciente.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'O Id do registro.',
+    example: 'ae9b25d0-5f9f-4b28-99cb-999cc4cd4a60',
+  })
+  @ApiCreatedResponse({
+    description: 'Registro médico da consulta atualizado.',
+    type: MedicalRegistryDTO,
+  })
+  @ApiNotFoundResponse({
+    description: 'Consulta não econtrada.',
+    type: NotFoundError,
+  })
   remove(@Param('id') id: UUIDVersion) {
     return this.medicalRegistriesService.remove(id);
   }

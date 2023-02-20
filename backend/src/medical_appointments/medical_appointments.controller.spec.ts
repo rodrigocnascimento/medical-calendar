@@ -3,6 +3,7 @@ import { MedicalAppointmentsController } from './medical_appointments.controller
 import { MedicalAppointmentsService } from './medical_appointments.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MedicalAppointment } from './medical_appointments.entity';
+import { MedicalAppointmentRepository } from './medical_appointments.repository';
 
 describe('MedicalAppointmentsController', () => {
   let controller: MedicalAppointmentsController;
@@ -13,13 +14,14 @@ describe('MedicalAppointmentsController', () => {
       providers: [
         MedicalAppointmentsService,
         {
-          provide: getRepositoryToken(MedicalAppointment),
+          provide: MedicalAppointmentRepository, // getRepositoryToken(MedicalAppointment),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
             findOneOrFail: jest.fn(),
             save: jest.fn(),
             update: jest.fn(),
+            alreadyHasAppointment: jest.fn(),
           },
         },
       ],

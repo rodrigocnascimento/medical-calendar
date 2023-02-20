@@ -16,6 +16,8 @@ import {
   ApiCreatedResponse,
   ApiTags,
   ApiParam,
+  ApiResponse,
+  OmitType,
 } from '@nestjs/swagger';
 import { NotFoundError } from '../errors/NotFound.error';
 import { MedicalAppointmentDTO } from './dto/medical_appointments.dto';
@@ -89,6 +91,17 @@ export class MedicalAppointmentsController {
     return this.medicalAppointmentsService.remove(id);
   }
 
+  @ApiOperation({
+    summary: 'Retorna todas as reserva de todas as consultas.',
+  })
+  @ApiResponse({
+    description: 'Reserva da consulta.',
+    type: MedicalAppointmentDTO,
+  })
+  @ApiNotFoundResponse({
+    description: 'Agendamento de consulta não econtrado.',
+    type: NotFoundError,
+  })
   @Get()
   findAll() {
     return this.medicalAppointmentsService.findAll();
