@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../../assets/logo-pebmed.png";
-import "./notlogged.css";
+import "./login.css";
 import "../../index.css";
 
 import { useHistory, useLocation } from "react-router-dom";
@@ -15,15 +15,14 @@ export default function NotLoggedRoute() {
   let location = useLocation();
   let auth = useAuth();
 
-  let { from }: any = location.state || { from: { pathname: "/" } };
+  let { from }: any = location.pathname || { from: { pathname: "/" } };
 
   async function handleUserLogin(e: any) {
     e.preventDefault();
 
     auth
       .signin(email, password)
-      .then((response: any) => {
-        setResponse(response.message);
+      .then(() => {
         history.replace(from);
       })
       .catch((error: any) => {

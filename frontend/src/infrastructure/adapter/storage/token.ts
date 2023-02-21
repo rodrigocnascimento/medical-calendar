@@ -69,7 +69,6 @@ export default class TokenStorage {
    * @memberof TokenStorage
    */
   remove(name: string = "") {
-    console.log("remove", this.name);
     this.storage.remove(this.name || name);
   }
 

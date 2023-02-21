@@ -4,7 +4,7 @@ import Patients from "../patients";
 import Dashboard from "../dashboard";
 import repository from "../../domain/repository";
 import { useAuth } from "../../context/auth/use-auth";
-import NotLoggedRoute from "../notlogged";
+import LoginRoute from "../login";
 
 function PrivateRoute({ children, ...rest }: any) {
   let auth = useAuth();
@@ -28,7 +28,7 @@ function PrivateRoute({ children, ...rest }: any) {
   );
 }
 
-export default function LoggedRoute() {
+export default function ApplicationRoutes() {
   let history = useHistory();
   let auth = useAuth();
 
@@ -59,7 +59,7 @@ export default function LoggedRoute() {
             <Dashboard />
           </Route>
           <Route path="/login">
-            <NotLoggedRoute />
+            <LoginRoute />
           </Route>
           <PrivateRoute path="/patients">
             <Patients inject={{ repository: repository() }} />
