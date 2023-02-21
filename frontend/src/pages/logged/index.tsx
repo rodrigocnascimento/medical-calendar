@@ -1,19 +1,43 @@
-import React, { useContext } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { AuthContext } from "../../context/user/auth.context";
+import React from "react";
+import { Switch, Route, Link, useHistory, Redirect } from "react-router-dom";
 import Patients from "../patients";
 import Dashboard from "../dashboard";
 import repository from "../../domain/repository";
+import { useAuth } from "../../context/auth/use-auth";
+import NotLoggedRoute from "../notlogged";
+
+function PrivateRoute({ children, ...rest }: any) {
+  let auth = useAuth();
+
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        auth.user ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location },
+            }}
+          />
+        )
+      }
+    />
+  );
+}
 
 export default function LoggedRoute() {
-  const user: any = useContext(AuthContext);
+  let history = useHistory();
+  let auth = useAuth();
 
-  async function handleUserLogout() {
-    await user.logout();
+  function handleUserLogout() {
+    auth.signout(() => history.push("/"));
   }
 
   return (
-    <Router>
+    <>
       <div id="sidebar">
         <nav>
           <ul>
@@ -34,11 +58,14 @@ export default function LoggedRoute() {
           <Route exact path="/">
             <Dashboard />
           </Route>
-          <Route path="/patients">
-            <Patients inject={{ repository: repository() }} />
+          <Route path="/login">
+            <NotLoggedRoute />
           </Route>
+          <PrivateRoute path="/patients">
+            <Patients inject={{ repository: repository() }} />
+          </PrivateRoute>
         </Switch>
       </div>
-    </Router>
+    </>
   );
 }

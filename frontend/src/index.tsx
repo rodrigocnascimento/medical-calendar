@@ -4,7 +4,7 @@ import "./index.css";
 
 import reportWebVitals from "./reportWebVitals";
 
-import AppProvider from "./context";
+import { ProvideAuth } from "./context/auth/use-auth";
 import RootRoute from "./pages/router";
 
 const root = ReactDOM.createRoot(
@@ -12,9 +12,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <AppProvider>
+    <ProvideAuth>
       <RootRoute />
-    </AppProvider>
+    </ProvideAuth>
   </React.StrictMode>
 );
 

@@ -1,20 +1,34 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import logo from "../../assets/logo-pebmed.png";
 import "./notlogged.css";
 import "../../index.css";
 
-import { AuthContext } from "../../context/user/auth.context";
+import { useHistory, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/auth/use-auth";
 
 export default function NotLoggedRoute() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [response, setResponse] = useState<string>("");
 
-  const user: any = useContext(AuthContext);
+  let history = useHistory();
+  let location = useLocation();
+  let auth = useAuth();
+
+  let { from }: any = location.state || { from: { pathname: "/" } };
 
   async function handleUserLogin(e: any) {
     e.preventDefault();
 
-    await user.login({ email, password });
+    auth
+      .signin(email, password)
+      .then((response: any) => {
+        setResponse(response.message);
+        history.replace(from);
+      })
+      .catch((error: any) => {
+        setResponse(error.message);
+      });
   }
 
   return (
@@ -49,6 +63,9 @@ export default function NotLoggedRoute() {
           <div className="button-right">
             <button type="submit">Entrar</button>
           </div>
+          {response && (
+            <p style={{ clear: "both", color: "red" }}>{response}</p>
+          )}
         </div>
       </form>
     </div>

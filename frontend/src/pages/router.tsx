@@ -1,10 +1,16 @@
-import { useContext } from "react";
-import { AuthContext } from "../context/user/auth.context";
+import React from "react";
+
 import LoggedRoute from "../pages/logged";
 import NotLoggedRoute from "../pages/notlogged";
+import { useAuth } from "../context/auth/use-auth";
 
+import { BrowserRouter } from "react-router-dom";
 export default function RootRoute() {
-  const user: any = useContext(AuthContext);
+  let auth = useAuth();
 
-  return user.isAuthenticated ? <LoggedRoute /> : <NotLoggedRoute />;
+  return (
+    <BrowserRouter>
+      {auth.user ? <LoggedRoute /> : <NotLoggedRoute />}
+    </BrowserRouter>
+  );
 }
