@@ -12,6 +12,8 @@ services:
       - "15432:5432"
     volumes:
       - ./database/pgsql-data:/var/lib/postgresql/data:rw
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - application-network
 
@@ -29,6 +31,8 @@ services:
       - "9229:9229"
     volumes:
       - ./backend/src:/home/backend/src
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     links:
       - postgres-db
     networks:
