@@ -1,20 +1,56 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 
-import reportWebVitals from "./reportWebVitals";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 
 import { ProvideAuth } from "./context/auth/use-auth";
 import RootRoute from "./pages/router";
+
+import reportWebVitals from "./reportWebVitals";
+
+const theme = createTheme({
+  palette: {
+    background: {
+      default: "#79c288",
+    },
+    primary: {
+      main: "#79c288",
+      dark: "#64be76",
+      contrastText: "#fff",
+    },
+    secondary: {
+      main: "#6091E0",
+      contrastText: "#fff",
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: ({ ownerState }) => ({
+          ...(ownerState.variant === "outlined" && {
+            ":hover": {
+              backgroundColor: "#64be76",
+              color: "#fff",
+            },
+          }),
+        }),
+      },
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <ProvideAuth>
-      <RootRoute />
-    </ProvideAuth>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <ProvideAuth>
+        <RootRoute />
+      </ProvideAuth>
+    </ThemeProvider>
   </React.StrictMode>
 );
 
