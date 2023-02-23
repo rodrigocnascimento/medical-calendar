@@ -24,6 +24,9 @@ export default function NotLoggedRoute() {
       .signin(email, password)
       .then(() => {
         history.replace(from);
+        setTimeout(() => {
+          history.go(0);
+        }, 100);
       })
       .catch((error: any) => {
         setResponse(error.message);

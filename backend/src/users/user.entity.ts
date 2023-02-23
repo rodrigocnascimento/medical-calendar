@@ -5,7 +5,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
   OneToOne,
 } from 'typeorm';
 
@@ -50,6 +49,5 @@ export class User {
   updatedAt?: Date;
 
   @OneToOne(() => MedicalAppointment)
-  @JoinColumn()
-  doctor: MedicalAppointment;
+  userAppointments: MedicalAppointment[];
 }

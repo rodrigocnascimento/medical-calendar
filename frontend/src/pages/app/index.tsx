@@ -11,6 +11,7 @@ import UsersCreate from "../users/user.create";
 // import AuthVerify from "../auth-verifier";
 import { Button } from "@mui/material";
 import "./index.css";
+import AppointmentsHome from "../appointments/appointments.home";
 
 const repo = repository();
 
@@ -60,7 +61,7 @@ export default function ApplicationRoutes() {
             <LoginRoute />
           </Route>
           <Route exact path={"/patients"}>
-            <PatientsHome repository={repo.patient} />
+            <PatientsHome repository={[repo.patient, repo.appointments]} />
           </Route>
           <Route
             path={["/patients/:id", "/patients/new"]}
@@ -73,6 +74,9 @@ export default function ApplicationRoutes() {
             path={["/users/:id", "/users/new"]}
             children={<UsersCreate repository={repo.user} />}
           />
+          <Route exact path={"/appointments"}>
+            <AppointmentsHome />
+          </Route>
         </Switch>
       </div>
     </>

@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import "./patients.css";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
+import AdapterDateFns from "@date-io/date-fns";
+// import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+
 import {
   Create,
   PermContactCalendar,
@@ -16,12 +21,42 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context/auth/use-auth";
 
-export default function PatientsHome({ repository: patientRepository }: any) {
+export default function PatientsHome({ repository }: any) {
   const auth = useAuth();
+  const [patientRepository, appointmentRepository] = repository;
 
+  const [success, setSuccess] = useState<any>("");
+  const [error, setError] = useState<any>("");
   const [patients, setPatients] = useState<any[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [open, setOpen] = useState(false);
+  const [appointmentDate, setAppointmentDate] = useState(
+    new Date().toISOString()
+  );
+
+  const handleAppointmentConfirmation = () => {
+    console.log(appointmentDate);
+    const [date, hours] = appointmentDate.split("T");
+    const [hour, minute] = hours.split(":");
+
+    appointmentRepository
+      .createAppointment({
+        patient: selectedPatient.id,
+        doctor: auth.user.sub,
+        date: `${date}T${hour}:${minute}`,
+      })
+      .then(async (response: any) => {
+        await loadPatients();
+        setSuccess("Agendamento criado com sucesso!");
+        setOpen(false);
+      })
+      .catch((error: any) => {
+        console.log("error", error);
+        setOpen(false);
+        setSuccess(false);
+        setError(JSON.parse(error.message).message);
+      });
+  };
 
   const handleOpen = (patient: any) => {
     setSelectedPatient(patient);
@@ -68,6 +103,30 @@ export default function PatientsHome({ repository: patientRepository }: any) {
             Novo
           </Link>
         </div>
+        {success && (
+          <div
+            style={{
+              border: "3px solid #79c288",
+              borderRadius: 5,
+              padding: 30,
+              backgroundColor: "#a2e6b0",
+            }}
+          >
+            {success}
+          </div>
+        )}
+        {error && (
+          <div
+            style={{
+              border: "3px solid red",
+              borderRadius: 5,
+              padding: 30,
+              backgroundColor: "pink",
+            }}
+          >
+            {error}
+          </div>
+        )}
       </div>
       {patients &&
         patients.map((patient, i) => {
@@ -157,11 +216,44 @@ export default function PatientsHome({ repository: patientRepository }: any) {
           }}
         >
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Faça uma reserva para {selectedPatient && selectedPatient.name}
+            Reserva de consulta para {selectedPatient && selectedPatient.name}
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            Confirme a data da reserva da consulta.
           </Typography>
+          <div style={{ flex: 1, display: "block" }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateTimePicker
+                views={["year", "month", "day", "hours", "minutes"]}
+                label="Data do agendamento"
+                value={appointmentDate}
+                onChange={(newValue: any) => {
+                  setAppointmentDate(newValue);
+                }}
+                inputFormat="dd/MM/yyyy, hh:mm"
+                renderInput={(params) => (
+                  <TextField
+                    style={{ marginLeft: 0, marginTop: 25, marginBottom: 30 }}
+                    fullWidth={true}
+                    {...params}
+                  />
+                )}
+              />
+            </LocalizationProvider>
+          </div>
+          <div style={{ float: "right" }}>
+            <a
+              href="dangerouslySetInnerHTML"
+              onClick={(e) => {
+                e.preventDefault();
+                handleAppointmentConfirmation();
+              }}
+              className="patient_card__category"
+            >
+              <CalendarMonth style={{ verticalAlign: "bottom" }} />
+              Confirmar agendamento
+            </a>
+          </div>
         </Box>
       </Modal>
     </div>
