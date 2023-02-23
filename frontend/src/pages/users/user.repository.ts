@@ -1,13 +1,13 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import { CreatePatientDTO, PatientDTO, UpdatePatientDTO } from "./patient.dto";
+import { CreateUserDTO, UserDTO, UpdateUserDTO } from "./user.dto";
 
-export class PatientRepository {
+export class UserRepository {
   /**
    * the serverURL
    *
    * @type {string}
-   * @memberof PatientRepository
+   * @memberof UserRepository
    */
   readonly baseUrl: string = "";
 
@@ -15,18 +15,18 @@ export class PatientRepository {
    * http client
    *
    * @type {IHttp}
-   * @memberof PatientRepository
+   * @memberof UserRepository
    */
   readonly http: IHttp;
 
   /**
-   * Creates an instance of PatientRepository.
+   * Creates an instance of UserRepository.
    * @param {string} baseUrl server url
    * @param {IHttp} http http client
-   * @memberof PatientRepository
+   * @memberof UserRepository
    */
   constructor(baseUrl: string, http: IHttp, userToken: TokenStorage) {
-    this.baseUrl = baseUrl + "/patients";
+    this.baseUrl = baseUrl + "/users";
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());
   }
@@ -34,15 +34,15 @@ export class PatientRepository {
   /**
    * create a pet
    *
-   * @param {CreatePatientDTO} patient data
+   * @param {CreateUserDTO} user data
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
-   * @memberof PatientRepository
+   * @memberof UserRepository
    */
-  async createPatient(patient: CreatePatientDTO): Promise<PatientDTO> {
+  async createUser(user: CreateUserDTO): Promise<UserDTO> {
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,
-      body: patient,
+      body: user,
     });
 
     const jsonResponse = await response.json();
@@ -56,14 +56,14 @@ export class PatientRepository {
 
   /**
    * The same as create but is as PATCH
-   * @param patient patient UpdatePatientDTO
+   * @param user user UpdateUserDTO
    * @returns
    */
-  async editPatient(patient: UpdatePatientDTO): Promise<PatientDTO> {
+  async editUser(userId: string, user: UpdateUserDTO): Promise<UserDTO> {
     const response = await this.http.request({
       method: "PATCH",
-      url: this.baseUrl,
-      body: patient,
+      url: this.baseUrl + `/${userId}`,
+      body: user,
     });
 
     const jsonResponse = await response.json();
@@ -76,11 +76,11 @@ export class PatientRepository {
   }
 
   /**
-   * Remove the patient
-   * @param id patient id
+   * Remove the user
+   * @param id user id
    * @returns
    */
-  async removePatient(id: string): Promise<PatientDTO> {
+  async removeUser(id: string): Promise<UserDTO> {
     const response = await this.http.request({
       method: "DELETE",
       url: this.baseUrl + `/${id}`,
@@ -99,7 +99,7 @@ export class PatientRepository {
    * Returns the list of all patients
    * @returns All patientes
    */
-  async getAll(): Promise<PatientDTO[]> {
+  async getAll(): Promise<UserDTO[]> {
     const response = await this.http.request({
       url: this.baseUrl,
     });
@@ -108,11 +108,11 @@ export class PatientRepository {
   }
 
   /**
-   * Return the selected patient
-   * @param id Patient id
+   * Return the selected user
+   * @param id User id
    * @returns
    */
-  async getById(id: string): Promise<PatientDTO> {
+  async getById(id: string): Promise<UserDTO> {
     const response = await this.http.request({
       url: this.baseUrl + `/${id}`,
     });

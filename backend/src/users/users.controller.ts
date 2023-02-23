@@ -89,6 +89,20 @@ export class UsersController {
     return this.userService.find(userId);
   }
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: 'Recupera todos os usuário.',
+  })
+  @ApiResponse({
+    description: 'Usuário atualizado.',
+    type: () => Array<UsersDTO>,
+  })
+  async getAllUsers(): Promise<User[]> {
+    return this.userService.findAll();
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')

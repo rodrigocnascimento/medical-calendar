@@ -1,9 +1,11 @@
 import { PatientRepository } from "../pages/patients/patient.repository";
+import { UserRepository } from "../pages/users/user.repository";
 import { serverEndpoint } from "../constants";
 import BaseInfrastructure from "../infrastructure";
 
 export interface IRepositories {
   patient: PatientRepository;
+  user: UserRepository;
 }
 
 export default function BaseRepository(): IRepositories {
@@ -15,5 +17,7 @@ export default function BaseRepository(): IRepositories {
       infra.http,
       infra.storage.token
     ),
+
+    user: new UserRepository(serverEndpoint, infra.http, infra.storage.token),
   };
 }

@@ -1,9 +1,12 @@
+import { MedicalAppointment } from '../medical_appointments/medical_appointments.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 /**
@@ -45,4 +48,8 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt?: Date;
+
+  @OneToOne(() => MedicalAppointment)
+  @JoinColumn()
+  doctor: MedicalAppointment;
 }

@@ -6,9 +6,13 @@ import { useAuth } from "../../context/auth/use-auth";
 import LoginRoute from "../login";
 import PatientsCreate from "../patients/patient.create";
 import PatientsHome from "../patients/patient.home";
-import AuthVerify from "../auth-verifier";
+import UsersHome from "../users/user.home";
+import UsersCreate from "../users/user.create";
+// import AuthVerify from "../auth-verifier";
 import { Button } from "@mui/material";
 import "./index.css";
+
+const repo = repository();
 
 export default function ApplicationRoutes() {
   let history = useHistory();
@@ -30,6 +34,11 @@ export default function ApplicationRoutes() {
             <li>
               <Link to="/patients">Pacientes</Link>
             </li>
+            {auth.user.userRole === "admin" && (
+              <li>
+                <Link to="/users">Administrar usuários</Link>
+              </li>
+            )}
           </ul>
         </nav>
         <div id="logout">
@@ -51,11 +60,18 @@ export default function ApplicationRoutes() {
             <LoginRoute />
           </Route>
           <Route exact path={"/patients"}>
-            <PatientsHome repository={repository().patient} />
+            <PatientsHome repository={repo.patient} />
           </Route>
           <Route
             path={["/patients/:id", "/patients/new"]}
-            children={<PatientsCreate repository={repository().patient} />}
+            children={<PatientsCreate repository={repo.patient} />}
+          />
+          <Route exact path={"/users"}>
+            <UsersHome repository={repo.user} />
+          </Route>
+          <Route
+            path={["/users/:id", "/users/new"]}
+            children={<UsersCreate repository={repo.user} />}
           />
         </Switch>
       </div>
