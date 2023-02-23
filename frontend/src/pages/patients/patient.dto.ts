@@ -11,3 +11,4 @@ export interface PatientDTO {
 }
 
 export interface CreatePatientDTO extends Omit<PatientDTO, "id"> {}
+export interface UpdatePatientDTO extends PatientDTO {}

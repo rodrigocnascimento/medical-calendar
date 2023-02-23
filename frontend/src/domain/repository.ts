@@ -1,4 +1,4 @@
-import { PatientRepository } from "../pages/patients/repository";
+import { PatientRepository } from "../pages/patients/patient.repository";
 import { serverEndpoint } from "../constants";
 import BaseInfrastructure from "../infrastructure";
 

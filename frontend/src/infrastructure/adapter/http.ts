@@ -45,16 +45,22 @@ class Http implements IHttp {
    */
   async request(requestOption: IHttpRequestOption): Promise<any> {
     let option: RequestInit = {
-      ...requestOption,
-      method: requestOption.method || "GET",
+      method: "GET",
       headers: {
         "content-type": "application/json; charset=UTF-8",
-        ...requestOption.headers,
       },
     };
 
+    if (requestOption.method) {
+      option = {
+        ...option,
+        method: requestOption.method,
+      };
+    }
+
     if (this?.bearerToken) {
       option = {
+        ...option,
         headers: {
           ...option.headers,
           Authorization: this?.bearerToken,
@@ -64,7 +70,15 @@ class Http implements IHttp {
 
     option.headers = new Headers(option.headers);
 
-    if (requestOption?.body) option.body = JSON.stringify(requestOption.body);
+    if (
+      requestOption?.body &&
+      !["GET", "HEAD"].includes(option.method as string)
+    ) {
+      option = {
+        ...option,
+        body: JSON.stringify(requestOption?.body),
+      };
+    }
 
     return fetch(requestOption.url, option);
   }
