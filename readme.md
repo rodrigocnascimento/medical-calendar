@@ -6,6 +6,7 @@ Este projeto é desenvolvido utilizando as seguintes ferramentas:
 - NodeJS v18.13.0
 - Typescript v4.9.5
 - Docker v23.0.1, build a5ee5b1
+  - docker-compose version 1.29.2, build 5becea4c
 - PostgreSQL v13.1
 - NestJS v9.0.0
 - React v18.2.0
@@ -16,6 +17,23 @@ Este projeto é desenvolvido utilizando as seguintes ferramentas:
 
 ```bash
 ❯ docker-compose up
+```
+
+- No diretório do backend, é necessário rodar as migrations. Isso irá criar o banco de dados e o primeiro usuário Administrador do sistema.
+
+```bash
+❯ cd backend
+❯ .bin/npm_run.sh migration:run
+```
+
+```txt
+User Mestre
+User: user_mestre@email.com
+Pass: 123123
+
+Médico 0
+User: medico0@email.com
+Pass: 123123
 ```
 
 ## Database
@@ -33,7 +51,7 @@ Este projeto é desenvolvido utilizando as seguintes ferramentas:
 
 ## Migrations
 
-- Para o projeto ser iniciado, é preciso rodar as migrations;
+- Rodando as migrations.
 
 ```bash
 ❯ .bin/npm_run.sh migration:run
@@ -41,7 +59,7 @@ Este projeto é desenvolvido utilizando as seguintes ferramentas:
 
 ### Development
 
-- Para gerar migrations baseadas nas Entidades da aplicação executar o seguinte comando:
+- Para gerar migrations baseadas nas Entidades da aplicação executar o seguinte comando, após ter definido toda a entity.
 
 ```bash
 ❯ .bin/npm_run.sh migration:generate --name=<migration_name>
@@ -63,11 +81,11 @@ Este projeto é desenvolvido utilizando as seguintes ferramentas:
 
 > `npm run build && npx typeorm -d dist/database/datasource.config.js migration:generate src/database/migrations/Patient`
 
-## Acessando o projeto
+## Acessando o projeto PEBMED MedApp
 
-- Após isso, para entrar no sistema, acesse: [PEBMED MedApp](http://localhost)
+- Após isso, para entrar no sistema, acesse: http://localhost
 
 ## Documentação
 
 - A documentação do projeto é feita de maneira automatizada, usando a ferramente Swagger.
-  - [Documentação](http://localhost:3420/docs)
+  - http://localhost:3420/docs

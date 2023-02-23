@@ -53,7 +53,7 @@
 - Os dados devem ser validados (existência e formatos) na inserção/atualização para
   garantir consistência da base ✅
 - Implementar testes unitários e/ou de integração e/ou documentação de testes (casos
-  de teste / script de teste);
+  de teste / script de teste); ✅
 
 ### Desejáveis
 
