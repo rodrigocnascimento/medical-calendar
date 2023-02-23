@@ -47,21 +47,20 @@ function useProvideAuth({ http, storage }: any) {
     setUser(null);
   };
 
-  useEffect(() => {
-    const subUser = storage.token.get();
+  const getUserToken = () => {
+    return storage.token.get();
+  };
 
-    if (subUser) {
-      setUser(subUser);
-    } else {
-      setUser(null);
-    }
-  }, []);
+  useEffect(() => {
+    setUser(storage.token.get());
+  }, [storage.token]);
 
   return {
     user,
     signin,
     signup,
     signout,
+    getUserToken,
   };
 }
 

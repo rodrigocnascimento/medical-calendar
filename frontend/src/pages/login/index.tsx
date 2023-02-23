@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import logo from "../../assets/logo-pebmed.png";
-import "./login.css";
-import "../../index.css";
 
 import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/auth/use-auth";
+import { TextField, Button } from "@mui/material";
 
+import "./login.css";
 export default function NotLoggedRoute() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -38,10 +38,10 @@ export default function NotLoggedRoute() {
           <img src={logo} className="App-logo" alt="PEBMED Logo" />
 
           <div className="form-group">
-            <label>Email</label>
-            <input
+            <label className="form-group-label">Email</label>
+            <TextField
               id="username"
-              aria-label="User name"
+              fullWidth={true}
               placeholder="Username"
               type="text"
               name="username"
@@ -49,18 +49,25 @@ export default function NotLoggedRoute() {
             />
           </div>
           <div className="form-group">
-            <label>Senha</label>
-            <input
+            <label className="form-group-label">Senha</label>
+            <TextField
+              fullWidth={true}
               id="password"
-              aria-label="User password"
               placeholder="Password"
               type="password"
               name="password"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="button-right">
-            <button type="submit">Entrar</button>
+          <div className="form-group">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ float: "right" }}
+            >
+              Entrar
+            </Button>
           </div>
           {response && (
             <p style={{ clear: "both", color: "red" }}>{response}</p>

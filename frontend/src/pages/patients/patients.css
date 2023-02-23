@@ -1,0 +1,79 @@
+/* Container */
+.container-home {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Column */
+.column-home {
+  flex-basis: 33.3333333333%;
+  width: 33.3333333333%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Article (Component) */
+.patient_card {
+  background: #fff;
+  margin: 0 10px 20px;
+  padding: 20px;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: 0.3s ease;
+}
+.patient_card:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.patient_card:active {
+  box-shadow: none;
+  transform-origin: center;
+  transform: scale(0.98);
+}
+.patient_card__category {
+  display: inline-block;
+  padding: 8px 10px;
+  margin: 0 0 10px;
+  color: #fff;
+  background-color: #79c288;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.075rem;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+.patient_card__category.danger {
+  color: #fff;
+  /* margin-left: 10px; */
+  background-color: #ff425b;
+}
+
+.patient_card__new {
+  display: inline-block;
+  padding: 8px 10px;
+  margin: 0 0 10px;
+  background-color: #fff;
+  color: #79c288;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.075rem;
+  text-transform: uppercase;
+}
+.patient_card__excerpt {
+  color: #666;
+  line-height: 1.5rem;
+  font-size: 0.875rem;
+}
+.patient_card__title {
+  margin: 0 0 10px;
+  color: #444;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+}
+
+.container-home {
+  margin: 50px;
+}
