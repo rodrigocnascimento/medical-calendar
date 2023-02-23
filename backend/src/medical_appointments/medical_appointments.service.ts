@@ -2,6 +2,8 @@ import {
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
+  Scope,
+  Inject,
 } from '@nestjs/common';
 import { CreateMedicalAppointmentDto } from './dto/create.dto';
 import { UpdateMedicalAppointmentDto } from './dto/update.dto';
@@ -9,9 +11,15 @@ import { MedicalAppointmentRepository } from './medical_appointments.repository'
 import { UUIDVersion } from 'class-validator';
 import { MedicalAppointmentDTO } from './dto/medical_appointments.dto';
 
-@Injectable()
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
+
+@Injectable({ scope: Scope.REQUEST })
 export class MedicalAppointmentsService {
-  constructor(private medicalAppointmentRepo: MedicalAppointmentRepository) {}
+  constructor(
+    @Inject(REQUEST) private request: Request,
+    private medicalAppointmentRepo: MedicalAppointmentRepository,
+  ) {}
   async create(createMedicalAppointmentDto: CreateMedicalAppointmentDto) {
     try {
       await this.medicalAppointmentRepo.alreadyHasAppointment(
@@ -46,7 +54,19 @@ export class MedicalAppointmentsService {
 
   findAll() {
     return this.medicalAppointmentRepo.find({
-      relations: ['medicalRegistries', 'patient'],
+      relations: ['medicalRegistries', 'patient', 'doctor'],
+    });
+  }
+
+  findAllByDoctor() {
+    console.log('ue', this.request.user['userId']);
+    return this.medicalAppointmentRepo.find({
+      relations: ['medicalRegistries', 'patient', 'doctor'],
+      where: {
+        doctor: {
+          id: this.request.user['userId'],
+        },
+      },
     });
   }
 }

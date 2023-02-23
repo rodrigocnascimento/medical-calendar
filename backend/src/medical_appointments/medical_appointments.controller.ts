@@ -110,4 +110,20 @@ export class MedicalAppointmentsController {
   findAll() {
     return this.medicalAppointmentsService.findAll();
   }
+
+  @ApiOperation({
+    summary: 'Retorna todas as reserva de um médico.',
+  })
+  @ApiResponse({
+    description: 'Reserva da consulta.',
+    type: MedicalAppointmentDTO,
+  })
+  @ApiNotFoundResponse({
+    description: 'Agendamento de consulta não econtrado.',
+    type: NotFoundError,
+  })
+  @Get('/by-doctor')
+  findAllByDoctor() {
+    return this.medicalAppointmentsService.findAllByDoctor();
+  }
 }
