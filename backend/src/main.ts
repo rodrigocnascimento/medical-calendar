@@ -29,7 +29,7 @@ async function bootstrap() {
 
   //Swagger configurations
   const options = new DocumentBuilder()
-    .setTitle('PEBMED - MedApp Medical Appointments')
+    .setTitle('MedApp Medical Appointments')
     .setDescription('Sistema de prontuário eletrônico Médico')
     .setVersion(version)
     .addBearerAuth(

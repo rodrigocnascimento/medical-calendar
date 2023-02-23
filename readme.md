@@ -81,7 +81,7 @@ Pass: 123123
 
 > `npm run build && npx typeorm -d dist/database/datasource.config.js migration:generate src/database/migrations/Patient`
 
-## Acessando o projeto PEBMED MedApp
+## Acessando o projeto MedApp
 
 - Após isso, para entrar no sistema, acesse: http://localhost
 

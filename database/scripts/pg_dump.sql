@@ -1,5 +1,5 @@
 CREATE USER docker;
 
-CREATE DATABASE pebmed_medapp;
+CREATE DATABASE medapp;
 
-GRANT ALL PRIVILEGES ON DATABASE pebmed_medapp TO docker;
+GRANT ALL PRIVILEGES ON DATABASE medapp TO docker;

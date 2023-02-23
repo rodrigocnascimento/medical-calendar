@@ -1,5 +1,5 @@
 {
-  "name": "pebmed",
+  "name": "medapp",
   "version": "1.0.0",
   "description": "Medical appointments calendar backend web application",
   "main": "index.js",

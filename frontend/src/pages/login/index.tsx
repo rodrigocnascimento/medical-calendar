@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../assets/logo-pebmed.png";
+import logo from "../../assets/logo.png";
 
 import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/auth/use-auth";
@@ -38,7 +38,7 @@ export default function NotLoggedRoute() {
       <form className="form" method="post" onSubmit={handleUserLogin}>
         <div className="form-content">
           <h3 className="form-title">Sign In</h3>
-          <img src={logo} className="App-logo" alt="PEBMED Logo" />
+          <img src={logo} className="App-logo" alt="Logo" />
 
           <div className="form-group">
             <label className="form-group-label">Email</label>
