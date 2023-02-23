@@ -1,0 +1,8 @@
+/* Container */
+.container-appointments {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 50px;
+  padding: 20px;
+}

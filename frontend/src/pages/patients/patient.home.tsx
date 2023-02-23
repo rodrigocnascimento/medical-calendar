@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./patients.css";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -7,7 +7,6 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
-// import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -228,7 +227,7 @@ export default function PatientsHome({ repository }: any) {
                 label="Data do agendamento"
                 value={appointmentDate}
                 onChange={(newValue: any) => {
-                  setAppointmentDate(newValue);
+                  setAppointmentDate(new Date(newValue).toISOString());
                 }}
                 inputFormat="dd/MM/yyyy, hh:mm"
                 renderInput={(params) => (

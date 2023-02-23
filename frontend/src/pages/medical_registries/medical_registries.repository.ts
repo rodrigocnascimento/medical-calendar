@@ -1,17 +1,17 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
 import {
-  AppointmentDTO,
-  CreateAppointmentDTO,
-  UpdateAppointmentDTO,
-} from "./appointment.dto";
+  MedicallRegistriesDTO,
+  CreateMedicallRegistriesDTO,
+  UpdateMedicallRegistriesDTO,
+} from "./medical_registries.dto";
 
-export class AppointmentRepository {
+export class MedicalRegistryRepository {
   /**
    * the serverURL
    *
    * @type {string}
-   * @memberof AppointmentRepository
+   * @memberof MedicalRegistriesRepository
    */
   readonly baseUrl: string = "";
 
@@ -19,18 +19,18 @@ export class AppointmentRepository {
    * http client
    *
    * @type {IHttp}
-   * @memberof AppointmentRepository
+   * @memberof MedicalRegistriesRepository
    */
   readonly http: IHttp;
 
   /**
-   * Creates an instance of AppointmentRepository.
+   * Creates an instance of MedicalRegistriesRepository.
    * @param {string} baseUrl server url
    * @param {IHttp} http http client
-   * @memberof AppointmentRepository
+   * @memberof MedicalRegistriesRepository
    */
   constructor(baseUrl: string, http: IHttp, userToken: TokenStorage) {
-    this.baseUrl = baseUrl + "/medical-appointments";
+    this.baseUrl = baseUrl + "/medical-registries";
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());
   }
@@ -38,17 +38,18 @@ export class AppointmentRepository {
   /**
    * Create an appoitnment
    *
-   * @param {CreateAppointmentDTO} appointment data
+   * @param {CreateMedicallRegistriesDTO} registry medical registry data
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
-   * @memberof AppointmentRepository
+   * @memberof MedicalRegistriesRepository
    */
-  async createAppointment(
-    appointment: CreateAppointmentDTO
-  ): Promise<AppointmentDTO> {
+  async createMedicalRegistry(
+    registry: CreateMedicallRegistriesDTO
+  ): Promise<MedicallRegistriesDTO> {
+    console.log("oi", registry);
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,
-      body: appointment,
+      body: registry,
     });
 
     const jsonResponse = await response.json();
@@ -66,14 +67,14 @@ export class AppointmentRepository {
    * @param appointment appoitnment data
    * @returns
    */
-  async editAppointment(
-    appointmentId: string,
-    appointment: UpdateAppointmentDTO
-  ): Promise<AppointmentDTO> {
+  async editMedicalRegistry(
+    medicalRegistryId: string,
+    medicalRegistry: UpdateMedicallRegistriesDTO
+  ): Promise<MedicallRegistriesDTO> {
     const response = await this.http.request({
       method: "PATCH",
-      url: this.baseUrl + `/${appointmentId}`,
-      body: appointment,
+      url: this.baseUrl + `/${medicalRegistryId}`,
+      body: medicalRegistry,
     });
 
     const jsonResponse = await response.json();
@@ -90,7 +91,7 @@ export class AppointmentRepository {
    * @param id appoitnment id
    * @returns
    */
-  async removeAppointment(id: string): Promise<AppointmentDTO> {
+  async removeMedicalRegistry(id: string): Promise<MedicallRegistriesDTO> {
     const response = await this.http.request({
       method: "DELETE",
       url: this.baseUrl + `/${id}`,
@@ -106,23 +107,11 @@ export class AppointmentRepository {
   }
 
   /**
-   * Returns the list of all appoitnments
-   * @returns All appoitnments
-   */
-  async getAll(): Promise<AppointmentDTO[]> {
-    const response = await this.http.request({
-      url: this.baseUrl + "/by-doctor",
-    });
-
-    return await response.json();
-  }
-
-  /**
    * Return the selected appoitnment
    * @param id Appoitnment id
    * @returns
    */
-  async getById(id: string): Promise<AppointmentDTO> {
+  async getById(id: string): Promise<MedicallRegistriesDTO> {
     const response = await this.http.request({
       url: this.baseUrl + `/${id}`,
     });

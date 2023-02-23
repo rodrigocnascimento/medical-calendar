@@ -40,6 +40,11 @@ export default function ApplicationRoutes() {
                 <Link to="/users">Administrar usuários</Link>
               </li>
             )}
+            {auth.user.userRole === "doctor" && (
+              <li>
+                <Link to="/appointments">Minhas consultas</Link>
+              </li>
+            )}
           </ul>
         </nav>
         <div id="logout">
@@ -75,7 +80,9 @@ export default function ApplicationRoutes() {
             children={<UsersCreate repository={repo.user} />}
           />
           <Route exact path={"/appointments"}>
-            <AppointmentsHome />
+            <AppointmentsHome
+              repository={[repo.appointments, repo.medicalRegistries]}
+            />
           </Route>
         </Switch>
       </div>
