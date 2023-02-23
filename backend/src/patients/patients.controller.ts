@@ -7,6 +7,7 @@ import {
   Patch,
   UnprocessableEntityException,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -27,7 +28,7 @@ import { PatientsService } from './patients.service';
 import { CreatePatientDTO } from './dto/create.dto';
 import { UpdatePatientDTO } from './dto/update.dto';
 import { PatientsDTO } from './dto/patient.dto';
-import { UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { Patient } from './patient.entity';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 
@@ -115,5 +116,26 @@ export class PatientsController {
     @Body() updatePatient: UpdatePatientDTO,
   ): Promise<Patient | UpdateResult> {
     return this.patientService.update(updatePatient);
+  }
+
+  @Delete(':id')
+  @ApiOperation({
+    summary: 'Remove um paciente.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'O Id do paciente',
+  })
+  @ApiOkResponse({
+    description: 'Paciente encontrado.',
+    type: DeleteResult,
+  })
+  @ApiNotFoundResponse({
+    description: 'Paciente não econtrado.',
+    type: NotFoundError,
+  })
+  async remove(@Param('id') id: string): Promise<DeleteResult> {
+    return this.patientService.remove(id);
   }
 }

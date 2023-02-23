@@ -8,7 +8,7 @@ import { Patient } from './patient.entity';
 import { CreatePatientDTO } from './dto/create.dto';
 import { PatientsRepository } from './patients.repository';
 import { UpdatePatientDTO } from './dto/update.dto';
-import { UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class PatientsService {
@@ -34,8 +34,9 @@ export class PatientsService {
     }
   }
 
-  async remove(id: string): Promise<void> {
-    await this.patientsRepository.delete(id);
+  async remove(id: string): Promise<DeleteResult> {
+    console.log('backend reomvoe', id);
+    return await this.patientsRepository.delete(id);
   }
 
   async save(patient: CreatePatientDTO): Promise<Patient> {
