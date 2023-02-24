@@ -1,37 +1,48 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import { Box, Modal, TextField, Autocomplete } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import AdapterDateFns from "@date-io/date-fns";
 import {
-  Create,
-  PermContactCalendar,
-  CalendarMonth,
-  HighlightOff,
-} from "@mui/icons-material";
+  Box,
+  Modal,
+  TextField,
+  Autocomplete,
+  Card,
+  CardActions,
+  CardContent,
+  Typography,
+} from "@mui/material";
+import { Create, PermContactCalendar, CalendarMonth, HighlightOff } from "@mui/icons-material";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
+import AdapterDateFns from "@date-io/date-fns";
+
+import { useAuth } from "../../context/auth/use-auth";
+import { mapperDoctorListDropDown } from "../users/user.mapper";
+import { DoctorUserDTO, UserRoles } from "../users/user.dto";
+import { PatientDTO } from "./patient.interfaces";
+
+import ErrorMessage, { TErrorMessage } from "../../components/error";
+import SuccessMessage from "../../components/success";
+import type { PatientsHomeProps } from "./patient.interfaces";
 
 import "./patients.css";
-import { useAuth } from "../../context/auth/use-auth";
-import { DoctorUserDTO } from "../users/user.dto";
-import { mapperDoctorListDropDown } from "../users/user.mapper";
 
-export default function PatientsHome({ repository }: any) {
+export default function PatientsHome({ repository }: PatientsHomeProps) {
+  const {
+    appointments: appointmentRepository,
+    patient: patientRepository,
+    user: userRepository,
+  } = repository;
+
   const auth = useAuth();
-  const [patientRepository, appointmentRepository, userRepository] = repository;
 
-  const [success, setSuccess] = useState<any>("");
-  const [error, setError] = useState<any>("");
-  const [patients, setPatients] = useState<any[]>([]);
+  const [success, setSuccess] = useState<string>("");
+  const [error, setError] = useState<TErrorMessage>();
+
+  const [patients, setPatients] = useState<PatientDTO[]>([]);
   const [doctors, setDoctors] = useState<DoctorUserDTO[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
+
   const [open, setOpen] = useState(false);
-  const [appointmentDate, setAppointmentDate] = useState(
-    new Date().toISOString()
-  );
+  const [appointmentDate, setAppointmentDate] = useState(new Date().toISOString());
   const [appointmentDoc, setAppointmentDoc] = useState<any>();
 
   const handleAppointmentConfirmation = () => {
@@ -42,18 +53,20 @@ export default function PatientsHome({ repository }: any) {
       .createAppointment({
         patient: selectedPatient.id,
         doctor: appointmentDoc.id,
-        date: `${date}T${hour}:${minute}`,
+        date: new Date(`${date}T${hour}:${minute}`),
       })
-      .then(async (response: any) => {
-        await loadPatients();
+      .then(async () => {
         setSuccess("Agendamento criado com sucesso!");
         setOpen(false);
+        await loadPatients();
       })
-      .catch((error: any) => {
-        console.log("error", error);
+      .catch((error: Error) => {
         setOpen(false);
-        setSuccess(false);
-        setError(JSON.parse(error.message).message);
+        setSuccess("");
+        setError({
+          title: error.message,
+          errors: error.cause,
+        });
       });
   };
 
@@ -76,19 +89,19 @@ export default function PatientsHome({ repository }: any) {
   const loadDoctors = useCallback(async () => {
     userRepository
       .getAll({
-        role: "doctor",
+        role: UserRoles.DOCTOR,
       })
       .then((doctors: any) => setDoctors(doctors))
-      .catch((error: any) => {
-        console.log("error?", error);
-        setError(error.toString());
-      });
+      .catch((error: any) =>
+        setError({
+          title: error.message,
+          errors: error.cause,
+        }),
+      );
   }, [userRepository]);
 
   const handlePatienteDeletion = (patient: any) => {
-    if (
-      window.confirm("Deseja realmente excluir o paciente: " + patient.name)
-    ) {
+    if (window.confirm("Deseja realmente excluir o paciente: " + patient.name)) {
       patientRepository
         .removePatient(patient.id)
         .then(async (response: any) => {
@@ -115,30 +128,8 @@ export default function PatientsHome({ repository }: any) {
             Novo
           </Link>
         </div>
-        {success && (
-          <div
-            style={{
-              border: "3px solid #79c288",
-              borderRadius: 5,
-              padding: 30,
-              backgroundColor: "#a2e6b0",
-            }}
-          >
-            {success}
-          </div>
-        )}
-        {error && (
-          <div
-            style={{
-              border: "3px solid red",
-              borderRadius: 5,
-              padding: 30,
-              backgroundColor: "pink",
-            }}
-          >
-            {error}
-          </div>
-        )}
+        {success && <SuccessMessage message={success} />}
+        {error && <ErrorMessage title={error.title} errors={error.errors} />}
       </div>
       {patients &&
         patients.map((patient, i) => {
@@ -149,34 +140,59 @@ export default function PatientsHome({ repository }: any) {
                   {patient.name}
                 </Typography>
                 <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  <span style={{ fontWeight: "bold" }}>Nome:</span>{" "}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Nome:
+                  </span>{" "}
                   {patient.phone}
                   <br />
-                  <span style={{ fontWeight: "bold" }}>Email:</span>{" "}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Email:
+                  </span>{" "}
                   {patient.email}
                   <br />
-                  <span style={{ fontWeight: "bold" }}>Gênero:</span>{" "}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Gênero:
+                  </span>{" "}
                   {patient.genre}
                   <br />
-                  <span style={{ fontWeight: "bold" }}>
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
                     Data de aniversário:{" "}
                   </span>
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(patient.dob)
-                  )}
+                  {new Intl.DateTimeFormat("pt-BR").format(new Date(patient.dob))}
                   <br />
-                  <span style={{ fontWeight: "bold" }}>Criado em:</span>{" "}
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(patient.createdAt)
-                  )}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Criado em:
+                  </span>{" "}
+                  {new Intl.DateTimeFormat("pt-BR").format(new Date(patient.createdAt))}
                 </Typography>
               </CardContent>
               <CardActions>
-                <Link
-                  className="patient_card__category"
-                  to={`/patients/${patient.id}`}
-                >
-                  <Create style={{ verticalAlign: "bottom" }} />
+                <Link className="patient_card__category" to={`/patients/${patient.id}`}>
+                  <Create
+                    style={{
+                      verticalAlign: "bottom",
+                    }}
+                  />
                   Editar
                 </Link>
 
@@ -188,7 +204,11 @@ export default function PatientsHome({ repository }: any) {
                   }}
                   className="patient_card__category"
                 >
-                  <CalendarMonth style={{ verticalAlign: "bottom" }} />
+                  <CalendarMonth
+                    style={{
+                      verticalAlign: "bottom",
+                    }}
+                  />
                   Agendar horário
                 </a>
                 {auth.user.userRole === "admin" && (
@@ -200,7 +220,11 @@ export default function PatientsHome({ repository }: any) {
                     }}
                     className="patient_card__category danger"
                   >
-                    <HighlightOff style={{ verticalAlign: "bottom" }} />
+                    <HighlightOff
+                      style={{
+                        verticalAlign: "bottom",
+                      }}
+                    />
                     Excluir Paciente
                   </a>
                 )}
@@ -245,7 +269,11 @@ export default function PatientsHome({ repository }: any) {
                 inputFormat="dd/MM/yyyy, hh:mm"
                 renderInput={(params) => (
                   <TextField
-                    style={{ marginLeft: 0, marginTop: 25, marginBottom: 30 }}
+                    style={{
+                      marginLeft: 0,
+                      marginTop: 25,
+                      marginBottom: 30,
+                    }}
                     fullWidth={true}
                     {...params}
                   />
@@ -257,13 +285,11 @@ export default function PatientsHome({ repository }: any) {
             <Autocomplete
               disablePortal
               id="doctor"
-              noOptionsText={"Nenhum Médico ecnontrado."}
+              noOptionsText={"Nenhum Médico encontrado."}
               options={mapperDoctorListDropDown(doctors)}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               onChange={(e: any, value: any) => setAppointmentDoc(value)}
-              renderInput={(params) => (
-                <TextField {...params} label="Selecione um Médico" />
-              )}
+              renderInput={(params) => <TextField {...params} label="Selecione um Médico" />}
             />
           </div>
           <div style={{ float: "right" }}>

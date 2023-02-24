@@ -1,12 +1,18 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import {
-  AppointmentDTO,
-  CreateAppointmentDTO,
-  UpdateAppointmentDTO,
-} from "./appointment.dto";
+import { AppointmentDTO, CreateAppointmentDTO, UpdateAppointmentDTO } from "./appointment.dto";
 
-export class AppointmentRepository {
+export interface IAppointmentRepository {
+  createAppointment(appointment: CreateAppointmentDTO): Promise<AppointmentDTO>;
+  editAppointment(
+    appointmentId: string,
+    appointment: UpdateAppointmentDTO,
+  ): Promise<AppointmentDTO>;
+  removeAppointment(id: string): Promise<AppointmentDTO>;
+  getAll(): Promise<AppointmentDTO[]>;
+}
+
+export class AppointmentRepository implements IAppointmentRepository {
   /**
    * the serverURL
    *
@@ -42,9 +48,7 @@ export class AppointmentRepository {
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
    * @memberof AppointmentRepository
    */
-  async createAppointment(
-    appointment: CreateAppointmentDTO
-  ): Promise<AppointmentDTO> {
+  async createAppointment(appointment: CreateAppointmentDTO): Promise<AppointmentDTO> {
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,
@@ -54,6 +58,7 @@ export class AppointmentRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
+      console.log("AppointmentRepository error", jsonResponse);
       throw new Error(JSON.stringify(jsonResponse));
     }
 
@@ -68,7 +73,7 @@ export class AppointmentRepository {
    */
   async editAppointment(
     appointmentId: string,
-    appointment: UpdateAppointmentDTO
+    appointment: UpdateAppointmentDTO,
   ): Promise<AppointmentDTO> {
     const response = await this.http.request({
       method: "PATCH",

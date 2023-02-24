@@ -1,8 +1,16 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import { CreatePatientDTO, PatientDTO, UpdatePatientDTO } from "./patient.dto";
+import { CreatePatientDTO, PatientDTO, UpdatePatientDTO } from "./patient.interfaces";
 
-export class PatientRepository {
+export interface IPatientRepository {
+  createPatient(patient: CreatePatientDTO): Promise<PatientDTO>;
+  editPatient(patient: UpdatePatientDTO): Promise<PatientDTO>;
+  removePatient(id: string): Promise<PatientDTO>;
+  getAll(): Promise<PatientDTO[]>;
+  getById(id: string): Promise<PatientDTO>;
+}
+
+export class PatientRepository implements IPatientRepository {
   /**
    * the serverURL
    *
@@ -48,8 +56,8 @@ export class PatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error('Erro ao criar o paciente!', {
-        cause: jsonResponse.message[0]
+      throw new Error("Erro ao criar o paciente!", {
+        cause: jsonResponse.message[0],
       });
     }
 
@@ -71,8 +79,8 @@ export class PatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error('Erro ao editar o paciente!', {
-        cause: jsonResponse.message[0]
+      throw new Error("Erro ao editar o paciente!", {
+        cause: jsonResponse.message[0],
       });
     }
 
@@ -93,8 +101,8 @@ export class PatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error('Erro ao editar o paciente!', {
-        cause: jsonResponse.message[0]
+      throw new Error("Erro ao editar o paciente!", {
+        cause: jsonResponse.message[0],
       });
     }
 

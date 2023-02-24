@@ -7,5 +7,6 @@ export interface AppointmentDTO {
   doctor: any;
 }
 
-export interface CreateAppointmentDTO extends Omit<AppointmentDTO, "id"> {}
-export interface UpdateAppointmentDTO extends AppointmentDTO {}
+export interface CreateAppointmentDTO
+  extends Omit<AppointmentDTO, "id" | "createdAt" | "updatedAt"> {}
+export interface UpdateAppointmentDTO extends Omit<AppointmentDTO, "createdAt" | "updatedAt"> {}

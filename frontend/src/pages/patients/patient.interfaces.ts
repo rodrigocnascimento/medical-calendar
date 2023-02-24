@@ -1,3 +1,4 @@
+import { IRepositories } from "../../domain/repository";
 export interface PatientDTO {
   id: string;
   name: string;
@@ -12,3 +13,7 @@ export interface PatientDTO {
 
 export interface CreatePatientDTO extends Omit<PatientDTO, "id"> {}
 export interface UpdatePatientDTO extends PatientDTO {}
+
+export type PatientsHomeProps = {
+  repository: Omit<IRepositories, "medicalRegistries">;
+};
