@@ -26,40 +26,40 @@ export default function ApplicationRoutes() {
 
   return (
     <>
-      <div id='sidebar'>
+      <div id="sidebar">
         <nav>
           Bem vindo, {auth.user.userName}
           <ul>
             <li>
-              <Link to='/'>Home</Link>
+              <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to='/patients'>Pacientes</Link>
+              <Link to="/patients">Pacientes</Link>
             </li>
             {auth.user.userRole === "admin" && (
               <li>
-                <Link to='/users'>Administrar usuários</Link>
+                <Link to="/users">Administrar usuários</Link>
               </li>
             )}
             {auth.user.userRole === "doctor" && (
               <li>
-                <Link to='/appointments'>Minhas consultas</Link>
+                <Link to="/appointments">Minhas consultas</Link>
               </li>
             )}
           </ul>
         </nav>
-        <div id='logout'>
-          <Button variant='outlined' color='primary' onClick={() => handleUserLogout()}>
+        <div id="logout">
+          <Button variant="outlined" color="primary" onClick={() => handleUserLogout()}>
             Logout
           </Button>
         </div>
       </div>
-      <div id='detail'>
+      <div id="detail">
         <Switch>
-          <Route exact path='/'>
+          <Route exact path="/">
             <Dashboard />
           </Route>
-          <Route path='/login'>
+          <Route path="/login">
             <LoginRoute />
           </Route>
           <Route exact path={"/patients"}>

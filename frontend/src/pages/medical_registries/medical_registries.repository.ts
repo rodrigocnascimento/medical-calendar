@@ -10,7 +10,7 @@ export interface IMedicalRegistryRepository {
   createMedicalRegistry(registry: CreateMedicallRegistriesDTO): Promise<MedicallRegistriesDTO>;
   editMedicalRegistry(
     medicalRegistryId: string,
-    medicalRegistry: UpdateMedicallRegistriesDTO,
+    medicalRegistry: UpdateMedicallRegistriesDTO
   ): Promise<MedicallRegistriesDTO>;
   removeMedicalRegistry(id: string): Promise<MedicallRegistriesDTO>;
   getById(id: string): Promise<MedicallRegistriesDTO>;
@@ -53,7 +53,7 @@ export class MedicalRegistryRepository {
    * @memberof MedicalRegistriesRepository
    */
   async createMedicalRegistry(
-    registry: CreateMedicallRegistriesDTO,
+    registry: CreateMedicallRegistriesDTO
   ): Promise<MedicallRegistriesDTO> {
     console.log("oi", registry);
     const response = await this.http.request({
@@ -79,7 +79,7 @@ export class MedicalRegistryRepository {
    */
   async editMedicalRegistry(
     medicalRegistryId: string,
-    medicalRegistry: UpdateMedicallRegistriesDTO,
+    medicalRegistry: UpdateMedicallRegistriesDTO
   ): Promise<MedicallRegistriesDTO> {
     const response = await this.http.request({
       method: "PATCH",

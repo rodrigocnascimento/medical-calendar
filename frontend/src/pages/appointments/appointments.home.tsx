@@ -100,17 +100,13 @@ export default function AppointmentsHome({ repository }: any) {
             <Card variant="outlined" key={i++} style={{ margin: 10 }}>
               <CardContent>
                 <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  <span style={{ fontWeight: "bold" }}>Nome:</span>{" "}
-                  {appointment.patient.name} <br />
-                  <span style={{ fontWeight: "bold" }}>Gênero:</span>{" "}
-                  {appointment.patient.genre} <br />
-                  <span style={{ fontWeight: "bold" }}>
-                    Data de aniversário:{" "}
-                  </span>
+                  <span style={{ fontWeight: "bold" }}>Nome:</span> {appointment.patient.name}{" "}
+                  <br />
+                  <span style={{ fontWeight: "bold" }}>Gênero:</span> {appointment.patient.genre}{" "}
+                  <br />
+                  <span style={{ fontWeight: "bold" }}>Data de aniversário: </span>
                   {(appointment.patient.dob &&
-                    new Intl.DateTimeFormat("pt-BR").format(
-                      new Date(appointment.patient.dob)
-                    )) ||
+                    new Intl.DateTimeFormat("pt-BR").format(new Date(appointment.patient.dob))) ||
                     "LGPD COMPLIANCE"}
                   <br />
                   <span style={{ fontWeight: "bold" }}>Peso: </span>
@@ -134,25 +130,23 @@ export default function AppointmentsHome({ repository }: any) {
                   }}
                 >
                   {appointment.medicalRegistries &&
-                    appointment.medicalRegistries.map(
-                      (registry: any, i: number) => (
-                        <li style={{ marginBottom: 40 }} key={i++}>
-                          Data:{" "}
-                          {registry.createdAt &&
-                            new Intl.DateTimeFormat("pt-BR", {
-                              year: "numeric",
-                              month: "numeric",
-                              day: "numeric",
-                              hour: "numeric",
-                              minute: "numeric",
-                              second: "numeric",
-                              hour12: false,
-                            }).format(new Date(registry.createdAt))}
-                          <br />
-                          {registry.observation}
-                        </li>
-                      )
-                    )}
+                    appointment.medicalRegistries.map((registry: any, i: number) => (
+                      <li style={{ marginBottom: 40 }} key={i++}>
+                        Data:{" "}
+                        {registry.createdAt &&
+                          new Intl.DateTimeFormat("pt-BR", {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                            second: "numeric",
+                            hour12: false,
+                          }).format(new Date(registry.createdAt))}
+                        <br />
+                        {registry.observation}
+                      </li>
+                    ))}
                 </ul>
               </CardContent>
               <CardActions>
@@ -207,8 +201,7 @@ export default function AppointmentsHome({ repository }: any) {
           }}
         >
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Observações da consulta de{" "}
-            {selectedAppointment && selectedAppointment.patient.name}
+            Observações da consulta de {selectedAppointment && selectedAppointment.patient.name}
           </Typography>
           <div style={{ flex: 1, display: "block", marginTop: 50 }}>
             <TextField

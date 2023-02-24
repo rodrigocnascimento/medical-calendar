@@ -96,7 +96,7 @@ export default function PatientsHome({ repository }: PatientsHomeProps) {
         setError({
           title: error.message,
           errors: error.cause,
-        }),
+        })
       );
   }, [userRepository]);
 

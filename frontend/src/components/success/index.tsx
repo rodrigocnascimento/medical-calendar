@@ -5,10 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 export default function SuccessMessage({ message, handlerOnClose }: any) {
   const [open, setOpen] = useState(true);
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }
@@ -18,12 +15,7 @@ export default function SuccessMessage({ message, handlerOnClose }: any) {
 
   const action = (
     <Fragment>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
+      <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
         <CloseIcon fontSize="small" />
       </IconButton>
     </Fragment>

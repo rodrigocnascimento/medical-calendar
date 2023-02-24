@@ -31,7 +31,7 @@ export default function BaseRepository(): IRepositories {
     medicalRegistries: new MedicalRegistryRepository(
       serverEndpoint,
       infra.http,
-      infra.storage.token,
+      infra.storage.token
     ),
   };
 }

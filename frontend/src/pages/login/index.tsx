@@ -63,18 +63,11 @@ export default function NotLoggedRoute() {
             />
           </div>
           <div className="form-group">
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              style={{ float: "right" }}
-            >
+            <Button type="submit" variant="contained" color="primary" style={{ float: "right" }}>
               Entrar
             </Button>
           </div>
-          {response && (
-            <p style={{ clear: "both", color: "red" }}>{response}</p>
-          )}
+          {response && <p style={{ clear: "both", color: "red" }}>{response}</p>}
         </div>
       </form>
     </div>

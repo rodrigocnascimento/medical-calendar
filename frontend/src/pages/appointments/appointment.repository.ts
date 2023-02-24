@@ -6,7 +6,7 @@ export interface IAppointmentRepository {
   createAppointment(appointment: CreateAppointmentDTO): Promise<AppointmentDTO>;
   editAppointment(
     appointmentId: string,
-    appointment: UpdateAppointmentDTO,
+    appointment: UpdateAppointmentDTO
   ): Promise<AppointmentDTO>;
   removeAppointment(id: string): Promise<AppointmentDTO>;
   getAll(): Promise<AppointmentDTO[]>;
@@ -73,7 +73,7 @@ export class AppointmentRepository implements IAppointmentRepository {
    */
   async editAppointment(
     appointmentId: string,
-    appointment: UpdateAppointmentDTO,
+    appointment: UpdateAppointmentDTO
   ): Promise<AppointmentDTO> {
     const response = await this.http.request({
       method: "PATCH",

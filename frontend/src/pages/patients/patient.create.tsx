@@ -42,7 +42,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
         setError({
           title: error.message,
           errors: error.cause,
-        }),
+        })
       );
   }, [id, patientRepository]);
 
@@ -61,7 +61,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
         setError({
           title: error.message,
           errors: error.cause,
-        }),
+        })
       );
   };
 
@@ -83,33 +83,33 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
       }}
     >
       <FormControl style={{ backgroundColor: "white" }}>
-        <h3 className='form-title'>👩‍⚕️ Ficha do paciente 👨‍⚕️</h3>
+        <h3 className="form-title">👩‍⚕️ Ficha do paciente 👨‍⚕️</h3>
         {error && <ErrorMessage title={error.title} errors={error.errors} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
-            id='name'
-            label='Nome do paciente'
+            id="name"
+            label="Nome do paciente"
             value={inputs.name || ""}
-            type='text'
-            name='name'
+            type="text"
+            name="name"
             style={{ marginRight: 0 }}
             onChange={handleChange}
           />
           <TextField
-            id='email'
-            label='Email do paciente'
+            id="email"
+            label="Email do paciente"
             value={inputs.email || ""}
-            type='text'
-            name='email'
+            type="text"
+            name="email"
             style={{ marginLeft: 20, marginRight: 0 }}
             onChange={handleChange}
           />
           <TextField
-            id='phone'
-            label='Telefone do paciente.'
+            id="phone"
+            label="Telefone do paciente."
             value={inputs.phone || ""}
-            type='text'
-            name='phone'
+            type="text"
+            name="phone"
             style={{ marginLeft: 20, marginRight: 10 }}
             onChange={handleChange}
           />
@@ -118,43 +118,43 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               views={["year", "month", "day"]}
-              label='Data de aniversário'
+              label="Data de aniversário"
               value={startDate}
               onChange={(newValue: any) => {
                 setStartDate(newValue);
               }}
-              inputFormat='dd/MM/yyyy'
+              inputFormat="dd/MM/yyyy"
               renderInput={(params) => (
                 <TextField style={{ marginRight: 0, width: 245 }} {...params} />
               )}
             />
           </LocalizationProvider>
           <TextField
-            id='height'
-            label='Altura do paciente.'
+            id="height"
+            label="Altura do paciente."
             style={{ marginLeft: 20, marginRight: 0 }}
             value={inputs.height || ""}
-            type='text'
-            name='height'
+            type="text"
+            name="height"
             onChange={handleChange}
           />
           <TextField
-            id='weight'
-            label='Peso do paciente.'
+            id="weight"
+            label="Peso do paciente."
             style={{ marginLeft: 20, marginRight: 10 }}
             value={inputs.weight || ""}
-            type='text'
-            name='weight'
+            type="text"
+            name="weight"
             onChange={handleChange}
           />
         </Grid>
         <Grid item style={{ margin: 10 }}>
           <TextField
             select // tell TextField to render select
-            id='genre'
-            name='genre'
+            id="genre"
+            name="genre"
             value={inputs.genre || ""}
-            label='Gênero'
+            label="Gênero"
             onChange={handleChange}
             style={{ width: 250 }}
           >
@@ -162,11 +162,11 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
             <MenuItem value={"M"}>Masculino</MenuItem>
           </TextField>
         </Grid>
-        {id !== "new" && <input value={inputs.id || ""} type='hidden' name='id' />}
-        <div className='button-right' style={{ margin: "20px 0 20px 0" }}>
+        {id !== "new" && <input value={inputs.id || ""} type="hidden" name="id" />}
+        <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
           <Button
-            type='submit'
-            variant='contained'
+            type="submit"
+            variant="contained"
             onClick={(e) => {
               e.preventDefault();
               handleSubmit();

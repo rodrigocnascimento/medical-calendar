@@ -6,6 +6,5 @@ export interface MedicallRegistriesDTO {
   observation: any;
 }
 
-export interface CreateMedicallRegistriesDTO
-  extends Omit<MedicallRegistriesDTO, "id"> {}
+export interface CreateMedicallRegistriesDTO extends Omit<MedicallRegistriesDTO, "id"> {}
 export interface UpdateMedicallRegistriesDTO extends MedicallRegistriesDTO {}

@@ -54,29 +54,20 @@ export default function UsersHome({ repository: userRepository }: any) {
                   {user.name}
                 </Typography>
                 <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  <span style={{ fontWeight: "bold" }}>Email:</span>{" "}
+                  <span style={{ fontWeight: "bold" }}>Email:</span>
                   {user.email}
                   <br />
                   <span style={{ fontWeight: "bold" }}>Role:</span> {user.role}
                   <br />
-                  <span style={{ fontWeight: "bold" }}>Criado em:</span>{" "}
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(user.createdAt)
-                  )}
+                  <span style={{ fontWeight: "bold" }}>Criado em:</span>
+                  {new Intl.DateTimeFormat("pt-BR").format(new Date(user.createdAt))}
                   <br />
-                  <span style={{ fontWeight: "bold" }}>
-                    Atualizado em:
-                  </span>{" "}
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(user.updatedAt)
-                  )}
+                  <span style={{ fontWeight: "bold" }}>Atualizado em:</span>
+                  {new Intl.DateTimeFormat("pt-BR").format(new Date(user.updatedAt))}
                 </Typography>
               </CardContent>
               <CardActions>
-                <Link
-                  className="patient_card__category"
-                  to={`/users/${user.id}`}
-                >
+                <Link className="patient_card__category" to={`/users/${user.id}`}>
                   <Create style={{ verticalAlign: "bottom" }} />
                   Editar
                 </Link>

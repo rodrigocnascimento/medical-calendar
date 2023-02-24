@@ -168,16 +168,12 @@ export default function UsersCreate({ repository: userRepository }: any) {
             onChange={handleChange}
           />
         </Grid>
-        {id !== "new" && (
-          <input value={inputs.id || ""} type="hidden" name="id" />
-        )}
+        {id !== "new" && <input value={inputs.id || ""} type="hidden" name="id" />}
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
           <Button
             type="submit"
             variant="contained"
-            onClick={(e) =>
-              id !== "new" ? handleUserEdition(e) : handleSubmit(e)
-            }
+            onClick={(e) => (id !== "new" ? handleUserEdition(e) : handleSubmit(e))}
           >
             <SaveAsIcon style={{ verticalAlign: "bottom", marginRight: 15 }} />
             {id !== "new" ? "Editar Usuário" : "Salvar Usuário"}
