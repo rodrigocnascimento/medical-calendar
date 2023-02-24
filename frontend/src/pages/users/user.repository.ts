@@ -1,13 +1,16 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import {
-  CreateUserDTO,
-  UserDTO,
-  UpdateUserDTO,
-  FilterUserDTO,
-} from "./user.dto";
+import { CreateUserDTO, UserDTO, UpdateUserDTO, FilterUserDTO } from "./user.dto";
 
-export class UserRepository {
+export interface IUserRepository {
+  createUser(user: CreateUserDTO): Promise<UserDTO>;
+  editUser(userId: string, user: UpdateUserDTO): Promise<UserDTO>;
+  removeUser(id: string): Promise<UserDTO>;
+  getAll(queryFilter: FilterUserDTO): Promise<UserDTO[]>;
+  getById(id: string): Promise<UserDTO>;
+}
+
+export class UserRepository implements IUserRepository {
   /**
    * the serverURL
    *
@@ -103,7 +106,7 @@ export class UserRepository {
   /**
    * Return all the users based on filter
    * @param {FilterUserDTO} queryFilter filter to query the user
-   * @returns 
+   * @returns
    */
   async getAll(queryFilter: FilterUserDTO): Promise<UserDTO[]> {
     const queryUrl = new URL(this.baseUrl);
