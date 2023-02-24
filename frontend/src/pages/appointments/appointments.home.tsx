@@ -13,12 +13,14 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 
 import "./appointments.css";
+import SuccessMessage from "../../components/success";
+import ErrorMessage from "../../components/error";
 
 export default function AppointmentsHome({ repository }: any) {
   const [appointmentRepository, medicalRegistriesRepository] = repository;
 
-  const [success, setSuccess] = useState<any>("");
-  const [error, setError] = useState<any[]>();
+  const [success, setSuccess] = useState<string>("");
+  const [errorMessages, setErrorMessages] = useState<any>();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
@@ -31,11 +33,10 @@ export default function AppointmentsHome({ repository }: any) {
   }, [appointmentRepository]);
 
   const handleMedicalRegistryCreation = () => {
-    console.log("medicalRegistry", medicalRegistry);
     if (medicalRegistry === "") {
-      setError([
+      setErrorMessages([
         {
-          medicalObservation: ["Precisa informar uma observação!"],
+          "Observação Médica": ["Precisa informar uma observação!"],
         },
       ]);
       setOpen(false);
@@ -56,7 +57,7 @@ export default function AppointmentsHome({ repository }: any) {
       .catch((error: any) => {
         console.log("error", error);
         setOpen(false);
-        setError(JSON.parse(error.message).message);
+        setErrorMessages(error.message.message);
       });
   };
 
@@ -81,40 +82,20 @@ export default function AppointmentsHome({ repository }: any) {
     <div className="container-appointments">
       <div className="header" style={{ width: "100%" }}>
         <h1 style={{ marginLeft: 20 }}>Consultas</h1>
-        {success && (
-          <div
-            style={{
-              border: "3px solid #79c288",
-              borderRadius: 5,
-              padding: 30,
-              backgroundColor: "#a2e6b0",
-            }}
-          >
-            {success}
-          </div>
-        )}
-        {error && (
-          <ul
-            style={{
-              border: "3px solid red",
-              borderRadius: 5,
-              padding: 30,
-              backgroundColor: "pink",
-            }}
-          >
-            {Object.keys(error[0])?.map((err: any, i: number) => {
-              return (
-                <li key={i++}>
-                  {err}: {error[0][err]}
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        {success && <SuccessMessage message={success} />}
+        {errorMessages && <ErrorMessage title="Erro!" errors={errorMessages} />}
       </div>
       {!appointments?.length && <h2>Sem consultas até o momento.</h2>}
       {appointments &&
         appointments.map((appointment, i) => {
+          if (!appointment.patient) {
+            appointment.patient = {
+              name: "LGPD COMPLIANCE",
+              genre: "LGPD COMPLIANCE",
+              weight: "LGPD COMPLIANCE",
+              height: "LGPD COMPLIANCE",
+            };
+          }
           return (
             <Card variant="outlined" key={i++} style={{ margin: 10 }}>
               <CardContent>
@@ -126,9 +107,11 @@ export default function AppointmentsHome({ repository }: any) {
                   <span style={{ fontWeight: "bold" }}>
                     Data de aniversário:{" "}
                   </span>
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(appointment.patient.dob)
-                  )}
+                  {(appointment.patient.dob &&
+                    new Intl.DateTimeFormat("pt-BR").format(
+                      new Date(appointment.patient.dob)
+                    )) ||
+                    "LGPD COMPLIANCE"}
                   <br />
                   <span style={{ fontWeight: "bold" }}>Peso: </span>
                   {appointment.patient.weight}
@@ -140,11 +123,34 @@ export default function AppointmentsHome({ repository }: any) {
                 <Typography variant="h6" component="div">
                   Observações da consulta
                 </Typography>
-                <ul>
+                <ul
+                  style={{
+                    margin: "0px 0px 20px 0px",
+                    listStyle: "none",
+                    overflow: "scroll",
+                    padding: "20px 10px 20px 10px",
+                    backgroundColor: "f1f1f1",
+                    maxHeight: 150,
+                  }}
+                >
                   {appointment.medicalRegistries &&
                     appointment.medicalRegistries.map(
                       (registry: any, i: number) => (
-                        <li key={i++}>{registry.observation}</li>
+                        <li style={{ marginBottom: 40 }} key={i++}>
+                          Data:{" "}
+                          {registry.createdAt &&
+                            new Intl.DateTimeFormat("pt-BR", {
+                              year: "numeric",
+                              month: "numeric",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                              second: "numeric",
+                              hour12: false,
+                            }).format(new Date(registry.createdAt))}
+                          <br />
+                          {registry.observation}
+                        </li>
                       )
                     )}
                 </ul>

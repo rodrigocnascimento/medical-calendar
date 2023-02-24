@@ -48,7 +48,9 @@ export class PatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      throw new Error('Erro ao criar o paciente!', {
+        cause: jsonResponse.message[0]
+      });
     }
 
     return jsonResponse;
@@ -69,7 +71,9 @@ export class PatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      throw new Error('Erro ao editar o paciente!', {
+        cause: jsonResponse.message[0]
+      });
     }
 
     return jsonResponse;
@@ -89,7 +93,9 @@ export class PatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      throw new Error('Erro ao editar o paciente!', {
+        cause: jsonResponse.message[0]
+      });
     }
 
     return jsonResponse;

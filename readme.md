@@ -1,4 +1,4 @@
-# PEDMED Medical Calendar
+# Medical Calendar
 
 Este projeto é desenvolvido utilizando as seguintes ferramentas:
 
