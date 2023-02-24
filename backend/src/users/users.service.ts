@@ -12,7 +12,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepo: Repository<User>,
-  ) { }
+  ) {}
 
   async findOne(userEmail: string): Promise<User> {
     try {

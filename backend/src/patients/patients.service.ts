@@ -52,6 +52,7 @@ export class PatientsService {
   }
 
   async update(patient: UpdatePatientDTO): Promise<Patient | UpdateResult> {
+    delete patient.appointments;
     const lookupPatient = await this.patientsRepository.findOne({
       where: {
         id: patient.id,
