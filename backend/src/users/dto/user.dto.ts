@@ -38,3 +38,5 @@ export class UsersDTO {
   @ApiProperty({ description: 'A data de criação do paciente.' })
   updatedAt?: Date;
 }
+
+export type FilterUsersDTO = Omit<UsersDTO, 'password'>;

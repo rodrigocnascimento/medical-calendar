@@ -5,13 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from './dto/create.dto';
 import { UpdateUserDTO } from './dto/update.dto';
 import { UUIDVersion } from 'class-validator';
+import { FilterUsersDTO } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepo: Repository<User>,
-  ) {}
+  ) { }
 
   async findOne(userEmail: string): Promise<User> {
     try {
@@ -40,8 +41,12 @@ export class UsersService {
     return await this.usersRepo.delete(userId);
   }
 
-  async findAll(): Promise<User[]> {
-    return this.usersRepo.find();
+  async findAll(params: FilterUsersDTO): Promise<User[]> {
+    const findQuery = {
+      where: params,
+    };
+
+    return this.usersRepo.find(findQuery);
   }
 
   async find(userId: UUIDVersion): Promise<User> {

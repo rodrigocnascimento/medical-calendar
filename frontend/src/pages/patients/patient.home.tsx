@@ -1,47 +1,47 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./patients.css";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
+import { Box, Modal, TextField, Autocomplete } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
-
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
-
 import {
   Create,
   PermContactCalendar,
   CalendarMonth,
   HighlightOff,
 } from "@mui/icons-material";
+
+import "./patients.css";
 import { useAuth } from "../../context/auth/use-auth";
+import { DoctorUserDTO } from "../users/user.dto";
+import { mapperDoctorListDropDown } from "../users/user.mapper";
 
 export default function PatientsHome({ repository }: any) {
   const auth = useAuth();
-  const [patientRepository, appointmentRepository] = repository;
+  const [patientRepository, appointmentRepository, userRepository] = repository;
 
   const [success, setSuccess] = useState<any>("");
   const [error, setError] = useState<any>("");
   const [patients, setPatients] = useState<any[]>([]);
+  const [doctors, setDoctors] = useState<DoctorUserDTO[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState(
     new Date().toISOString()
   );
+  const [appointmentDoc, setAppointmentDoc] = useState<any>();
 
   const handleAppointmentConfirmation = () => {
-    console.log(appointmentDate);
     const [date, hours] = appointmentDate.split("T");
     const [hour, minute] = hours.split(":");
 
     appointmentRepository
       .createAppointment({
         patient: selectedPatient.id,
-        doctor: auth.user.sub,
+        doctor: appointmentDoc.id,
         date: `${date}T${hour}:${minute}`,
       })
       .then(async (response: any) => {
@@ -73,6 +73,18 @@ export default function PatientsHome({ repository }: any) {
     setPatients(patients);
   }, [patientRepository]);
 
+  const loadDoctors = useCallback(async () => {
+    userRepository
+      .getAll({
+        role: "doctor",
+      })
+      .then((doctors: any) => setDoctors(doctors))
+      .catch((error: any) => {
+        console.log("error?", error);
+        setError(error.toString());
+      });
+  }, [userRepository]);
+
   const handlePatienteDeletion = (patient: any) => {
     if (
       window.confirm("Deseja realmente excluir o paciente: " + patient.name)
@@ -90,7 +102,8 @@ export default function PatientsHome({ repository }: any) {
 
   useEffect(() => {
     loadPatients();
-  }, [loadPatients]);
+    loadDoctors();
+  }, [loadPatients, loadDoctors]);
 
   return (
     <div className="container-home">
@@ -220,7 +233,7 @@ export default function PatientsHome({ repository }: any) {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Confirme a data da reserva da consulta.
           </Typography>
-          <div style={{ flex: 1, display: "block" }}>
+          <div style={{ display: "block" }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DateTimePicker
                 views={["year", "month", "day", "hours", "minutes"]}
@@ -239,6 +252,19 @@ export default function PatientsHome({ repository }: any) {
                 )}
               />
             </LocalizationProvider>
+          </div>
+          <div style={{ display: "block", marginBottom: 30 }}>
+            <Autocomplete
+              disablePortal
+              id="doctor"
+              noOptionsText={"Nenhum Médico ecnontrado."}
+              options={mapperDoctorListDropDown(doctors)}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              onChange={(e: any, value: any) => setAppointmentDoc(value)}
+              renderInput={(params) => (
+                <TextField {...params} label="Selecione um Médico" />
+              )}
+            />
           </div>
           <div style={{ float: "right" }}>
             <a

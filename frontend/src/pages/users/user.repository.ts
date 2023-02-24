@@ -1,6 +1,11 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import { CreateUserDTO, UserDTO, UpdateUserDTO } from "./user.dto";
+import {
+  CreateUserDTO,
+  UserDTO,
+  UpdateUserDTO,
+  FilterUserDTO,
+} from "./user.dto";
 
 export class UserRepository {
   /**
@@ -96,15 +101,30 @@ export class UserRepository {
   }
 
   /**
-   * Returns the list of all patients
-   * @returns All patientes
+   * Return all the users based on filter
+   * @param {FilterUserDTO} queryFilter filter to query the user
+   * @returns 
    */
-  async getAll(): Promise<UserDTO[]> {
+  async getAll(queryFilter: FilterUserDTO): Promise<UserDTO[]> {
+    const queryUrl = new URL(this.baseUrl);
+
+    if (queryFilter) {
+      for (const [name, value] of Object.entries(queryFilter)) {
+        queryUrl.searchParams.set(name, value as string);
+      }
+    }
+
     const response = await this.http.request({
-      url: this.baseUrl,
+      url: queryUrl.toString(),
     });
 
-    return await response.json();
+    const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      throw new Error(JSON.stringify(jsonResponse));
+    }
+
+    return jsonResponse;
   }
 
   /**

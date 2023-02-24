@@ -22,3 +22,14 @@ export interface UserDTO {
 
 export interface CreateUserDTO extends Omit<UserDTO, "id"> {}
 export interface UpdateUserDTO extends UserDTO {}
+
+export interface FilterUserDTO extends Omit<UserDTO, "id" | "password"> {}
+
+export interface DoctorUserDTO extends Omit<UserDTO, "password"> {
+  role: UserRoles.DOCTOR;
+}
+
+export type DoctorDropDownListDTO = {
+  id: string;
+  label: string;
+};

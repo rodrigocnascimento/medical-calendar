@@ -8,6 +8,7 @@ import {
   Get,
   Param,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -25,7 +26,7 @@ import { BadRequestError } from '../errors/BadRequest.error';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from './dto/create.dto';
 import { UpdateUserDTO } from './dto/update.dto';
-import { UsersDTO } from './dto/user.dto';
+import { FilterUsersDTO, UsersDTO } from './dto/user.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { User } from './user.entity';
@@ -99,8 +100,8 @@ export class UsersController {
     description: 'Usuário atualizado.',
     type: () => Array<UsersDTO>,
   })
-  async getAllUsers(): Promise<User[]> {
-    return this.userService.findAll();
+  async getAllUsers(@Query() queryFilter: FilterUsersDTO): Promise<User[]> {
+    return this.userService.findAll(queryFilter);
   }
 
   @Patch(':id')
