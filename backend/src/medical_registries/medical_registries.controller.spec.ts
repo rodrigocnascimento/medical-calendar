@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MedicalRegistriesController } from './medical_registries.controller';
-import { MedicalRegistriesService } from './medical_registries.service';
-import { MedicalRegistry } from './medical_registry.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test, TestingModule } from "@nestjs/testing";
+import { MedicalRegistriesController } from "./medical_registries.controller";
+import { MedicalRegistriesService } from "./medical_registries.service";
+import { MedicalRegistry } from "./medical_registry.entity";
+import { getRepositoryToken } from "@nestjs/typeorm";
 
-describe('MedicalRegistriesController', () => {
+describe("MedicalRegistriesController", () => {
   let controller: MedicalRegistriesController;
 
   beforeEach(async () => {
@@ -24,12 +24,10 @@ describe('MedicalRegistriesController', () => {
       ],
     }).compile();
 
-    controller = module.get<MedicalRegistriesController>(
-      MedicalRegistriesController,
-    );
+    controller = module.get<MedicalRegistriesController>(MedicalRegistriesController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

@@ -1,13 +1,13 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from "@nestjs/testing";
 
-import { PatientsController } from './patients.controller';
-import { PatientsService } from './patients.service';
-import { build as patientMock } from '../test/mocks/patients.mock';
-import { Patient } from './patient.entity';
-import { CreatePatientDTO } from './dto/create.dto';
-import { UpdatePatientDTO } from './dto/update.dto';
+import { PatientsController } from "./patients.controller";
+import { PatientsService } from "./patients.service";
+import { build as patientMock } from "../test/mocks/patients.mock";
+import { Patient } from "./patient.entity";
+import { CreatePatientDTO } from "./dto/create.dto";
+import { UpdatePatientDTO } from "./dto/update.dto";
 
-describe('PatientsController', () => {
+describe("PatientsController", () => {
   let controller: PatientsController;
   let service: PatientsService;
 
@@ -31,38 +31,38 @@ describe('PatientsController', () => {
     service = module.get<PatientsService>(PatientsService);
   });
 
-  describe('PatientsController', () => {
-    it('Service and Controller should be defined', async () => {
+  describe("PatientsController", () => {
+    it("Service and Controller should be defined", async () => {
       expect(service).toBeDefined();
       expect(controller).toBeDefined();
     });
 
-    it('Should return a list of patients', async () => {
+    it("Should return a list of patients", async () => {
       const patients = patientMock({
         quantityToGenerate: 3,
       }) as unknown as Promise<Patient[]>;
 
-      jest.spyOn(service, 'findAll').mockResolvedValue(patients);
+      jest.spyOn(service, "findAll").mockResolvedValue(patients);
 
       await controller.getAll();
 
       expect(service.findAll).toBeCalled();
     });
 
-    it('Should return a patient based on his ID', async () => {
+    it("Should return a patient based on his ID", async () => {
       const patient = patientMock() as unknown as Patient;
 
-      jest.spyOn(service, 'findOne').mockResolvedValue(patient);
+      jest.spyOn(service, "findOne").mockResolvedValue(patient);
 
       await controller.get(patient.id);
 
       expect(service.findOne).toBeCalledWith(patient.id);
     });
 
-    it('Should create a patient and return the data', async () => {
+    it("Should create a patient and return the data", async () => {
       const patient = patientMock() as unknown as CreatePatientDTO;
 
-      jest.spyOn(service, 'save').mockResolvedValue(patient);
+      jest.spyOn(service, "save").mockResolvedValue(patient);
 
       const returnedPatient = await controller.createPatient(patient);
 
@@ -71,19 +71,17 @@ describe('PatientsController', () => {
       expect(returnedPatient.name).toEqual(patient.name);
     });
 
-    it('Should update a patient and return the data updated', async () => {
+    it("Should update a patient and return the data updated", async () => {
       const patient = patientMock() as Patient;
       const patient_ = patientMock({
         customData: { ...patient },
       }) as UpdatePatientDTO;
 
-      patient_.name += ' Editado';
+      patient_.name += " Editado";
 
-      jest.spyOn(service, 'update').mockResolvedValue(patient_);
+      jest.spyOn(service, "update").mockResolvedValue(patient_);
 
-      const returnedPatient = (await controller.updatePatient(
-        patient_,
-      )) as Patient;
+      const returnedPatient = (await controller.updatePatient(patient_)) as Patient;
 
       expect(service.update).toBeCalledWith(patient_);
       expect(returnedPatient.name).toEqual(patient_.name);

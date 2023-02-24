@@ -1,6 +1,6 @@
-import { MockDataOptions, createMockData } from './autoMock';
-import { faker } from '@faker-js/faker';
-import { Genre, Patient } from '../../patients/patient.entity';
+import { MockDataOptions, createMockData } from "./autoMock";
+import { faker } from "@faker-js/faker";
+import { Genre, Patient } from "../../patients/patient.entity";
 
 function defaultData(customData = {}, quantityToGenerate = 1) {
   return [...Array(quantityToGenerate).keys()].map(() => {
@@ -8,7 +8,7 @@ function defaultData(customData = {}, quantityToGenerate = 1) {
       id = faker.datatype.uuid(),
       name = faker.name.fullName(),
       email = faker.internet.email(),
-      dob = faker.date.birthdate({ min: 1900, max: 2000, mode: 'year' }),
+      dob = faker.date.birthdate({ min: 1900, max: 2000, mode: "year" }),
       phone = faker.phone.number(),
       height = faker.datatype.float({ min: 130, max: 220, precision: 0.01 }),
       weight = faker.datatype.float({ min: 65, max: 170, precision: 0.01 }),
@@ -30,9 +30,7 @@ function defaultData(customData = {}, quantityToGenerate = 1) {
   });
 }
 
-export function build(
-  options: MockDataOptions<Patient> = {},
-): Patient | Patient[] {
+export function build(options: MockDataOptions<Patient> = {}): Patient | Patient[] {
   const { customData, quantityToGenerate } = options;
 
   const entityObject = defaultData(customData, quantityToGenerate);

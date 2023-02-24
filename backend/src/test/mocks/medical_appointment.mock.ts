@@ -1,6 +1,6 @@
-import { MockDataOptions, createMockData } from './autoMock';
-import { faker } from '@faker-js/faker';
-import { MedicalAppointment } from '../../medical_appointments/medical_appointments.entity';
+import { MockDataOptions, createMockData } from "./autoMock";
+import { faker } from "@faker-js/faker";
+import { MedicalAppointment } from "../../medical_appointments/medical_appointments.entity";
 
 function defaultData(customData = {}, quantityToGenerate = 1) {
   return [...Array(quantityToGenerate).keys()].map(() => {
@@ -21,7 +21,7 @@ function defaultData(customData = {}, quantityToGenerate = 1) {
 }
 
 export function build(
-  options: MockDataOptions<MedicalAppointment> = {},
+  options: MockDataOptions<MedicalAppointment> = {}
 ): MedicalAppointment | MedicalAppointment[] {
   const { customData, quantityToGenerate } = options;
 

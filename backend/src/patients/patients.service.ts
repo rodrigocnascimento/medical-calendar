@@ -1,20 +1,16 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Patient } from './patient.entity';
-import { CreatePatientDTO } from './dto/create.dto';
-import { PatientsRepository } from './patients.repository';
-import { UpdatePatientDTO } from './dto/update.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Patient } from "./patient.entity";
+import { CreatePatientDTO } from "./dto/create.dto";
+import { PatientsRepository } from "./patients.repository";
+import { UpdatePatientDTO } from "./dto/update.dto";
+import { DeleteResult, UpdateResult } from "typeorm";
 
 @Injectable()
 export class PatientsService {
   constructor(
     @InjectRepository(Patient)
-    private patientsRepository: PatientsRepository,
+    private patientsRepository: PatientsRepository
   ) {}
 
   async findAll(): Promise<Patient[]> {
@@ -27,15 +23,15 @@ export class PatientsService {
         where: {
           id,
         },
-        relations: ['appointments'],
+        relations: ["appointments"],
       });
     } catch (error) {
-      throw new NotFoundException('Paciente não encontrado.');
+      throw new NotFoundException("Paciente não encontrado.");
     }
   }
 
   async remove(id: string): Promise<DeleteResult> {
-    console.log('backend reomvoe', id);
+    console.log("backend reomvoe", id);
     return await this.patientsRepository.delete(id);
   }
 
@@ -43,9 +39,7 @@ export class PatientsService {
     const emailAlreadyRegistered = await this.getEmailOrFail(patient.email);
 
     if (emailAlreadyRegistered) {
-      throw new UnprocessableEntityException(
-        'Email de paciente já cadastrado.',
-      );
+      throw new UnprocessableEntityException("Email de paciente já cadastrado.");
     }
 
     return this.patientsRepository.save(patient);
@@ -60,13 +54,10 @@ export class PatientsService {
     });
 
     if (!lookupPatient) {
-      throw new NotFoundException('Paciente não encontrado.');
+      throw new NotFoundException("Paciente não encontrado.");
     }
 
-    const wasPatientUpdated = await this.patientsRepository.update(
-      patient.id,
-      patient,
-    );
+    const wasPatientUpdated = await this.patientsRepository.update(patient.id, patient);
 
     if (wasPatientUpdated.affected) {
       return this.patientsRepository.findOne({

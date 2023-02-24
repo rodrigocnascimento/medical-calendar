@@ -1,17 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './user.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDTO } from './dto/create.dto';
-import { UpdateUserDTO } from './dto/update.dto';
-import { UUIDVersion } from 'class-validator';
-import { FilterUsersDTO } from './dto/user.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { User } from "./user.entity";
+import { DeleteResult, Repository, UpdateResult } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { CreateUserDTO } from "./dto/create.dto";
+import { UpdateUserDTO } from "./dto/update.dto";
+import { UUIDVersion } from "class-validator";
+import { FilterUsersDTO } from "./dto/user.dto";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepo: Repository<User>,
+    private usersRepo: Repository<User>
   ) {}
 
   async findOne(userEmail: string): Promise<User> {
@@ -22,7 +22,7 @@ export class UsersService {
         },
       });
     } catch (error) {
-      throw new NotFoundException('Usuário não econtrado.');
+      throw new NotFoundException("Usuário não econtrado.");
     }
   }
 
@@ -30,10 +30,7 @@ export class UsersService {
     return await this.usersRepo.save(user);
   }
 
-  async update(
-    userId: UUIDVersion,
-    user: UpdateUserDTO,
-  ): Promise<User | UpdateResult> {
+  async update(userId: UUIDVersion, user: UpdateUserDTO): Promise<User | UpdateResult> {
     return await this.usersRepo.update(userId, user);
   }
 

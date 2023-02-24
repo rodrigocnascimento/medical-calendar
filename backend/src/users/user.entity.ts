@@ -1,4 +1,4 @@
-import { MedicalAppointment } from '../medical_appointments/medical_appointments.entity';
+import { MedicalAppointment } from "../medical_appointments/medical_appointments.entity";
 import {
   Column,
   Entity,
@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
-} from 'typeorm';
+} from "typeorm";
 
 /**
  * List of user roles
@@ -15,14 +15,14 @@ import {
  * @enum F Female
  **/
 export enum UserRoles {
-  ADMIN = 'admin',
-  DOCTOR = 'doctor',
-  PATIENT = 'patient',
+  ADMIN = "admin",
+  DOCTOR = "doctor",
+  PATIENT = "patient",
 }
 
-@Entity('users')
+@Entity("users")
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({
@@ -34,7 +34,7 @@ export class User {
   email: string;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: UserRoles,
   })
   role: UserRoles;
@@ -42,10 +42,10 @@ export class User {
   @Column()
   password: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
   @OneToOne(() => MedicalAppointment)

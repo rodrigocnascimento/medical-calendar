@@ -8,7 +8,7 @@ import {
   UnprocessableEntityException,
   UseGuards,
   Delete,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
   ApiTags,
   ApiParam,
@@ -20,52 +20,52 @@ import {
   ApiNotFoundResponse,
   ApiResponse,
   ApiBearerAuth,
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
 
-import { NotFoundError } from '../errors/NotFound.error';
-import { BadRequestError } from '../errors/BadRequest.error';
-import { PatientsService } from './patients.service';
-import { CreatePatientDTO } from './dto/create.dto';
-import { UpdatePatientDTO } from './dto/update.dto';
-import { PatientsDTO } from './dto/patient.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
-import { Patient } from './patient.entity';
-import { JwtAuthGuard } from '../auth/jwt.guard';
+import { NotFoundError } from "../errors/NotFound.error";
+import { BadRequestError } from "../errors/BadRequest.error";
+import { PatientsService } from "./patients.service";
+import { CreatePatientDTO } from "./dto/create.dto";
+import { UpdatePatientDTO } from "./dto/update.dto";
+import { PatientsDTO } from "./dto/patient.dto";
+import { DeleteResult, UpdateResult } from "typeorm";
+import { Patient } from "./patient.entity";
+import { JwtAuthGuard } from "../auth/jwt.guard";
 
-@ApiTags('Patients')
-@Controller('patients')
+@ApiTags("Patients")
+@Controller("patients")
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth('access-token')
+@ApiBearerAuth("access-token")
 export class PatientsController {
   constructor(private readonly patientService: PatientsService) {}
 
-  @Get(':id')
+  @Get(":id")
   @ApiOperation({
-    summary: 'Busca um paciente pelo seu id',
+    summary: "Busca um paciente pelo seu id",
   })
   @ApiParam({
-    name: 'id',
+    name: "id",
     type: String,
-    description: 'O Id do paciente',
+    description: "O Id do paciente",
   })
   @ApiOkResponse({
-    description: 'Paciente encontrado.',
+    description: "Paciente encontrado.",
     type: PatientsDTO,
   })
   @ApiNotFoundResponse({
-    description: 'Paciente não econtrado.',
+    description: "Paciente não econtrado.",
     type: NotFoundError,
   })
-  async get(@Param('id') id: string): Promise<Patient> {
+  async get(@Param("id") id: string): Promise<Patient> {
     return this.patientService.findOne(id);
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Encontra todos os pacientes',
+    summary: "Encontra todos os pacientes",
   })
   @ApiOkResponse({
-    description: 'Todos os pacientes encontrados.',
+    description: "Todos os pacientes encontrados.",
     type: [PatientsDTO],
   })
   async getAll(): Promise<Patient[]> {
@@ -74,23 +74,21 @@ export class PatientsController {
 
   @Post()
   @ApiOperation({
-    summary: 'Cria um paciente',
+    summary: "Cria um paciente",
   })
   @ApiCreatedResponse({
-    description: 'Paciente criado.',
+    description: "Paciente criado.",
     type: CreatePatientDTO,
   })
   @ApiBadRequestResponse({
-    description: 'A requisição não combina com o esperado.',
+    description: "A requisição não combina com o esperado.",
     type: BadRequestError,
   })
   @ApiUnprocessableEntityResponse({
-    description: 'Erro ao criar o paciente.',
+    description: "Erro ao criar o paciente.",
     type: UnprocessableEntityException,
   })
-  async createPatient(
-    @Body() createPatient: CreatePatientDTO,
-  ): Promise<Patient> {
+  async createPatient(@Body() createPatient: CreatePatientDTO): Promise<Patient> {
     const newPatient = await this.patientService.save(createPatient);
 
     return newPatient;
@@ -98,44 +96,42 @@ export class PatientsController {
 
   @Patch()
   @ApiOperation({
-    summary: 'Edita um paciente',
+    summary: "Edita um paciente",
   })
   @ApiResponse({
-    description: 'Paciente atualizado.',
+    description: "Paciente atualizado.",
     type: UpdatePatientDTO,
   })
   @ApiBadRequestResponse({
-    description: 'A requisição não combina com o esperado.',
+    description: "A requisição não combina com o esperado.",
     type: BadRequestError,
   })
   @ApiUnprocessableEntityResponse({
-    description: 'Erro ao criar o paciente.',
+    description: "Erro ao criar o paciente.",
     type: UnprocessableEntityException,
   })
-  async updatePatient(
-    @Body() updatePatient: UpdatePatientDTO,
-  ): Promise<Patient | UpdateResult> {
+  async updatePatient(@Body() updatePatient: UpdatePatientDTO): Promise<Patient | UpdateResult> {
     return this.patientService.update(updatePatient);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @ApiOperation({
-    summary: 'Remove um paciente.',
+    summary: "Remove um paciente.",
   })
   @ApiParam({
-    name: 'id',
+    name: "id",
     type: String,
-    description: 'O Id do paciente',
+    description: "O Id do paciente",
   })
   @ApiOkResponse({
-    description: 'Paciente encontrado.',
+    description: "Paciente encontrado.",
     type: DeleteResult,
   })
   @ApiNotFoundResponse({
-    description: 'Paciente não econtrado.',
+    description: "Paciente não econtrado.",
     type: NotFoundError,
   })
-  async remove(@Param('id') id: string): Promise<DeleteResult> {
+  async remove(@Param("id") id: string): Promise<DeleteResult> {
     return this.patientService.remove(id);
   }
 }

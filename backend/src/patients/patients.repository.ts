@@ -1,6 +1,6 @@
-import { Entity, Repository } from 'typeorm';
-import { Patient } from './patient.entity';
-import { Injectable } from '@nestjs/common';
+import { Entity, Repository } from "typeorm";
+import { Patient } from "./patient.entity";
+import { Injectable } from "@nestjs/common";
 
 @Entity()
 @Injectable()

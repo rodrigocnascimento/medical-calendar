@@ -1,14 +1,7 @@
-import {
-  Controller,
-  Request,
-  Post,
-  UseGuards,
-  Get,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { LocalAuthGuard } from './auth/local.guard';
-import { AuthService } from './auth/auth.service';
-import { JwtAuthGuard } from './auth/jwt.guard';
+import { Controller, Request, Post, UseGuards, Get, UnauthorizedException } from "@nestjs/common";
+import { LocalAuthGuard } from "./auth/local.guard";
+import { AuthService } from "./auth/auth.service";
+import { JwtAuthGuard } from "./auth/jwt.guard";
 import {
   ApiBearerAuth,
   ApiBody,
@@ -16,51 +9,51 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
-} from '@nestjs/swagger';
-import { AuthDTO, BearerTokenDTO } from './auth/dto/auth.dto';
+} from "@nestjs/swagger";
+import { AuthDTO, BearerTokenDTO } from "./auth/dto/auth.dto";
 
 @Controller()
 export class AppController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
+  @Post("auth/login")
   @ApiOperation({
-    summary: 'Realiza o login de um usuário.',
+    summary: "Realiza o login de um usuário.",
   })
   @ApiBody({
-    description: 'Credenciais do usuário.',
+    description: "Credenciais do usuário.",
     type: AuthDTO,
   })
   @ApiOkResponse({
-    description: 'Bearer token.',
+    description: "Bearer token.",
     type: BearerTokenDTO,
   })
   @ApiNotFoundResponse({
-    description: 'Paciente não econtrado.',
+    description: "Paciente não econtrado.",
     type: UnauthorizedException,
   })
-  @ApiTags('Login')
+  @ApiTags("Login")
   async login(@Request() req: any) {
     console.log(req.user);
     return this.authService.login(req.user);
   }
 
-  @Get('/')
+  @Get("/")
   async public() {
-    return 'Hello World';
+    return "Hello World";
   }
 
   @ApiOperation({
-    summary: 'Apenas para validar o token o login de um usuário.',
+    summary: "Apenas para validar o token o login de um usuário.",
   })
   @ApiOkResponse({
-    description: 'PING-PONG.',
+    description: "PING-PONG.",
   })
-  @Get('/private-route')
+  @Get("/private-route")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth("access-token")
   async _private() {
-    return 'PONG';
+    return "PONG";
   }
 }

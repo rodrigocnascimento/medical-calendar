@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class MigrationMestreUser1677123751798 implements MigrationInterface {
-  name = 'MigrationMestreUser1677123751798';
+  name = "MigrationMestreUser1677123751798";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -18,11 +18,7 @@ export class MigrationMestreUser1677123751798 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DELETE FROM users WHERE id = '8d184f2f-cac4-48e8-be05-8d0a5dbb3ba9'`,
-    );
-    await queryRunner.query(
-      `DELETE FROM users WHERE id = '7d184f2f-cac4-48e8-be05-8d0a5dbb3ba9'`,
-    );
+    await queryRunner.query(`DELETE FROM users WHERE id = '8d184f2f-cac4-48e8-be05-8d0a5dbb3ba9'`);
+    await queryRunner.query(`DELETE FROM users WHERE id = '7d184f2f-cac4-48e8-be05-8d0a5dbb3ba9'`);
   }
 }

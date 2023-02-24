@@ -1,6 +1,6 @@
-import { MedicalRegistry } from '../medical_registries/medical_registry.entity';
-import { Patient } from '../patients/patient.entity';
-import { User } from '../users/user.entity';
+import { MedicalRegistry } from "../medical_registries/medical_registry.entity";
+import { Patient } from "../patients/patient.entity";
+import { User } from "../users/user.entity";
 import {
   Column,
   Entity,
@@ -10,11 +10,11 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
-} from 'typeorm';
+} from "typeorm";
 
-@Entity('medical_appointments')
+@Entity("medical_appointments")
 export class MedicalAppointment {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
@@ -29,13 +29,10 @@ export class MedicalAppointment {
   @ManyToOne(() => Patient, (patient: Patient) => patient.appointments)
   patient: Patient;
 
-  @OneToMany(
-    () => MedicalRegistry,
-    (records: MedicalRegistry) => records.medicalAppointment,
-  )
+  @OneToMany(() => MedicalRegistry, (records: MedicalRegistry) => records.medicalAppointment)
   medicalRegistries?: MedicalRegistry[];
 
   @ManyToOne(() => User, (user) => user.userAppointments)
-  @JoinColumn({ name: 'doctorId' })
+  @JoinColumn({ name: "doctorId" })
   doctor: User;
 }

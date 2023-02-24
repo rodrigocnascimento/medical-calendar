@@ -1,15 +1,15 @@
-import { HttpStatus } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
+import { HttpStatus } from "@nestjs/common";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class BadRequestError {
   @ApiProperty({
-    description: 'O código do erro.',
+    description: "O código do erro.",
     example: HttpStatus.BAD_REQUEST,
   })
   statusCode: HttpStatus;
 
   @ApiProperty({
-    description: 'Mensagem(s) de erro.',
+    description: "Mensagem(s) de erro.",
     example: `[
       {
         "name": [
@@ -21,8 +21,8 @@ export class BadRequestError {
   message: Array<{ name: string[] }>;
 
   @ApiProperty({
-    description: 'Name of Exception',
-    example: '/users',
+    description: "Name of Exception",
+    example: "/users",
   })
   error: string;
 }

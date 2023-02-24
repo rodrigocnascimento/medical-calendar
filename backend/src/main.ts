@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestFactory } from "@nestjs/core";
+import { BadRequestException, ValidationPipe } from "@nestjs/common";
+import { AppModule } from "./app.module";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 const serverPort = process.env.PORT || 3000;
 const version = process.env.npm_package_version;
@@ -24,21 +24,18 @@ async function bootstrap() {
 
         return new BadRequestException([customErrors]);
       },
-    }),
+    })
   );
 
   //Swagger configurations
   const options = new DocumentBuilder()
-    .setTitle('MedApp Medical Appointments')
-    .setDescription('Sistema de prontuário eletrônico Médico')
+    .setTitle("MedApp Medical Appointments")
+    .setDescription("Sistema de prontuário eletrônico Médico")
     .setVersion(version)
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'access-token',
-    )
+    .addBearerAuth({ type: "http", scheme: "bearer", bearerFormat: "JWT" }, "access-token")
     .build();
 
-  SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, options));
+  SwaggerModule.setup("docs", app, SwaggerModule.createDocument(app, options));
 
   await app.listen(serverPort);
 }

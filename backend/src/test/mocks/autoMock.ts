@@ -3,22 +3,17 @@ export interface MockDataOptions<T> {
   quantityToGenerate?: number;
 }
 
-function customObjectPropertyOverload<T>(
-  index: any,
-  customData: any,
-  mockedData: T,
-) {
+function customObjectPropertyOverload<T>(index: any, customData: any, mockedData: T) {
   const dataPropertyKeys = Object.keys(customData || {});
 
   for (const dataIndex of dataPropertyKeys) {
     const dataSubProperties = Object.keys(customData[dataIndex]);
 
-    if (typeof customData[dataIndex] !== 'object') {
+    if (typeof customData[dataIndex] !== "object") {
       mockedData[index][dataIndex] = customData[dataIndex];
     } else {
       for (const dataSubIndex of dataSubProperties) {
-        mockedData[index][dataIndex][dataSubIndex] =
-          customData[dataIndex][dataSubIndex];
+        mockedData[index][dataIndex][dataSubIndex] = customData[dataIndex][dataSubIndex];
       }
     }
   }
@@ -34,7 +29,7 @@ function customObjectPropertyOverload<T>(
  */
 export function createMockData<T>(
   entityObject: T[],
-  customData: MockDataOptions<T>['customData'] = {},
+  customData: MockDataOptions<T>["customData"] = {}
 ): T | T[] {
   let mockedData: T[] = [];
   const quantityToGenerate = entityObject.length || 1;
@@ -42,11 +37,7 @@ export function createMockData<T>(
   for (const [index, entity] of Object.entries(entityObject)) {
     mockedData.push(entity);
 
-    mockedData = customObjectPropertyOverload<T[]>(
-      index,
-      customData,
-      mockedData,
-    );
+    mockedData = customObjectPropertyOverload<T[]>(index, customData, mockedData);
   }
   return quantityToGenerate > 1 ? mockedData : mockedData.shift();
 }

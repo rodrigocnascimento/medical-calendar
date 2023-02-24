@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MedicalAppointmentsController } from './medical_appointments.controller';
-import { MedicalAppointmentsService } from './medical_appointments.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { MedicalAppointmentsController } from "./medical_appointments.controller";
+import { MedicalAppointmentsService } from "./medical_appointments.service";
 
-import { MedicalAppointmentRepository } from './medical_appointments.repository';
+import { MedicalAppointmentRepository } from "./medical_appointments.repository";
 
-describe('MedicalAppointmentsController', () => {
+describe("MedicalAppointmentsController", () => {
   let controller: MedicalAppointmentsController;
 
   beforeEach(async () => {
@@ -26,12 +26,10 @@ describe('MedicalAppointmentsController', () => {
       ],
     }).compile();
 
-    controller = module.get<MedicalAppointmentsController>(
-      MedicalAppointmentsController,
-    );
+    controller = module.get<MedicalAppointmentsController>(MedicalAppointmentsController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

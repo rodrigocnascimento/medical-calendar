@@ -1,16 +1,8 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
-import { MedicalRegistriesService } from './medical_registries.service';
-import { CreateMedicalRegistryDTO } from './dto/create.dto';
-import { UpdateMedicalRegistryDTO } from './dto/update.dto';
-import { MedicalRegistryDTO } from './dto/medical_registry.dto';
+import { Controller, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
+import { MedicalRegistriesService } from "./medical_registries.service";
+import { CreateMedicalRegistryDTO } from "./dto/create.dto";
+import { UpdateMedicalRegistryDTO } from "./dto/update.dto";
+import { MedicalRegistryDTO } from "./dto/medical_registry.dto";
 import {
   ApiOperation,
   ApiCreatedResponse,
@@ -19,84 +11,79 @@ import {
   ApiTags,
   ApiParam,
   ApiBearerAuth,
-} from '@nestjs/swagger';
-import { NotFoundError } from '../errors/NotFound.error';
-import { UUIDVersion } from 'class-validator';
-import { JwtAuthGuard } from '../auth/jwt.guard';
+} from "@nestjs/swagger";
+import { NotFoundError } from "../errors/NotFound.error";
+import { UUIDVersion } from "class-validator";
+import { JwtAuthGuard } from "../auth/jwt.guard";
 
-@ApiTags('MedicalRegistries')
-@Controller('medical-registries')
+@ApiTags("MedicalRegistries")
+@Controller("medical-registries")
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth('access-token')
+@ApiBearerAuth("access-token")
 export class MedicalRegistriesController {
-  constructor(
-    private readonly medicalRegistriesService: MedicalRegistriesService,
-  ) {}
+  constructor(private readonly medicalRegistriesService: MedicalRegistriesService) {}
 
   @Post()
   @ApiOperation({
-    summary: 'Cria um registro médico para um paciente.',
+    summary: "Cria um registro médico para um paciente.",
   })
   @ApiProperty({
-    description: 'Test',
+    description: "Test",
     type: CreateMedicalRegistryDTO,
   })
   @ApiCreatedResponse({
-    description: 'Registro médico da consulta criado.',
+    description: "Registro médico da consulta criado.",
     type: MedicalRegistryDTO,
   })
   @ApiNotFoundResponse({
-    description: 'Consulta não econtrada.',
+    description: "Consulta não econtrada.",
     type: NotFoundError,
   })
   create(@Body() createMedicalRegistryDto: CreateMedicalRegistryDTO) {
     return this.medicalRegistriesService.create(createMedicalRegistryDto);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @ApiOperation({
-    summary: 'Atualiza um registro médico para um paciente.',
+    summary: "Atualiza um registro médico para um paciente.",
   })
   @ApiParam({
-    name: 'id',
+    name: "id",
     type: String,
-    description: 'O Id do registro.',
-    example: 'ae9b25d0-5f9f-4b28-99cb-999cc4cd4a60',
+    description: "O Id do registro.",
+    example: "ae9b25d0-5f9f-4b28-99cb-999cc4cd4a60",
   })
   @ApiCreatedResponse({
-    description: 'Registro médico da consulta atualizado.',
+    description: "Registro médico da consulta atualizado.",
     type: MedicalRegistryDTO,
   })
   @ApiNotFoundResponse({
-    description: 'Consulta não econtrada.',
+    description: "Consulta não econtrada.",
     type: NotFoundError,
   })
-  update(
-    @Param('id') id: UUIDVersion,
-    @Body() updateMedicalRegistryDto: UpdateMedicalRegistryDTO,
-  ) {
+  update(@Param("id") id: UUIDVersion, @Body() updateMedicalRegistryDto: UpdateMedicalRegistryDTO) {
     return this.medicalRegistriesService.update(id, updateMedicalRegistryDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @ApiOperation({
-    summary: 'Remove um registro médico para um paciente.',
+    summary: "Remove um registro médico para um paciente.",
   })
   @ApiParam({
-    name: 'id',
+    name: "id",
     type: String,
-    description: 'O Id do registro.',
-    example: 'ae9b25d0-5f9f-4b28-99cb-999cc4cd4a60',
+    description: "O Id do registro.",
+    example: "ae9b25d0-5f9f-4b28-99cb-999cc4cd4a60",
   })
   @ApiCreatedResponse({
-    description: 'Registro médico da consulta atualizado.',
+    description: "Registro médico da consulta atualizado.",
     type: MedicalRegistryDTO,
   })
   @ApiNotFoundResponse({
-    description: 'Consulta não econtrada.',
+    description: "Consulta não econtrada.",
     type: NotFoundError,
   })
-  remove(@Param('id') id: UUIDVersion) {
+  remove(@Param("id") id: UUIDVersion) {
     return this.medicalRegistriesService.remove(id);
   }
 }

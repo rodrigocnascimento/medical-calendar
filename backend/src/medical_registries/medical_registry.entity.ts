@@ -1,4 +1,4 @@
-import { MedicalAppointment } from '../medical_appointments/medical_appointments.entity';
+import { MedicalAppointment } from "../medical_appointments/medical_appointments.entity";
 import {
   Column,
   Entity,
@@ -6,11 +6,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-} from 'typeorm';
+} from "typeorm";
 
-@Entity('medical_registries')
+@Entity("medical_registries")
 export class MedicalRegistry {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @CreateDateColumn()
@@ -20,13 +20,10 @@ export class MedicalRegistry {
   updatedAt?: Date;
 
   @Column({
-    type: 'text',
+    type: "text",
   })
   observation: string;
 
-  @ManyToOne(
-    () => MedicalAppointment,
-    (record: MedicalAppointment) => record.medicalRegistries,
-  )
+  @ManyToOne(() => MedicalAppointment, (record: MedicalAppointment) => record.medicalRegistries)
   medicalAppointment: MedicalAppointment;
 }

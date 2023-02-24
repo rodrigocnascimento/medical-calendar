@@ -1,6 +1,6 @@
-import { DataSource, Entity, Repository } from 'typeorm';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { MedicalAppointment } from './medical_appointments.entity';
+import { DataSource, Entity, Repository } from "typeorm";
+import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { MedicalAppointment } from "./medical_appointments.entity";
 
 @Entity()
 @Injectable()

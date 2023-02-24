@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MedicalRegistriesService } from './medical_registries.service';
-import { MedicalRegistry } from './medical_registry.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test, TestingModule } from "@nestjs/testing";
+import { MedicalRegistriesService } from "./medical_registries.service";
+import { MedicalRegistry } from "./medical_registry.entity";
+import { getRepositoryToken } from "@nestjs/typeorm";
 
-describe('MedicalRegistriesService', () => {
+describe("MedicalRegistriesService", () => {
   let service: MedicalRegistriesService;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe('MedicalRegistriesService', () => {
     service = module.get<MedicalRegistriesService>(MedicalRegistriesService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 });
