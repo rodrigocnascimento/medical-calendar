@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route, Link, useHistory, useLocation } from "react-router-dom";
-import { useAuth, useRepository } from "context";
+import { Switch, Route, Link, useLocation } from "react-router-dom";
+import { useAuth } from "context";
 import LoginRoute from "pages/login";
 import { PatientsForm, PatientsHome } from "pages/patients";
 import { UsersHome, UsersForm } from "pages/users";
@@ -11,18 +11,11 @@ import "./index.css";
 import "root.css";
 
 export default function ApplicationRoutes() {
-  const { patient, appointments, user, medicalRegistries } = useRepository();
-  let history = useHistory();
   let auth = useAuth();
 
   const location = useLocation<any>();
 
   const [activePath, setActivePath] = useState<string>("/");
-
-  function handleUserLogout() {
-    auth.signout();
-    history.push("/");
-  }
 
   useEffect(() => {
     setActivePath(location.pathname);
@@ -37,7 +30,9 @@ export default function ApplicationRoutes() {
           <ul>
             <li>
               <Link
-                className={["/patients", "/"].includes(activePath) ? "active" : ""}
+                className={
+                  ["/patients", "/"].includes(activePath) ? "active" : ""
+                }
                 to="/patients"
               >
                 Pacientes
@@ -45,14 +40,20 @@ export default function ApplicationRoutes() {
             </li>
             {auth.user.userRole === "admin" && (
               <li>
-                <Link className={activePath === "/users" ? "active" : ""} to="/users">
+                <Link
+                  className={activePath === "/users" ? "active" : ""}
+                  to="/users"
+                >
                   Administrar usuários
                 </Link>
               </li>
             )}
             {auth.user.userRole === "doctor" && (
               <li>
-                <Link className={activePath === "/appointments" ? "active" : ""} to="/appointments">
+                <Link
+                  className={activePath === "/appointments" ? "active" : ""}
+                  to="/appointments"
+                >
                   Minhas consultas
                 </Link>
               </li>
@@ -60,7 +61,11 @@ export default function ApplicationRoutes() {
           </ul>
         </nav>
         <div id="logout">
-          <Button variant="outlined" color="primary" onClick={() => handleUserLogout()}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => auth.signout()}
+          >
             Logout
           </Button>
         </div>
@@ -71,21 +76,18 @@ export default function ApplicationRoutes() {
             <LoginRoute />
           </Route>
           <Route exact path={["/patients", "/"]}>
-            <PatientsHome repository={{ patient, appointments, user }} />
+            <PatientsHome />
           </Route>
           <Route
             path={["/patients/:id", "/patients/new"]}
-            children={<PatientsForm repository={patient} />}
+            children={<PatientsForm />}
           />
           <Route exact path={"/users"}>
-            <UsersHome repository={{ user }} />
+            <UsersHome />
           </Route>
-          <Route
-            path={["/users/:id", "/users/new"]}
-            children={<UsersForm repository={{ user }} />}
-          />
+          <Route path={["/users/:id", "/users/new"]} children={<UsersForm />} />
           <Route exact path={"/appointments"}>
-            <AppointmentsHome repository={{ appointments, medicalRegistries }} />
+            <AppointmentsHome />
           </Route>
         </Switch>
       </div>

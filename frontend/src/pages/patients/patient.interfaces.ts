@@ -1,4 +1,3 @@
-import { IRepositories } from "domain/repository";
 import { AppointmentDTO } from "pages/appointments";
 
 /**
@@ -26,12 +25,12 @@ export interface PatientDTO {
 }
 
 export interface CreatePatientDTO
-  extends Partial<Omit<PatientDTO, "createdAt" | "updatedAt" | "appointments">> {}
+  extends Partial<
+    Omit<PatientDTO, "createdAt" | "updatedAt" | "appointments">
+  > {}
 export interface UpdatePatientDTO
-  extends Partial<Omit<PatientDTO, "createdAt" | "updatedAt" | "appointments">> {}
-
-export type PatientsComponentProps = {
-  repository: Pick<IRepositories, "patient" | "appointments" | "user">;
-};
+  extends Partial<
+    Omit<PatientDTO, "createdAt" | "updatedAt" | "appointments">
+  > {}
 
 export interface FilterPatientDTO extends Partial<PatientDTO> {}

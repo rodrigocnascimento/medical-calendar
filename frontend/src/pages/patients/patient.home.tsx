@@ -15,9 +15,9 @@ import { Create, PermContactCalendar, CalendarMonth, HighlightOff } from "@mui/i
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
 
-import { useAuth } from "context";
+import { useAuth, useRepository } from "context";
 import { UserDTO, UserRoles, mapperDoctorListDropDown } from "../users";
-import { PatientsComponentProps, PatientDTO } from "./index";
+import { PatientDTO } from "./index";
 import { AppointmentDTO } from "../appointments";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
@@ -33,12 +33,12 @@ import "./patients.css";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-export function PatientsHome({ repository }: PatientsComponentProps): JSX.Element {
+export function PatientsHome(): JSX.Element {
   const {
     appointments: appointmentRepository,
     patient: patientRepository,
     user: userRepository,
-  } = repository;
+  } = useRepository();
 
   const auth = useAuth();
   const [success, setSuccess] = useState<string>("");

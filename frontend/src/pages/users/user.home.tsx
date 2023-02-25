@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 
 import { Create, PermContactCalendar, HighlightOff } from "@mui/icons-material";
-import { UserDTO, UsersComponentProps } from "./index";
+import { UserDTO } from "./index";
 import ErrorMessage, { TErrorMessage } from "components/error";
 import { DeleteConfirmation, TDeleteConfirmation } from "components/delete-confirmation";
 
@@ -11,15 +11,15 @@ import SuccessMessage from "components/success";
 import { useAuth } from "context/auth/use-auth";
 
 import "./users.css";
+import { useRepository } from "context";
 
 /**
  * This page is the dashboard of the module.
  *
- * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-export function UsersHome({ repository }: UsersComponentProps): JSX.Element {
-  const { user: userRepository } = repository;
+export function UsersHome(): JSX.Element {
+  const { user: userRepository } = useRepository();
 
   const auth = useAuth();
   const [users, setUsers] = useState<UserDTO[]>([]);

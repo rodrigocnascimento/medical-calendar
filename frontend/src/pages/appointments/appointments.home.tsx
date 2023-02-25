@@ -15,11 +15,18 @@ import TextField from "@mui/material/TextField";
 import SuccessMessage from "components/success";
 import ErrorMessage, { TErrorMessage } from "components/error";
 
-import { AppointmentComponentProps, AppointmentDTO } from "./index";
-import { CreateMedicallRegistriesDTO, UpdateMedicallRegistriesDTO } from "pages/medical_registries";
-import { TDeleteConfirmation, DeleteConfirmation } from "components/delete-confirmation";
+import { AppointmentDTO } from "./index";
+import {
+  CreateMedicallRegistriesDTO,
+  UpdateMedicallRegistriesDTO,
+} from "pages/medical_registries";
+import {
+  TDeleteConfirmation,
+  DeleteConfirmation,
+} from "components/delete-confirmation";
 import { Button } from "@mui/material";
 import "./appointments.css";
+import { useRepository } from "context";
 
 /**
  * This page is the dashboard of the module.
@@ -27,20 +34,25 @@ import "./appointments.css";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-export function AppointmentsHome({ repository }: AppointmentComponentProps): JSX.Element {
-  const { appointments: appointmentRepository, medicalRegistries: medicalRegistriesRepository } =
-    repository;
+export function AppointmentsHome(): JSX.Element {
+  const {
+    appointments: appointmentRepository,
+    medicalRegistries: medicalRegistriesRepository,
+  } = useRepository();
 
   const [success, setSuccess] = useState<string>("");
   const [error, setError] = useState<TErrorMessage>();
   const [errorModal, setErrorModal] = useState<TErrorMessage>();
-  const [deleteConfirmation, setDeleteConfirmation] = useState<TDeleteConfirmation>();
+  const [deleteConfirmation, setDeleteConfirmation] =
+    useState<TDeleteConfirmation>();
 
   const [appointments, setAppointments] = useState<AppointmentDTO[]>([]);
 
   const [open, setOpen] = useState(false);
 
-  const [selectedAppointment, setSelectedAppointment] = useState<Partial<AppointmentDTO>>({
+  const [selectedAppointment, setSelectedAppointment] = useState<
+    Partial<AppointmentDTO>
+  >({
     id: "",
     patient: "",
   });
@@ -141,13 +153,17 @@ export function AppointmentsHome({ repository }: AppointmentComponentProps): JSX
             <Card variant="outlined" key={i++} style={{ margin: 10 }}>
               <CardContent>
                 <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  <span style={{ fontWeight: "bold" }}>Nome:</span> {appointment.patient.name}{" "}
-                  <br />
-                  <span style={{ fontWeight: "bold" }}>Gênero:</span> {appointment.patient.genre}{" "}
-                  <br />
-                  <span style={{ fontWeight: "bold" }}>Data de aniversário: </span>
+                  <span style={{ fontWeight: "bold" }}>Nome:</span>{" "}
+                  {appointment.patient.name} <br />
+                  <span style={{ fontWeight: "bold" }}>Gênero:</span>{" "}
+                  {appointment.patient.genre} <br />
+                  <span style={{ fontWeight: "bold" }}>
+                    Data de aniversário:{" "}
+                  </span>
                   {(appointment.patient.dob &&
-                    new Intl.DateTimeFormat("pt-BR").format(new Date(appointment.patient.dob))) ||
+                    new Intl.DateTimeFormat("pt-BR").format(
+                      new Date(appointment.patient.dob)
+                    )) ||
                     "LGPD COMPLIANCE"}
                   <br />
                   <span style={{ fontWeight: "bold" }}>Peso: </span>
@@ -171,23 +187,25 @@ export function AppointmentsHome({ repository }: AppointmentComponentProps): JSX
                   }}
                 >
                   {appointment.medicalRegistries &&
-                    appointment.medicalRegistries.map((registry: any, i: number) => (
-                      <li style={{ marginBottom: 40 }} key={i++}>
-                        Data:{" "}
-                        {registry.createdAt &&
-                          new Intl.DateTimeFormat("pt-BR", {
-                            year: "numeric",
-                            month: "numeric",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "numeric",
-                            second: "numeric",
-                            hour12: false,
-                          }).format(new Date(registry.createdAt))}
-                        <br />
-                        {registry.observation}
-                      </li>
-                    ))}
+                    appointment.medicalRegistries.map(
+                      (registry: any, i: number) => (
+                        <li style={{ marginBottom: 40 }} key={i++}>
+                          Data:{" "}
+                          {registry.createdAt &&
+                            new Intl.DateTimeFormat("pt-BR", {
+                              year: "numeric",
+                              month: "numeric",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                              second: "numeric",
+                              hour12: false,
+                            }).format(new Date(registry.createdAt))}
+                          <br />
+                          {registry.observation}
+                        </li>
+                      )
+                    )}
                 </ul>
               </CardContent>
               <CardActions>
@@ -254,7 +272,8 @@ export function AppointmentsHome({ repository }: AppointmentComponentProps): JSX
         >
           {errorModal && <ErrorMessage {...errorModal} />}
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Observações da consulta de {selectedAppointment && selectedAppointment.patient?.name}
+            Observações da consulta de{" "}
+            {selectedAppointment && selectedAppointment.patient?.name}
           </Typography>
           <div style={{ marginTop: 50 }}>
             <TextField

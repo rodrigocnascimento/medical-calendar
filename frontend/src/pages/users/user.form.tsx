@@ -4,16 +4,10 @@ import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import {
-  CreateUserDTO,
-  UpdateUserDTO,
-  UserDTO,
-  UserRoles,
-  UsersComponentProps,
-  userValidation,
-} from "./index";
+import { CreateUserDTO, UpdateUserDTO, UserDTO, UserRoles, userValidation } from "./index";
 import ErrorMessage, { TErrorMessage } from "components/error";
 import SuccessMessage from "components/success";
+import { useRepository } from "context";
 
 /**
  * The basic ideia of this page is to allow the creation and edidion of a form.
@@ -22,11 +16,10 @@ import SuccessMessage from "components/success";
  * as soons as possible the component allows it. If the value of that `"id"` is equal to `"new"` it will
  * assume that is a new entity that will be created.
  *
- * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Form Element
  */
-export function UsersForm({ repository }: UsersComponentProps): JSX.Element {
-  const { user: userRepository } = repository;
+export function UsersForm(): JSX.Element {
+  const { user: userRepository } = useRepository();
 
   let { id } = useParams<{ id: string }>();
   const history = useHistory();

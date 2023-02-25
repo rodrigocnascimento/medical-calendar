@@ -6,10 +6,10 @@ import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import ErrorMessage, { TErrorMessage } from "components/error";
 import { CreatePatientDTO, Genre, PatientDTO, UpdatePatientDTO, patientValidation } from "./index";
-import { IPatientRepository } from "./patient.repository";
 import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import SuccessMessage from "components/success";
+import { useRepository } from "context";
 
 /**
  * The basic ideia of this page is to allow the creation and edidion of a form.
@@ -21,11 +21,10 @@ import SuccessMessage from "components/success";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Form Element
  */
-export function PatientsForm({ repository }: any): JSX.Element {
+export function PatientsForm(): JSX.Element {
+  const { patient: patientRepository } = useRepository();
   const history = useHistory();
   let { id } = useParams<{ id: string }>();
-
-  const patientRepository: IPatientRepository = repository;
 
   const [formInput, setFormInput] = useState<CreatePatientDTO | UpdatePatientDTO>({
     id: "",

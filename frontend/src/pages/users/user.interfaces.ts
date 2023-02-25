@@ -1,5 +1,3 @@
-import { IRepositories } from "domain/repository";
-
 /**
  * List of user roles
  * @readonly
@@ -25,16 +23,14 @@ export interface UserDTO {
   updatedAt: Date;
 }
 
-export interface CreateUserDTO extends Partial<Omit<UserDTO, "createdAt" | "updatedAt">> {}
-export interface UpdateUserDTO extends Partial<Omit<UserDTO, "createdAt" | "updatedAt">> {}
+export interface CreateUserDTO
+  extends Partial<Omit<UserDTO, "createdAt" | "updatedAt">> {}
+export interface UpdateUserDTO
+  extends Partial<Omit<UserDTO, "createdAt" | "updatedAt">> {}
 
 export interface FilterUserDTO extends Partial<UserDTO> {}
 
 export type DoctorMUIDropDownListDTO = {
   id: string;
   label: string;
-};
-
-export type UsersComponentProps = {
-  repository: Pick<IRepositories, "user">;
 };

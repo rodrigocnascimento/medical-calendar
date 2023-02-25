@@ -52,7 +52,9 @@ export class MedicalRegistryRepository {
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
    * @memberof MedicalRegistriesRepository
    */
-  async create(registry: CreateMedicallRegistriesDTO): Promise<MedicallRegistriesDTO> {
+  async create(
+    registry: CreateMedicallRegistriesDTO
+  ): Promise<MedicallRegistriesDTO> {
     console.log("oi", registry);
     const response = await this.http.request({
       method: "POST",
