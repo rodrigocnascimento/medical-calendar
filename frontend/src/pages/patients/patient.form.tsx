@@ -5,39 +5,55 @@ import AdapterDateFns from "@date-io/date-fns";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import ErrorMessage, { TErrorMessage } from "../../components/error";
-import { PatientDTO } from "./patient.interfaces";
+import { CreatePatientDTO, Genre, PatientDTO, UpdatePatientDTO } from "./patient.interfaces";
 import { IPatientRepository } from "./patient.repository";
+import { ValidationError } from "yup";
+import { mapperYupErrorsToErrorMessages } from "../../domain/yup.mapper-errors";
+import { patientValidation } from "./patient.validation";
+import SuccessMessage from "../../components/success";
 
 /**
- * The patient creation component.
- * The "id" param could assume the patient id on database or could be "new"
- * that indicates that the patient is being created on the other hand
- * if it has a "id" or anything different from "new", it will assume that
- * is an patient edition.
+ * The basic ideia of this page is to allow the creation and edidion of a form.
  *
- * @param repository The repositories used on the component
- * @returns {JSX.Element} PatientCreate Element
+ * The `"/path/:id"` param is a param that matches on the route and is treated as a value that needs to be fetched
+ * as soons as possible the component allows it. If the value of that `"id"` is equal to `"new"` it will
+ * assume that is a new entity that will be created.
+ *
+ * @param {UsersComponentProps} { repository } IRepository injected repository
+ * @returns {JSX.Element} Form Element
  */
-export default function PatientsCreate({ repository }: any): JSX.Element {
+export default function PatientsForm({ repository }: any): JSX.Element {
   const history = useHistory();
   let { id } = useParams<{ id: string }>();
 
   const patientRepository: IPatientRepository = repository;
-  const [inputs, setInputs] = useState<any>();
+
+  const [formInput, setFormInput] = useState<CreatePatientDTO | UpdatePatientDTO>({
+    id: "",
+    name: "",
+    email: "",
+    dob: new Date(),
+    phone: "",
+    height: 0,
+    weight: 0,
+    genre: Genre.F,
+  });
+
   const [startDate, setStartDate] = useState(new Date());
   const [error, setError] = useState<TErrorMessage>();
+  const [success, setSuccess] = useState<string>("");
 
   const handleChange = (event: any) => {
     const name = event.target.name;
     let value = event.target.value;
 
-    setInputs((values: any) => ({ ...values, [name]: value }));
+    setFormInput((values: any) => ({ ...values, [name]: value }));
   };
 
   const loadPatient = useCallback(async () => {
     patientRepository
       .getById(id)
-      .then((patient: PatientDTO) => setInputs(patient))
+      .then((patient: PatientDTO) => setFormInput(patient))
       .catch((error: Error) =>
         setError({
           title: error.message,
@@ -47,20 +63,28 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
   }, [id, patientRepository]);
 
   const handleSubmit = () => {
-    const userManaging =
-      id !== "new"
-        ? patientRepository.editPatient(inputs)
-        : patientRepository.createPatient(inputs);
+    const formManager = id === "new" ? patientRepository.create : patientRepository.edit;
 
-    // format the DOB before send
-    inputs.dob = new Date(startDate);
-
-    userManaging
-      .then(() => history.push("/patients"))
-      .catch((error: Error) =>
+    patientValidation
+      .validate(formInput, { abortEarly: false })
+      .then(() =>
+        formManager
+          .call(patientRepository, formInput)
+          .then(() => {
+            setSuccess("Paciente criado com sucesso!");
+            setTimeout(() => history.push("/patients"), 25e2);
+          })
+          .catch((error: Error) =>
+            setError({
+              title: error.message,
+              errors: error.cause,
+            })
+          )
+      )
+      .catch((validationErrors: ValidationError) =>
         setError({
-          title: error.message,
-          errors: error.cause,
+          title: "Erro ao criar o paciente.",
+          errors: mapperYupErrorsToErrorMessages(validationErrors),
         })
       );
   };
@@ -84,12 +108,13 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
     >
       <FormControl style={{ backgroundColor: "white" }}>
         <h3 className="form-title">👩‍⚕️ Ficha do paciente 👨‍⚕️</h3>
-        {error && <ErrorMessage title={error.title} errors={error.errors} />}
+        {error && <ErrorMessage {...error} />}
+        {success && <SuccessMessage message={success} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
             id="name"
             label="Nome do paciente"
-            value={inputs.name || ""}
+            value={formInput.name || ""}
             type="text"
             name="name"
             style={{ marginRight: 0 }}
@@ -98,7 +123,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
           <TextField
             id="email"
             label="Email do paciente"
-            value={inputs.email || ""}
+            value={formInput.email || ""}
             type="text"
             name="email"
             style={{ marginLeft: 20, marginRight: 0 }}
@@ -107,7 +132,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
           <TextField
             id="phone"
             label="Telefone do paciente."
-            value={inputs.phone || ""}
+            value={formInput.phone || ""}
             type="text"
             name="phone"
             style={{ marginLeft: 20, marginRight: 10 }}
@@ -133,7 +158,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
             id="height"
             label="Altura do paciente."
             style={{ marginLeft: 20, marginRight: 0 }}
-            value={inputs.height || ""}
+            value={formInput.height || ""}
             type="text"
             name="height"
             onChange={handleChange}
@@ -142,7 +167,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
             id="weight"
             label="Peso do paciente."
             style={{ marginLeft: 20, marginRight: 10 }}
-            value={inputs.weight || ""}
+            value={formInput.weight || ""}
             type="text"
             name="weight"
             onChange={handleChange}
@@ -153,7 +178,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
             select // tell TextField to render select
             id="genre"
             name="genre"
-            value={inputs.genre || ""}
+            value={formInput.genre || ""}
             label="Gênero"
             onChange={handleChange}
             style={{ width: 250 }}
@@ -162,7 +187,7 @@ export default function PatientsCreate({ repository }: any): JSX.Element {
             <MenuItem value={"M"}>Masculino</MenuItem>
           </TextField>
         </Grid>
-        {id !== "new" && <input value={inputs.id || ""} type="hidden" name="id" />}
+        {id !== "new" && <input value={formInput.id || ""} type="hidden" name="id" />}
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
           <Button
             type="submit"

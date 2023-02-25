@@ -8,5 +8,8 @@ export interface AppointmentDTO {
 }
 
 export interface CreateAppointmentDTO
-  extends Omit<AppointmentDTO, "id" | "createdAt" | "updatedAt"> {}
-export interface UpdateAppointmentDTO extends Omit<AppointmentDTO, "createdAt" | "updatedAt"> {}
+  extends Partial<Omit<AppointmentDTO, "createdAt" | "updatedAt">> {}
+export interface UpdateAppointmentDTO
+  extends Partial<Omit<AppointmentDTO, "createdAt" | "updatedAt">> {}
+
+export interface FilterAppointmentDTO extends Partial<AppointmentDTO> {}

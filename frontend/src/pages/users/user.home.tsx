@@ -40,12 +40,13 @@ export default function UsersHome({ repository }: UsersComponentProps): JSX.Elem
         setSuccess("Usuário removido com sucesso.");
         await loadUsers();
       })
-      .catch((error: Error) =>
+      .catch((error: Error) => {
+        setSuccess("");
         setError({
           title: error.message,
           errors: error.cause,
-        })
-      );
+        });
+      });
   };
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export default function UsersHome({ repository }: UsersComponentProps): JSX.Elem
         <div id="new-patient" style={{ margin: 10 }}>
           <Link to={`/users/new`}>
             <Button variant="contained" color="secondary">
-              <PermContactCalendar style={{ verticalAlign: "bottom" }} />
+              <PermContactCalendar />
               Novo
             </Button>
           </Link>
@@ -92,7 +93,7 @@ export default function UsersHome({ repository }: UsersComponentProps): JSX.Elem
               <CardActions>
                 <Link to={`/users/${user.id}`}>
                   <Button style={{ margin: 10 }} variant="contained">
-                    <Create style={{ verticalAlign: "bottom" }} />
+                    <Create />
                     Editar
                   </Button>
                 </Link>
@@ -113,7 +114,7 @@ export default function UsersHome({ repository }: UsersComponentProps): JSX.Elem
                     color="error"
                     variant="contained"
                   >
-                    <HighlightOff style={{ verticalAlign: "bottom" }} />
+                    <HighlightOff />
                     Excluir Usuário
                   </Button>
                 )}

@@ -1,12 +1,17 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import { CreatePatientDTO, PatientDTO, UpdatePatientDTO } from "./patient.interfaces";
+import {
+  CreatePatientDTO,
+  FilterPatientDTO,
+  PatientDTO,
+  UpdatePatientDTO,
+} from "./patient.interfaces";
 
 export interface IPatientRepository {
-  createPatient(patient: CreatePatientDTO): Promise<PatientDTO>;
-  editPatient(patient: UpdatePatientDTO): Promise<PatientDTO>;
-  removePatient(id: string): Promise<PatientDTO>;
-  getAll(): Promise<PatientDTO[]>;
+  create(patient: CreatePatientDTO): Promise<PatientDTO>;
+  edit(patient: UpdatePatientDTO): Promise<PatientDTO>;
+  remove(id: string): Promise<PatientDTO>;
+  getAll(queryFilter?: FilterPatientDTO): Promise<PatientDTO[]>;
   getById(id: string): Promise<PatientDTO>;
 }
 
@@ -46,7 +51,8 @@ export class PatientRepository implements IPatientRepository {
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
    * @memberof PatientRepository
    */
-  async createPatient(patient: CreatePatientDTO): Promise<PatientDTO> {
+  async create(patient: CreatePatientDTO): Promise<PatientDTO> {
+    delete patient.id;
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,
@@ -56,8 +62,9 @@ export class PatientRepository implements IPatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
+      console.error(jsonResponse);
       throw new Error("Erro ao criar o paciente!", {
-        cause: jsonResponse.message[0],
+        cause: jsonResponse.message,
       });
     }
 
@@ -69,7 +76,7 @@ export class PatientRepository implements IPatientRepository {
    * @param patient patient UpdatePatientDTO
    * @returns
    */
-  async editPatient(patient: UpdatePatientDTO): Promise<PatientDTO> {
+  async edit(patient: UpdatePatientDTO): Promise<PatientDTO> {
     const response = await this.http.request({
       method: "PATCH",
       url: this.baseUrl,
@@ -79,8 +86,9 @@ export class PatientRepository implements IPatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
+      console.error(jsonResponse);
       throw new Error("Erro ao editar o paciente!", {
-        cause: jsonResponse.message[0],
+        cause: jsonResponse.message,
       });
     }
 
@@ -92,7 +100,7 @@ export class PatientRepository implements IPatientRepository {
    * @param id patient id
    * @returns
    */
-  async removePatient(id: string): Promise<PatientDTO> {
+  async remove(id: string): Promise<PatientDTO> {
     const response = await this.http.request({
       method: "DELETE",
       url: this.baseUrl + `/${id}`,
@@ -101,8 +109,9 @@ export class PatientRepository implements IPatientRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error("Erro ao editar o paciente!", {
-        cause: jsonResponse.message[0],
+      console.error(jsonResponse);
+      throw new Error("Erro ao remover o paciente!", {
+        cause: jsonResponse.message,
       });
     }
 
@@ -113,12 +122,29 @@ export class PatientRepository implements IPatientRepository {
    * Returns the list of all patients
    * @returns All patientes
    */
-  async getAll(): Promise<PatientDTO[]> {
+  async getAll(queryFilter: FilterPatientDTO): Promise<PatientDTO[]> {
+    const queryUrl = new URL(this.baseUrl);
+
+    if (queryFilter) {
+      Object.entries(queryFilter).forEach(([key, value]) => {
+        queryUrl.searchParams.set(key, value as string);
+      });
+    }
+
     const response = await this.http.request({
-      url: this.baseUrl,
+      url: queryUrl.toString(),
     });
 
-    return await response.json();
+    const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      console.error(jsonResponse);
+      throw new Error("Erro ao buscar o paciente!", {
+        cause: jsonResponse.message,
+      });
+    }
+
+    return jsonResponse;
   }
 
   /**
@@ -131,6 +157,15 @@ export class PatientRepository implements IPatientRepository {
       url: this.baseUrl + `/${id}`,
     });
 
-    return await response.json();
+    const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      console.error(jsonResponse);
+      throw new Error("Erro ao buscar o paciente!", {
+        cause: jsonResponse.message,
+      });
+    }
+
+    return jsonResponse;
   }
 }

@@ -1,14 +1,16 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import { AppointmentDTO, CreateAppointmentDTO, UpdateAppointmentDTO } from "./appointment.dto";
+import {
+  AppointmentDTO,
+  CreateAppointmentDTO,
+  FilterAppointmentDTO,
+  UpdateAppointmentDTO,
+} from "./appointment.dto";
 
 export interface IAppointmentRepository {
-  createAppointment(appointment: CreateAppointmentDTO): Promise<AppointmentDTO>;
-  editAppointment(
-    appointmentId: string,
-    appointment: UpdateAppointmentDTO
-  ): Promise<AppointmentDTO>;
-  removeAppointment(id: string): Promise<AppointmentDTO>;
+  create(appointment: CreateAppointmentDTO): Promise<AppointmentDTO>;
+  edit(appointment: UpdateAppointmentDTO): Promise<AppointmentDTO>;
+  remove(id: string): Promise<AppointmentDTO>;
   getAll(): Promise<AppointmentDTO[]>;
 }
 
@@ -48,7 +50,7 @@ export class AppointmentRepository implements IAppointmentRepository {
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
    * @memberof AppointmentRepository
    */
-  async createAppointment(appointment: CreateAppointmentDTO): Promise<AppointmentDTO> {
+  async create(appointment: CreateAppointmentDTO): Promise<AppointmentDTO> {
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,
@@ -58,8 +60,10 @@ export class AppointmentRepository implements IAppointmentRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      console.log("AppointmentRepository error", jsonResponse);
-      throw new Error(JSON.stringify(jsonResponse));
+      console.error(jsonResponse);
+      throw new Error("Erro ao criar o agendamento!", {
+        cause: jsonResponse.message,
+      });
     }
 
     return jsonResponse;
@@ -71,20 +75,20 @@ export class AppointmentRepository implements IAppointmentRepository {
    * @param appointment appoitnment data
    * @returns
    */
-  async editAppointment(
-    appointmentId: string,
-    appointment: UpdateAppointmentDTO
-  ): Promise<AppointmentDTO> {
+  async edit(appointment: UpdateAppointmentDTO): Promise<AppointmentDTO> {
     const response = await this.http.request({
       method: "PATCH",
-      url: this.baseUrl + `/${appointmentId}`,
+      url: this.baseUrl + `/${appointment.id}`,
       body: appointment,
     });
 
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      console.error(jsonResponse);
+      throw new Error("Erro ao editar o usuário!", {
+        cause: jsonResponse.message,
+      });
     }
 
     return jsonResponse;
@@ -95,7 +99,7 @@ export class AppointmentRepository implements IAppointmentRepository {
    * @param id appoitnment id
    * @returns
    */
-  async removeAppointment(id: string): Promise<AppointmentDTO> {
+  async remove(id: string): Promise<AppointmentDTO> {
     const response = await this.http.request({
       method: "DELETE",
       url: this.baseUrl + `/${id}`,
@@ -104,22 +108,44 @@ export class AppointmentRepository implements IAppointmentRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      console.error(jsonResponse);
+      throw new Error("Erro ao remover o agendamento!", {
+        cause: jsonResponse.message,
+      });
     }
 
     return jsonResponse;
   }
 
   /**
-   * Returns the list of all appoitnments
+   * Returns the list of all appointments but considering only
+   * doctors. So, when this query runs it will specifically fetch the
+   * doctors, based on his logged in access_token, the JWT token
    * @returns All appoitnments
    */
-  async getAll(): Promise<AppointmentDTO[]> {
+  async getAll(queryFilter?: FilterAppointmentDTO): Promise<AppointmentDTO[]> {
+    const queryUrl = new URL(this.baseUrl + "/by-doctor");
+
+    if (queryFilter) {
+      Object.entries(queryFilter).forEach(([key, value]) => {
+        queryUrl.searchParams.set(key, value as string);
+      });
+    }
+
     const response = await this.http.request({
-      url: this.baseUrl + "/by-doctor",
+      url: queryUrl.toString(),
     });
 
-    return await response.json();
+    const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      console.error(jsonResponse);
+      throw new Error("Erro ao buscar o usuário!", {
+        cause: jsonResponse.message,
+      });
+    }
+
+    return jsonResponse;
   }
 
   /**
@@ -132,6 +158,15 @@ export class AppointmentRepository implements IAppointmentRepository {
       url: this.baseUrl + `/${id}`,
     });
 
-    return await response.json();
+    const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      console.error(jsonResponse);
+      throw new Error("Erro ao buscar o agendamento!", {
+        cause: jsonResponse.message,
+      });
+    }
+
+    return jsonResponse;
   }
 }

@@ -8,9 +8,8 @@ export type TErrorMessage = {
 };
 
 export default function ErrorMessage({ title, errors }: TErrorMessage) {
-  console.log(errors, errors[0], Array.isArray(errors), Array.isArray(errors[0]));
   return (
-    <Alert severity="error">
+    <Alert severity="error" style={{ marginBottom: 20 }}>
       <AlertTitle>
         <strong>{title}</strong>
       </AlertTitle>
@@ -26,8 +25,6 @@ export default function ErrorMessage({ title, errors }: TErrorMessage) {
           </div>
         );
       })}
-
-      {/* {!Array.isArray(errors) && <div key={0}>{errors}</div>} */}
     </Alert>
   );
 }

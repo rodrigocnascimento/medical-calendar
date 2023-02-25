@@ -4,7 +4,7 @@ import Dashboard from "../dashboard";
 import repository, { IRepositories } from "../../domain/repository";
 import { useAuth } from "../../context/auth/use-auth";
 import LoginRoute from "../login";
-import PatientsCreate from "../patients/patient.create";
+import PatientsForm from "../patients/patient.form";
 import PatientsHome from "../patients/patient.home";
 import UsersHome from "../users/user.home";
 import UsersForm from "../users/user.form";
@@ -67,7 +67,7 @@ export default function ApplicationRoutes() {
           </Route>
           <Route
             path={["/patients/:id", "/patients/new"]}
-            children={<PatientsCreate repository={patient} />}
+            children={<PatientsForm repository={patient} />}
           />
           <Route exact path={"/users"}>
             <UsersHome repository={{ user }} />

@@ -72,7 +72,7 @@ export default function UsersForm({ repository }: UsersComponentProps): JSX.Elem
           .call(userRepository, formInput)
           .then(() => {
             setSuccess("Usuário criado com sucesso!");
-            setTimeout(() => history.push("/users"), 35e2);
+            setTimeout(() => history.push("/users"), 25e2);
           })
           .catch((error: Error) =>
             setError({
