@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext } from "react";
-import repository, { IRepositories } from "../../domain/repository";
+import repository, { IRepositories } from "domain/repository";
 
 const RepositoryContext = createContext<IRepositories>(repository());
 

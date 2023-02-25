@@ -1,5 +1,5 @@
-import { IHttp } from "../../infrastructure/adapter/http";
-import { ITokenStorage } from "../../infrastructure/adapter/storage/token";
+import { IHttp } from "infrastructure/adapter/http";
+import { ITokenStorage } from "infrastructure/adapter/storage/token";
 import {
   MedicallRegistriesDTO,
   CreateMedicallRegistriesDTO,

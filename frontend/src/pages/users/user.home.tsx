@@ -4,11 +4,11 @@ import { Button, Card, CardActions, CardContent, Typography } from "@mui/materia
 
 import { Create, PermContactCalendar, HighlightOff } from "@mui/icons-material";
 import { UserDTO, UsersComponentProps } from "./index";
-import ErrorMessage, { TErrorMessage } from "../../components/error";
-import { DeleteConfirmation, TDeleteConfirmation } from "../../components/delete-confirmation";
+import ErrorMessage, { TErrorMessage } from "components/error";
+import { DeleteConfirmation, TDeleteConfirmation } from "components/delete-confirmation";
 
-import SuccessMessage from "../../components/success";
-import { useAuth } from "../../context/auth/use-auth";
+import SuccessMessage from "components/success";
+import { useAuth } from "context/auth/use-auth";
 
 import "./users.css";
 

@@ -3,11 +3,17 @@ import { useHistory, useParams } from "react-router-dom";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { ValidationError } from "yup";
-import { mapperYupErrorsToErrorMessages } from "../../domain/yup.mapper-errors";
-import { CreateUserDTO, UpdateUserDTO, UserDTO, UserRoles, UsersComponentProps } from "./index";
-import ErrorMessage, { TErrorMessage } from "../../components/error";
-import { userValidation } from "./user.validation";
-import SuccessMessage from "../../components/success";
+import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
+import {
+  CreateUserDTO,
+  UpdateUserDTO,
+  UserDTO,
+  UserRoles,
+  UsersComponentProps,
+  userValidation,
+} from "./index";
+import ErrorMessage, { TErrorMessage } from "components/error";
+import SuccessMessage from "components/success";
 
 /**
  * The basic ideia of this page is to allow the creation and edidion of a form.

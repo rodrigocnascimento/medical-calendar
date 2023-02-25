@@ -4,13 +4,12 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
-import ErrorMessage, { TErrorMessage } from "../../components/error";
-import { CreatePatientDTO, Genre, PatientDTO, UpdatePatientDTO } from "./patient.interfaces";
+import ErrorMessage, { TErrorMessage } from "components/error";
+import { CreatePatientDTO, Genre, PatientDTO, UpdatePatientDTO, patientValidation } from "./index";
 import { IPatientRepository } from "./patient.repository";
 import { ValidationError } from "yup";
-import { mapperYupErrorsToErrorMessages } from "../../domain/yup.mapper-errors";
-import { patientValidation } from "./patient.validation";
-import SuccessMessage from "../../components/success";
+import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
+import SuccessMessage from "components/success";
 
 /**
  * The basic ideia of this page is to allow the creation and edidion of a form.

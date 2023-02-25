@@ -1,5 +1,5 @@
-import { IRepositories } from "../../domain/repository";
-import { MedicallRegistriesDTO } from "../medical_registries";
+import { IRepositories } from "domain/repository";
+import { MedicallRegistriesDTO } from "pages/medical_registries";
 
 export interface AppointmentDTO {
   id: string;

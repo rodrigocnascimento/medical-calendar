@@ -2,11 +2,11 @@ import React from "react";
 
 import ApplicationRoutes from "./app";
 import LoginRoute from "./login";
-import { useAuth } from "../context/auth/use-auth";
+import { useAuth } from "context/auth/use-auth";
 
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import { ProvideRepository } from "../context";
+import { ProvideRepository } from "context";
 
 const history = createBrowserHistory();
 

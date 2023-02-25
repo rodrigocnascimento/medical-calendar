@@ -12,12 +12,12 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 
-import SuccessMessage from "../../components/success";
-import ErrorMessage, { TErrorMessage } from "../../components/error";
+import SuccessMessage from "components/success";
+import ErrorMessage, { TErrorMessage } from "components/error";
 
-import { AppointmentComponentProps, AppointmentDTO } from "./appointment.interfaces";
-import { CreateMedicallRegistriesDTO, UpdateMedicallRegistriesDTO } from "../medical_registries";
-import { TDeleteConfirmation, DeleteConfirmation } from "../../components/delete-confirmation";
+import { AppointmentComponentProps, AppointmentDTO } from "./index";
+import { CreateMedicallRegistriesDTO, UpdateMedicallRegistriesDTO } from "pages/medical_registries";
+import { TDeleteConfirmation, DeleteConfirmation } from "components/delete-confirmation";
 import { Button } from "@mui/material";
 import "./appointments.css";
 

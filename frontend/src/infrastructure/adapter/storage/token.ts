@@ -1,4 +1,4 @@
-import { JWTUser } from "../../../context/auth/use-auth";
+import { JWTUser } from "context/auth/use-auth";
 import Storage from "./index";
 
 export interface ITokenStorage {

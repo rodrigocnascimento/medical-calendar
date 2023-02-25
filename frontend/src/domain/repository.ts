@@ -1,9 +1,9 @@
-import { serverEndpoint } from "../constants";
-import BaseInfrastructure from "../infrastructure";
-import { IPatientRepository, PatientRepository } from "../pages/patients";
-import { IUserRepository, UserRepository } from "../pages/users";
-import { AppointmentRepository, IAppointmentRepository } from "../pages/appointments";
-import { IMedicalRegistryRepository, MedicalRegistryRepository } from "../pages/medical_registries";
+import { serverEndpoint } from "env-constants";
+import BaseInfrastructure from "infrastructure";
+import { IPatientRepository, PatientRepository } from "pages/patients";
+import { IUserRepository, UserRepository } from "pages/users";
+import { AppointmentRepository, IAppointmentRepository } from "pages/appointments";
+import { IMedicalRegistryRepository, MedicalRegistryRepository } from "pages/medical_registries";
 
 export interface IRepositories {
   patient: IPatientRepository;

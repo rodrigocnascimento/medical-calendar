@@ -1,5 +1,5 @@
 import { object, string, mixed, number } from "yup";
-import { Genre } from "./patient.interfaces";
+import { Genre } from "./index";
 
 const patientValidation = object().shape({
   name: string().required("Nome é necessário."),

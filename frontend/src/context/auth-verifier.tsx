@@ -1,6 +1,6 @@
 import { useLocation, withRouter } from "react-router-dom";
 import React, { useEffect } from "react";
-import { useAuth } from "../context/auth/use-auth";
+import { useAuth } from "context/auth/use-auth";
 
 function AuthVerify() {
   const auth = useAuth();

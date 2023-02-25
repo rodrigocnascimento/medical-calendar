@@ -1,4 +1,4 @@
-import ListMapper from "../../domain/mapper";
+import ListMapper from "domain/mapper";
 import { UserDTO, DoctorMUIDropDownListDTO } from "./index";
 
 /**

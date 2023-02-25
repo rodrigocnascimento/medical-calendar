@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import logo from "../../assets/logo.png";
+import logo from "assets/logo.png";
 
 import { useHistory, useLocation } from "react-router-dom";
-import { useAuth } from "../../context";
+import { useAuth } from "context";
 import { TextField, Button } from "@mui/material";
 
-import ErrorMessage, { TErrorMessage } from "../../components/error";
+import ErrorMessage, { TErrorMessage } from "components/error";
 
 import "./login.css";
 export default function LoginRoute(): JSX.Element {

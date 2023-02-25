@@ -1,11 +1,11 @@
-import { IHttp } from "../../infrastructure/adapter/http";
-import { ITokenStorage } from "../../infrastructure/adapter/storage/token";
+import { IHttp } from "infrastructure/adapter/http";
+import { ITokenStorage } from "infrastructure/adapter/storage/token";
 import {
   AppointmentDTO,
   CreateAppointmentDTO,
   FilterAppointmentDTO,
   UpdateAppointmentDTO,
-} from "./appointment.interfaces";
+} from "./index";
 
 export interface IAppointmentRepository {
   create(appointment: CreateAppointmentDTO): Promise<AppointmentDTO>;

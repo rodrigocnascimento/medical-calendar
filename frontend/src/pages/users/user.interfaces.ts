@@ -1,4 +1,4 @@
-import { IRepositories } from "../../domain/repository";
+import { IRepositories } from "domain/repository";
 
 /**
  * List of user roles

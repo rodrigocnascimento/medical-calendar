@@ -15,15 +15,15 @@ import { Create, PermContactCalendar, CalendarMonth, HighlightOff } from "@mui/i
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
 
-import { useAuth } from "../../context";
+import { useAuth } from "context";
 import { UserDTO, UserRoles, mapperDoctorListDropDown } from "../users";
 import { PatientsComponentProps, PatientDTO } from "./index";
 import { AppointmentDTO } from "../appointments";
 
-import ErrorMessage, { TErrorMessage } from "../../components/error";
-import SuccessMessage from "../../components/success";
+import ErrorMessage, { TErrorMessage } from "components/error";
+import SuccessMessage from "components/success";
 
-import { DeleteConfirmation, TDeleteConfirmation } from "../../components/delete-confirmation";
+import { DeleteConfirmation, TDeleteConfirmation } from "components/delete-confirmation";
 
 import "./patients.css";
 

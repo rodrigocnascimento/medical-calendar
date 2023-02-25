@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, useHistory, useLocation } from "react-router-dom";
-import { useAuth, useRepository } from "../../context";
-import LoginRoute from "../login";
-import { PatientsForm, PatientsHome } from "../patients";
-import { UsersHome, UsersForm } from "../users";
-import AuthVerify from "../auth-verifier";
+import { useAuth, useRepository } from "context";
+import LoginRoute from "pages/login";
+import { PatientsForm, PatientsHome } from "pages/patients";
+import { UsersHome, UsersForm } from "pages/users";
+import AuthVerify from "context/auth-verifier";
 import { Button } from "@mui/material";
-import { AppointmentsHome } from "../appointments";
+import { AppointmentsHome } from "pages/appointments";
 import "./index.css";
-import "../../root.css";
+import "root.css";
 
 export default function ApplicationRoutes() {
   const { patient, appointments, user, medicalRegistries } = useRepository();

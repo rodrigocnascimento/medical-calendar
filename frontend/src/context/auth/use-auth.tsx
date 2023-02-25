@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createContext, ReactNode } from "react";
-import { serverEndpoint } from "../../constants";
-import BaseInfrastructure, { IInfrastructures } from "../../infrastructure";
+import { serverEndpoint } from "env-constants";
+import BaseInfrastructure, { IInfrastructures } from "infrastructure";
 
 type Auth = any | null;
 
