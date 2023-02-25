@@ -5,7 +5,7 @@ import {
   CreateAppointmentDTO,
   FilterAppointmentDTO,
   UpdateAppointmentDTO,
-} from "./appointment.dto";
+} from "./appointment.interfaces";
 
 export interface IAppointmentRepository {
   create(appointment: CreateAppointmentDTO): Promise<AppointmentDTO>;

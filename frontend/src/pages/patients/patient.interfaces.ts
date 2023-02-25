@@ -1,5 +1,5 @@
 import { IRepositories } from "../../domain/repository";
-import { AppointmentDTO } from "../appointments/appointment.dto";
+import { AppointmentDTO } from "../appointments/appointment.interfaces";
 
 /**
  * List of human genres

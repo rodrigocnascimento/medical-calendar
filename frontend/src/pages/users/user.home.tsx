@@ -54,7 +54,7 @@ export default function UsersHome({ repository }: UsersComponentProps): JSX.Elem
   }, [loadUsers]);
 
   return (
-    <div className="container-home">
+    <div className="container-user">
       <div className="header" style={{ width: "100%" }}>
         <h1 style={{ marginLeft: 10 }}>Usuários</h1>
         <div id="new-patient" style={{ margin: 10 }}>

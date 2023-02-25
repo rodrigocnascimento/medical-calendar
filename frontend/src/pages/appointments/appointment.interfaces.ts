@@ -1,3 +1,6 @@
+import { IRepositories } from "../../domain/repository";
+import { MedicallRegistriesDTO } from "../medical_registries/medical_registries.dto";
+
 export interface AppointmentDTO {
   id: string;
   date: Date;
@@ -5,11 +8,17 @@ export interface AppointmentDTO {
   updatedAt: Date;
   patient: any;
   doctor: any;
+  medicalRegistries: MedicallRegistriesDTO[];
 }
 
 export interface CreateAppointmentDTO
   extends Partial<Omit<AppointmentDTO, "createdAt" | "updatedAt">> {}
+
 export interface UpdateAppointmentDTO
   extends Partial<Omit<AppointmentDTO, "createdAt" | "updatedAt">> {}
 
 export interface FilterAppointmentDTO extends Partial<AppointmentDTO> {}
+
+export type AppointmentComponentProps = {
+  repository: Pick<IRepositories, "medicalRegistries" | "appointments">;
+};

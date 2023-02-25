@@ -7,12 +7,12 @@ import {
 } from "./medical_registries.dto";
 
 export interface IMedicalRegistryRepository {
-  createMedicalRegistry(registry: CreateMedicallRegistriesDTO): Promise<MedicallRegistriesDTO>;
-  editMedicalRegistry(
+  create(registry: CreateMedicallRegistriesDTO): Promise<MedicallRegistriesDTO>;
+  edit(
     medicalRegistryId: string,
     medicalRegistry: UpdateMedicallRegistriesDTO
   ): Promise<MedicallRegistriesDTO>;
-  removeMedicalRegistry(id: string): Promise<MedicallRegistriesDTO>;
+  remove(id: string): Promise<MedicallRegistriesDTO>;
   getById(id: string): Promise<MedicallRegistriesDTO>;
 }
 
@@ -52,9 +52,7 @@ export class MedicalRegistryRepository {
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
    * @memberof MedicalRegistriesRepository
    */
-  async createMedicalRegistry(
-    registry: CreateMedicallRegistriesDTO
-  ): Promise<MedicallRegistriesDTO> {
+  async create(registry: CreateMedicallRegistriesDTO): Promise<MedicallRegistriesDTO> {
     console.log("oi", registry);
     const response = await this.http.request({
       method: "POST",
@@ -77,7 +75,7 @@ export class MedicalRegistryRepository {
    * @param appointment appoitnment data
    * @returns
    */
-  async editMedicalRegistry(
+  async edit(
     medicalRegistryId: string,
     medicalRegistry: UpdateMedicallRegistriesDTO
   ): Promise<MedicallRegistriesDTO> {
@@ -101,7 +99,7 @@ export class MedicalRegistryRepository {
    * @param id appoitnment id
    * @returns
    */
-  async removeMedicalRegistry(id: string): Promise<MedicallRegistriesDTO> {
+  async remove(id: string): Promise<MedicallRegistriesDTO> {
     const response = await this.http.request({
       method: "DELETE",
       url: this.baseUrl + `/${id}`,

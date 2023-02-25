@@ -54,7 +54,7 @@ export default function ApplicationRoutes() {
           </Button>
         </div>
       </div>
-      <div id="detail">
+      <div id="detail" style={{ overflow: "scroll" }}>
         <Switch>
           <Route exact path="/">
             <Dashboard />
@@ -77,7 +77,7 @@ export default function ApplicationRoutes() {
             children={<UsersForm repository={{ user }} />}
           />
           <Route exact path={"/appointments"}>
-            <AppointmentsHome repository={[appointments, medicalRegistries]} />
+            <AppointmentsHome repository={{ appointments, medicalRegistries }} />
           </Route>
         </Switch>
       </div>

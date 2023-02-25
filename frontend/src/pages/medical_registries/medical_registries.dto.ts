@@ -1,10 +1,13 @@
 export interface MedicallRegistriesDTO {
   id: string;
   date: Date;
+  observation: any;
+  medicalAppointment: any;
   createdAt: Date;
   updatedAt: Date;
-  observation: any;
 }
 
-export interface CreateMedicallRegistriesDTO extends Omit<MedicallRegistriesDTO, "id"> {}
-export interface UpdateMedicallRegistriesDTO extends MedicallRegistriesDTO {}
+export interface CreateMedicallRegistriesDTO
+  extends Partial<Omit<MedicallRegistriesDTO, "createdAt" | "updatedAt">> {}
+export interface UpdateMedicallRegistriesDTO
+  extends Partial<Omit<MedicallRegistriesDTO, "createdAt" | "updatedAt">> {}

@@ -5,26 +5,55 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-import { Create, HighlightOff } from "@mui/icons-material";
+import { Create, HighlightOff, PermContactCalendar } from "@mui/icons-material";
 import MedicationIcon from "@mui/icons-material/Medication";
 
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 
-import "./appointments.css";
 import SuccessMessage from "../../components/success";
-import ErrorMessage from "../../components/error";
+import ErrorMessage, { TErrorMessage } from "../../components/error";
 
-export default function AppointmentsHome({ repository }: any) {
-  const [appointmentRepository, medicalRegistriesRepository] = repository;
+import { AppointmentComponentProps, AppointmentDTO } from "./appointment.interfaces";
+import {
+  CreateMedicallRegistriesDTO,
+  UpdateMedicallRegistriesDTO,
+} from "../medical_registries/medical_registries.dto";
+import { TDeleteConfirmation, DeleteConfirmation } from "../../components/delete-confirmation";
+import { Button } from "@mui/material";
+import "./appointments.css";
+
+/**
+ * This page is the dashboard of the module.
+ *
+ * @param {UsersComponentProps} { repository } IRepository injected repository
+ * @returns {JSX.Element} Dashboard Element
+ */
+export default function AppointmentsHome({ repository }: AppointmentComponentProps) {
+  const { appointments: appointmentRepository, medicalRegistries: medicalRegistriesRepository } =
+    repository;
 
   const [success, setSuccess] = useState<string>("");
-  const [errorMessages, setErrorMessages] = useState<any>();
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [error, setError] = useState<TErrorMessage>();
+  const [errorModal, setErrorModal] = useState<TErrorMessage>();
+  const [deleteConfirmation, setDeleteConfirmation] = useState<TDeleteConfirmation>();
+
+  const [appointments, setAppointments] = useState<AppointmentDTO[]>([]);
+
   const [open, setOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
-  const [medicalRegistry, setMedicalRegistry] = useState<any>("");
+
+  const [selectedAppointment, setSelectedAppointment] = useState<Partial<AppointmentDTO>>({
+    id: "",
+    patient: "",
+  });
+
+  const [medicalRegistry, setMedicalRegistry] = useState<
+    CreateMedicallRegistriesDTO | UpdateMedicallRegistriesDTO
+  >({
+    observation: "",
+    medicalAppointment: "",
+  });
 
   const loadAppointments = useCallback(async () => {
     const appointments = await appointmentRepository.getAll();
@@ -33,45 +62,51 @@ export default function AppointmentsHome({ repository }: any) {
   }, [appointmentRepository]);
 
   const handleMedicalRegistryCreation = () => {
-    if (medicalRegistry === "") {
-      setErrorMessages([
-        {
+    if (medicalRegistry.id === "") {
+      setErrorModal({
+        title: "Erro ao adicionar observação",
+        errors: {
           "Observação Médica": ["Precisa informar uma observação!"],
         },
-      ]);
+      });
       setOpen(false);
       return;
     }
 
     medicalRegistriesRepository
-      .createMedicalRegistry({
+      .create({
         observation: medicalRegistry,
         medicalAppointment: selectedAppointment.id,
       })
-      .then(async (response: any) => {
+      .then(async () => {
         setSuccess("Registro criado com sucesso!");
         setOpen(false);
-        setMedicalRegistry("");
+        setMedicalRegistry({
+          observation: "",
+          medicalAppointment: "",
+        });
         await loadAppointments();
       })
-      .catch((error: any) => {
-        console.log("error", error);
+      .catch((error: Error) => {
+        setSuccess("");
         setOpen(false);
-        setErrorMessages(error.message.message);
+        setError({
+          title: error.message,
+          errors: error.cause,
+        });
       });
   };
 
   const handleAppointmentDeletion = (appointment: any) => {
-    if (window.confirm("Deseja realmente excluir a consulta? ")) {
-      appointmentRepository
-        .removeAppointment(appointment.id)
-        .then(async (response: any) => {
-          await loadAppointments();
+    appointmentRepository
+      .remove(appointment.id)
+      .then(async () => await loadAppointments())
+      .catch((error: any) =>
+        setError({
+          title: error.message,
+          errors: error.cause,
         })
-        .catch((error: any) => {
-          console.log("error", error);
-        });
-    }
+      );
   };
 
   useEffect(() => {
@@ -81,13 +116,22 @@ export default function AppointmentsHome({ repository }: any) {
   return (
     <div className="container-appointments">
       <div className="header" style={{ width: "100%" }}>
-        <h1 style={{ marginLeft: 20 }}>Consultas</h1>
+        <h1 style={{ marginLeft: 10 }}>Consultas</h1>
+        <div id="new-appointment" style={{ margin: 10 }}>
+          <Link to={`/patients/new`}>
+            <Button variant="contained" color="secondary">
+              <PermContactCalendar />
+              Novo
+            </Button>
+          </Link>
+        </div>
         {success && <SuccessMessage message={success} />}
-        {errorMessages && <ErrorMessage title="Erro!" errors={errorMessages} />}
+        {error && <ErrorMessage {...error} />}
+        {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
       {!appointments?.length && <h2>Sem consultas até o momento.</h2>}
       {appointments &&
-        appointments.map((appointment, i) => {
+        appointments.map((appointment: AppointmentDTO, i: number) => {
           if (!appointment.patient) {
             appointment.patient = {
               name: "LGPD COMPLIANCE",
@@ -150,33 +194,43 @@ export default function AppointmentsHome({ repository }: any) {
                 </ul>
               </CardContent>
               <CardActions>
-                <Link className="patient_card__category" to={`/patients/`}>
-                  <Create style={{ verticalAlign: "bottom" }} />
-                  Editar
+                <Link to={`/patients/`}>
+                  <Button variant="contained" style={{ margin: 10 }}>
+                    <Create />
+                    Editar
+                  </Button>
                 </Link>
-                <a
-                  href="dangerouslySetInnerHTML"
+                <Button
+                  variant="contained"
+                  style={{ margin: 10 }}
                   onClick={(e) => {
                     e.preventDefault();
                     setOpen(true);
                     setSelectedAppointment(appointment);
                   }}
-                  className="patient_card__category"
                 >
-                  <MedicationIcon style={{ verticalAlign: "bottom" }} />
+                  <MedicationIcon />
                   Observação
-                </a>
-                <a
-                  href="dangerouslySetInnerHTML"
+                </Button>
+                <Button
+                  style={{ margin: 10 }}
+                  variant="contained"
+                  color="error"
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAppointmentDeletion(appointment);
+                    setDeleteConfirmation({
+                      message: `Confirmando essa ação, você irá excluir a consulta do Paciente ${appointment.patient.name}. Tem certeza disso?`,
+                      onConfirmation: {
+                        title: "Sim, tenho certeza.",
+                        fn: () => handleAppointmentDeletion(appointment),
+                      },
+                      onFinally: () => setDeleteConfirmation(undefined),
+                    });
                   }}
-                  className="patient_card__category danger"
                 >
-                  <HighlightOff style={{ verticalAlign: "bottom" }} />
+                  <HighlightOff />
                   Excluir Consulta
-                </a>
+                </Button>
               </CardActions>
             </Card>
           );
@@ -188,6 +242,7 @@ export default function AppointmentsHome({ repository }: any) {
         aria-describedby="modal-modal-description"
       >
         <Box
+          display="flex-row"
           sx={{
             position: "absolute" as "absolute",
             top: "50%",
@@ -200,33 +255,35 @@ export default function AppointmentsHome({ repository }: any) {
             p: 4,
           }}
         >
+          {errorModal && <ErrorMessage {...errorModal} />}
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Observações da consulta de {selectedAppointment && selectedAppointment.patient.name}
+            Observações da consulta de {selectedAppointment && selectedAppointment.patient?.name}
           </Typography>
-          <div style={{ flex: 1, display: "block", marginTop: 50 }}>
+          <div style={{ marginTop: 50 }}>
             <TextField
               id="outlined-multiline-static"
               label="Observações do paciente"
               name="medicalObservation"
               onChange={(e: any) => setMedicalRegistry(e.target.value)}
+              style={{ width: "100%" }}
               multiline
               rows={10}
-              variant="outlined"
+              variant="filled"
             />
           </div>
 
           <div style={{ float: "right", marginTop: 30 }}>
-            <a
-              href="dangerouslySetInnerHTML"
+            <Button
+              variant="contained"
+              style={{ marginTop: 10 }}
               onClick={(e) => {
                 e.preventDefault();
                 handleMedicalRegistryCreation();
               }}
-              className="patient_card__category"
             >
-              <MedicationIcon style={{ verticalAlign: "bottom" }} />
+              <MedicationIcon />
               Confirmar observação
-            </a>
+            </Button>
           </div>
         </Box>
       </Modal>

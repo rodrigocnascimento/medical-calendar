@@ -24,9 +24,10 @@ import ErrorMessage, { TErrorMessage } from "../../components/error";
 import SuccessMessage from "../../components/success";
 import type { PatientsComponentProps } from "./patient.interfaces";
 
-import "./patients.css";
 import { DeleteConfirmation, TDeleteConfirmation } from "../../components/delete-confirmation";
-import { AppointmentDTO } from "../appointments/appointment.dto";
+import { AppointmentDTO } from "../appointments/appointment.interfaces";
+
+import "./patients.css";
 
 /**
  * This page is the dashboard of the module.
