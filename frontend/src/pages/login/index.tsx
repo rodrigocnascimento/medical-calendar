@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import logo from "../../assets/logo.png";
 
 import { useHistory, useLocation } from "react-router-dom";
-import { useAuth } from "../../context/auth/use-auth";
+import { useAuth } from "../../context";
 import { TextField, Button } from "@mui/material";
 
-import "./login.css";
 import ErrorMessage, { TErrorMessage } from "../../components/error";
-export default function NotLoggedRoute() {
+
+import "./login.css";
+export default function LoginRoute(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 

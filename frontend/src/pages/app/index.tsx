@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, useHistory, useLocation } from "react-router-dom";
-import repository, { IRepositories } from "../../domain/repository";
-import { useAuth } from "../../context/auth/use-auth";
+import { useAuth, useRepository } from "../../context";
 import LoginRoute from "../login";
 import PatientsForm from "../patients/patient.form";
 import PatientsHome from "../patients/patient.home";
@@ -14,7 +13,7 @@ import "./index.css";
 import "../../root.css";
 
 export default function ApplicationRoutes() {
-  const { patient, appointments, user, medicalRegistries }: IRepositories = repository();
+  const { patient, appointments, user, medicalRegistries } = useRepository();
   let history = useHistory();
   let auth = useAuth();
 

@@ -6,6 +6,7 @@ import { useAuth } from "../context/auth/use-auth";
 
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
+import { ProvideRepository } from "../context";
 
 const history = createBrowserHistory();
 
@@ -14,8 +15,13 @@ export default function RootRoute() {
 
   return (
     <Router history={history}>
-      
-      {auth.user ? <ApplicationRoutes /> : <LoginRoute />}
+      {auth.user ? (
+        <ProvideRepository>
+          <ApplicationRoutes />
+        </ProvideRepository>
+      ) : (
+        <LoginRoute />
+      )}
     </Router>
   );
 }
