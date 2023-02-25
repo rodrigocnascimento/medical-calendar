@@ -1,11 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Typography,
+} from "@mui/material";
 
 import { Create, PermContactCalendar, HighlightOff } from "@mui/icons-material";
 import { UserDTO } from "./index";
 import ErrorMessage, { TErrorMessage } from "components/error";
-import { DeleteConfirmation, TDeleteConfirmation } from "components/delete-confirmation";
+import {
+  DeleteConfirmation,
+  TDeleteConfirmation,
+} from "components/delete-confirmation";
 
 import SuccessMessage from "components/success";
 import { useAuth } from "context/auth/use-auth";
@@ -18,14 +27,15 @@ import { useRepository } from "context";
  *
  * @returns {JSX.Element} Dashboard Element
  */
-export function UsersHome(): JSX.Element {
+export function ListUsers(): JSX.Element {
   const { user: userRepository } = useRepository();
 
   const auth = useAuth();
   const [users, setUsers] = useState<UserDTO[]>([]);
   const [error, setError] = useState<TErrorMessage>();
   const [success, setSuccess] = useState<string>("");
-  const [deleteConfirmation, setDeleteConfirmation] = useState<TDeleteConfirmation>();
+  const [deleteConfirmation, setDeleteConfirmation] =
+    useState<TDeleteConfirmation>();
 
   const loadUsers = useCallback(async () => {
     const users = await userRepository.getAll();
@@ -84,10 +94,14 @@ export function UsersHome(): JSX.Element {
                   <span style={{ fontWeight: "bold" }}>Role:</span> {user.role}
                   <br />
                   <span style={{ fontWeight: "bold" }}>Criado em:</span>
-                  {new Intl.DateTimeFormat("pt-BR").format(new Date(user.createdAt))}
+                  {new Intl.DateTimeFormat("pt-BR").format(
+                    new Date(user.createdAt)
+                  )}
                   <br />
                   <span style={{ fontWeight: "bold" }}>Atualizado em:</span>
-                  {new Intl.DateTimeFormat("pt-BR").format(new Date(user.updatedAt))}
+                  {new Intl.DateTimeFormat("pt-BR").format(
+                    new Date(user.updatedAt)
+                  )}
                 </Typography>
               </CardContent>
               <CardActions>

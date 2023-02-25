@@ -3,7 +3,7 @@ import { Switch, Route, Link, useLocation } from "react-router-dom";
 import { useAuth } from "context";
 import LoginRoute from "pages/login";
 import { PatientsForm, PatientsHome } from "pages/patients";
-import { UsersHome, UsersForm } from "pages/users";
+import { ListUsers, CreateUser, UpdateUser } from "pages/users";
 import AuthVerify from "context/auth-verifier";
 import { Button } from "@mui/material";
 import { AppointmentsHome } from "pages/appointments";
@@ -82,10 +82,15 @@ export default function ApplicationRoutes() {
             path={["/patients/:id", "/patients/new"]}
             children={<PatientsForm />}
           />
-          <Route exact path={"/users"}>
-            <UsersHome />
+
+          <Route exact path={"/users"} children={<ListUsers />} />
+          <Route path={"/users/new"}>
+            <CreateUser />
           </Route>
-          <Route path={["/users/:id", "/users/new"]} children={<UsersForm />} />
+          <Route path={"/users/:id"}>
+            <UpdateUser />
+          </Route>
+
           <Route exact path={"/appointments"}>
             <AppointmentsHome />
           </Route>
