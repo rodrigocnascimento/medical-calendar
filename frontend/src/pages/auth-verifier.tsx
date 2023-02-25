@@ -1,20 +1,18 @@
-import { withRouter } from "react-router-dom";
+import {  useLocation, withRouter } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useAuth } from "../context/auth/use-auth";
 
-function AuthVerify({ history }: any) {
+function AuthVerify() {
   const auth = useAuth();
   const expired = auth.getUserToken().expired;
 
-  useEffect(() => {
-    const unlisten = history.listen((location: any, action: any) => {
-      if (expired) {
-        history.push("/login");
-      }
-    });
+  const location = useLocation<any>();
 
-    return unlisten;
-  }, [history, expired]);
+  useEffect(() => {
+    if (expired) {
+      auth.signout();
+    }
+  }, [location.pathname, expired, auth]);
 
   return <></>;
 }

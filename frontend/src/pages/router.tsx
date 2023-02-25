@@ -12,5 +12,10 @@ const history = createBrowserHistory();
 export default function RootRoute() {
   let auth = useAuth();
 
-  return <Router history={history}>{auth.user ? <ApplicationRoutes /> : <LoginRoute />}</Router>;
+  return (
+    <Router history={history}>
+      
+      {auth.user ? <ApplicationRoutes /> : <LoginRoute />}
+    </Router>
+  );
 }

@@ -7,15 +7,14 @@ import PatientsForm from "../patients/patient.form";
 import PatientsHome from "../patients/patient.home";
 import UsersHome from "../users/user.home";
 import UsersForm from "../users/user.form";
-// import AuthVerify from "../auth-verifier";
+import AuthVerify from "../auth-verifier";
 import { Button } from "@mui/material";
 import AppointmentsHome from "../appointments/appointments.home";
 import "./index.css";
 import "../../root.css";
 
-const { patient, appointments, user, medicalRegistries }: IRepositories = repository();
-
 export default function ApplicationRoutes() {
+  const { patient, appointments, user, medicalRegistries }: IRepositories = repository();
   let history = useHistory();
   let auth = useAuth();
 
@@ -34,14 +33,16 @@ export default function ApplicationRoutes() {
 
   return (
     <>
+      <AuthVerify />
       <div id="sidebar">
         <nav>
           Bem vindo, {auth.user.userName}
-          <br />
-          active: {activePath}
           <ul>
             <li>
-              <Link className={activePath === "/patients" ? "active" : ""} to="/patients">
+              <Link
+                className={["/patients", "/"].includes(activePath) ? "active" : ""}
+                to="/patients"
+              >
                 Pacientes
               </Link>
             </li>
