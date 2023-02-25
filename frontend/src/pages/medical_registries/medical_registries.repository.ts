@@ -4,7 +4,7 @@ import {
   MedicallRegistriesDTO,
   CreateMedicallRegistriesDTO,
   UpdateMedicallRegistriesDTO,
-} from "./medical_registries.dto";
+} from "./index";
 
 export interface IMedicalRegistryRepository {
   create(registry: CreateMedicallRegistriesDTO): Promise<MedicallRegistriesDTO>;

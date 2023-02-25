@@ -4,15 +4,9 @@ import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "../../domain/yup.mapper-errors";
-import {
-  CreateUserDTO,
-  UpdateUserDTO,
-  UserDTO,
-  UserRoles,
-  UsersComponentProps,
-} from "./user.interfaces";
+import { CreateUserDTO, UpdateUserDTO, UserDTO, UserRoles, UsersComponentProps } from "./index";
 import ErrorMessage, { TErrorMessage } from "../../components/error";
-import { userValidation } from "./users.validation";
+import { userValidation } from "./user.validation";
 import SuccessMessage from "../../components/success";
 
 /**
@@ -25,7 +19,7 @@ import SuccessMessage from "../../components/success";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Form Element
  */
-export default function UsersForm({ repository }: UsersComponentProps): JSX.Element {
+export function UsersForm({ repository }: UsersComponentProps): JSX.Element {
   const { user: userRepository } = repository;
 
   let { id } = useParams<{ id: string }>();

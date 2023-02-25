@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 
 import { Create, PermContactCalendar, HighlightOff } from "@mui/icons-material";
-import { UserDTO, UsersComponentProps } from "./user.interfaces";
+import { UserDTO, UsersComponentProps } from "./index";
 import ErrorMessage, { TErrorMessage } from "../../components/error";
 import { DeleteConfirmation, TDeleteConfirmation } from "../../components/delete-confirmation";
 
@@ -18,7 +18,7 @@ import "./users.css";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-export default function UsersHome({ repository }: UsersComponentProps): JSX.Element {
+export function UsersHome({ repository }: UsersComponentProps): JSX.Element {
   const { user: userRepository } = repository;
 
   const auth = useAuth();

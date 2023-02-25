@@ -22,7 +22,7 @@ import SuccessMessage from "../../components/success";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Form Element
  */
-export default function PatientsForm({ repository }: any): JSX.Element {
+export function PatientsForm({ repository }: any): JSX.Element {
   const history = useHistory();
   let { id } = useParams<{ id: string }>();
 

@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, useHistory, useLocation } from "react-router-dom";
 import { useAuth, useRepository } from "../../context";
 import LoginRoute from "../login";
-import PatientsForm from "../patients/patient.form";
-import PatientsHome from "../patients/patient.home";
-import UsersHome from "../users/user.home";
-import UsersForm from "../users/user.form";
+import { PatientsForm, PatientsHome } from "../patients";
+import { UsersHome, UsersForm } from "../users";
 import AuthVerify from "../auth-verifier";
 import { Button } from "@mui/material";
-import AppointmentsHome from "../appointments/appointments.home";
+import { AppointmentsHome } from "../appointments";
 import "./index.css";
 import "../../root.css";
 

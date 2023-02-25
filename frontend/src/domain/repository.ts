@@ -1,15 +1,9 @@
 import { serverEndpoint } from "../constants";
 import BaseInfrastructure from "../infrastructure";
-import { IPatientRepository, PatientRepository } from "../pages/patients/patient.repository";
-import { IUserRepository, UserRepository } from "../pages/users/user.repository";
-import {
-  AppointmentRepository,
-  IAppointmentRepository,
-} from "../pages/appointments/appointment.repository";
-import {
-  IMedicalRegistryRepository,
-  MedicalRegistryRepository,
-} from "../pages/medical_registries/medical_registries.repository";
+import { IPatientRepository, PatientRepository } from "../pages/patients";
+import { IUserRepository, UserRepository } from "../pages/users";
+import { AppointmentRepository, IAppointmentRepository } from "../pages/appointments";
+import { IMedicalRegistryRepository, MedicalRegistryRepository } from "../pages/medical_registries";
 
 export interface IRepositories {
   patient: IPatientRepository;

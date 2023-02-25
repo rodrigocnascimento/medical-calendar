@@ -16,10 +16,7 @@ import SuccessMessage from "../../components/success";
 import ErrorMessage, { TErrorMessage } from "../../components/error";
 
 import { AppointmentComponentProps, AppointmentDTO } from "./appointment.interfaces";
-import {
-  CreateMedicallRegistriesDTO,
-  UpdateMedicallRegistriesDTO,
-} from "../medical_registries/medical_registries.dto";
+import { CreateMedicallRegistriesDTO, UpdateMedicallRegistriesDTO } from "../medical_registries";
 import { TDeleteConfirmation, DeleteConfirmation } from "../../components/delete-confirmation";
 import { Button } from "@mui/material";
 import "./appointments.css";
@@ -30,7 +27,7 @@ import "./appointments.css";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-export default function AppointmentsHome({ repository }: AppointmentComponentProps) {
+export function AppointmentsHome({ repository }: AppointmentComponentProps): JSX.Element {
   const { appointments: appointmentRepository, medicalRegistries: medicalRegistriesRepository } =
     repository;
 

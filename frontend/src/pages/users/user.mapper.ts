@@ -1,5 +1,5 @@
 import ListMapper from "../../domain/mapper";
-import { UserDTO, DoctorMUIDropDownListDTO } from "./user.interfaces";
+import { UserDTO, DoctorMUIDropDownListDTO } from "./index";
 
 /**
  * A mapper to transform the value received from a source, into a DropDown list.

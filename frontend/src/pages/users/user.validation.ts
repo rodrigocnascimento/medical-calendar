@@ -1,5 +1,5 @@
 import { ref, object, string, mixed } from "yup";
-import { UserRoles } from "./user.interfaces";
+import { UserRoles } from "./index";
 
 const userValidation = object().shape({
   name: string().required("Nome é necessário."),

@@ -15,17 +15,15 @@ import { Create, PermContactCalendar, CalendarMonth, HighlightOff } from "@mui/i
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
 
-import { useAuth } from "../../context/auth/use-auth";
-import { mapperDoctorListDropDown } from "../users/user.mapper";
-import { UserDTO, UserRoles } from "../users/user.interfaces";
-import { PatientDTO } from "./patient.interfaces";
+import { useAuth } from "../../context";
+import { UserDTO, UserRoles, mapperDoctorListDropDown } from "../users";
+import { PatientsComponentProps, PatientDTO } from "./index";
+import { AppointmentDTO } from "../appointments";
 
 import ErrorMessage, { TErrorMessage } from "../../components/error";
 import SuccessMessage from "../../components/success";
-import type { PatientsComponentProps } from "./patient.interfaces";
 
 import { DeleteConfirmation, TDeleteConfirmation } from "../../components/delete-confirmation";
-import { AppointmentDTO } from "../appointments/appointment.interfaces";
 
 import "./patients.css";
 
@@ -35,7 +33,7 @@ import "./patients.css";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-export default function PatientsHome({ repository }: PatientsComponentProps): JSX.Element {
+export function PatientsHome({ repository }: PatientsComponentProps): JSX.Element {
   const {
     appointments: appointmentRepository,
     patient: patientRepository,
