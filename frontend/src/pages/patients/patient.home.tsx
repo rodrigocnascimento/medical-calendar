@@ -16,16 +16,16 @@ import AdapterDateFns from "@date-io/date-fns";
 
 import { useAuth } from "../../context/auth/use-auth";
 import { mapperDoctorListDropDown } from "../users/user.mapper";
-import { DoctorUserDTO, UserRoles } from "../users/user.dto";
+import { DoctorUserDTO, UserRoles } from "../users/user.interfaces";
 import { PatientDTO } from "./patient.interfaces";
 
 import ErrorMessage, { TErrorMessage } from "../../components/error";
 import SuccessMessage from "../../components/success";
-import type { PatientsHomeProps } from "./patient.interfaces";
+import type { PatientsComponentProps } from "./patient.interfaces";
 
 import "./patients.css";
 
-export default function PatientsHome({ repository }: PatientsHomeProps) {
+export default function PatientsHome({ repository }: PatientsComponentProps) {
   const {
     appointments: appointmentRepository,
     patient: patientRepository,
@@ -129,7 +129,7 @@ export default function PatientsHome({ repository }: PatientsHomeProps) {
           </Link>
         </div>
         {success && <SuccessMessage message={success} />}
-        {error && <ErrorMessage title={error.title} errors={error.errors} />}
+        {error && <ErrorMessage {...error} />}
       </div>
       {patients &&
         patients.map((patient, i) => {

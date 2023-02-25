@@ -1,7 +1,13 @@
 import ListMapper from "../../domain/mapper";
-import { DoctorUserDTO, DoctorDropDownListDTO } from "./user.dto";
+import { UserDTO, DoctorMUIDropDownListDTO } from "./user.interfaces";
 
-export function MapperDoctorDropDownList(user: DoctorUserDTO): DoctorDropDownListDTO {
+/**
+ * A mapper to transform the value received from a source, into a DropDown list.
+ * specifically to MUI Material UI dropdown list
+ * @param user user data fetched
+ * @returns {DoctorDropDownListDTO} the dropdown user list
+ */
+function MapperDoctorDropDownList(user: UserDTO): DoctorMUIDropDownListDTO {
   return {
     id: user.id,
     label: user.name,

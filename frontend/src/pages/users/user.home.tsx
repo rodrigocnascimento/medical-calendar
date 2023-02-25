@@ -1,15 +1,31 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./users.css";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
+import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 
 import { Create, PermContactCalendar, HighlightOff } from "@mui/icons-material";
+import { UserDTO, UsersComponentProps } from "./user.interfaces";
+import ErrorMessage, { TErrorMessage } from "../../components/error";
+import { DeleteConfirmation, TDeleteConfirmation } from "../../components/delete-confirmation";
 
-export default function UsersHome({ repository: userRepository }: any) {
-  const [users, setUsers] = useState<any[]>([]);
+import SuccessMessage from "../../components/success";
+import { useAuth } from "../../context/auth/use-auth";
+
+import "./users.css";
+
+/**
+ * This page is the dashboard of the module.
+ *
+ * @param {UsersComponentProps} { repository } IRepository injected repository
+ * @returns {JSX.Element} Dashboard Element
+ */
+export default function UsersHome({ repository }: UsersComponentProps): JSX.Element {
+  const { user: userRepository } = repository;
+
+  const auth = useAuth();
+  const [users, setUsers] = useState<UserDTO[]>([]);
+  const [error, setError] = useState<TErrorMessage>();
+  const [success, setSuccess] = useState<string>("");
+  const [deleteConfirmation, setDeleteConfirmation] = useState<TDeleteConfirmation>();
 
   const loadUsers = useCallback(async () => {
     const users = await userRepository.getAll();
@@ -17,17 +33,19 @@ export default function UsersHome({ repository: userRepository }: any) {
     setUsers(users);
   }, [userRepository]);
 
-  const handleUserDeletion = (user: any) => {
-    if (window.confirm("Deseja realmente excluir o usuário: " + user.name)) {
-      userRepository
-        .removeUser(user.id)
-        .then(async (response: any) => {
-          await loadUsers();
+  const handleUserDeletion = (user: UserDTO) => {
+    userRepository
+      .remove(user.id)
+      .then(async () => {
+        setSuccess("Usuário removido com sucesso.");
+        await loadUsers();
+      })
+      .catch((error: Error) =>
+        setError({
+          title: error.message,
+          errors: error.cause,
         })
-        .catch((error: any) => {
-          console.log("error", error);
-        });
-    }
+      );
   };
 
   useEffect(() => {
@@ -37,16 +55,21 @@ export default function UsersHome({ repository: userRepository }: any) {
   return (
     <div className="container-home">
       <div className="header" style={{ width: "100%" }}>
-        <h1 style={{ marginLeft: 20 }}>Usuários</h1>
-        <div id="new-patient" style={{ margin: 20 }}>
-          <Link className="patient_card__new" to={`/users/new`}>
-            <PermContactCalendar style={{ verticalAlign: "bottom" }} />
-            Novo
+        <h1 style={{ marginLeft: 10 }}>Usuários</h1>
+        <div id="new-patient" style={{ margin: 10 }}>
+          <Link to={`/users/new`}>
+            <Button variant="contained" color="secondary">
+              <PermContactCalendar style={{ verticalAlign: "bottom" }} />
+              Novo
+            </Button>
           </Link>
         </div>
+        {error && <ErrorMessage {...error} />}
+        {success && <SuccessMessage message={success} />}
+        {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
       {users &&
-        users.map((user, i) => {
+        users.map((user: UserDTO, i: number) => {
           return (
             <Card variant="outlined" key={i++} style={{ margin: 10 }}>
               <CardContent>
@@ -67,21 +90,33 @@ export default function UsersHome({ repository: userRepository }: any) {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Link className="patient_card__category" to={`/users/${user.id}`}>
-                  <Create style={{ verticalAlign: "bottom" }} />
-                  Editar
+                <Link to={`/users/${user.id}`}>
+                  <Button style={{ margin: 10 }} variant="contained">
+                    <Create style={{ verticalAlign: "bottom" }} />
+                    Editar
+                  </Button>
                 </Link>
-                <a
-                  href="dangerouslySetInnerHTML"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleUserDeletion(user);
-                  }}
-                  className="patient_card__category danger"
-                >
-                  <HighlightOff style={{ verticalAlign: "bottom" }} />
-                  Excluir Usuário
-                </a>
+                {auth.user.sub !== user.id && (
+                  <Button
+                    style={{ margin: 10 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDeleteConfirmation({
+                        message: `Fazendo isso, você irá excluir o registro ${user.name}. Tem certeza disso?`,
+                        onConfirmation: {
+                          title: "Sim",
+                          fn: () => handleUserDeletion(user),
+                        },
+                        onFinally: () => setDeleteConfirmation(undefined),
+                      });
+                    }}
+                    color="error"
+                    variant="contained"
+                  >
+                    <HighlightOff style={{ verticalAlign: "bottom" }} />
+                    Excluir Usuário
+                  </Button>
+                )}
               </CardActions>
             </Card>
           );
