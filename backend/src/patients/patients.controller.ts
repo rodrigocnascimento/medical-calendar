@@ -8,6 +8,8 @@ import {
   UnprocessableEntityException,
   UseGuards,
   Delete,
+  NotFoundException,
+  BadRequestException,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -22,8 +24,6 @@ import {
   ApiBearerAuth,
 } from "@nestjs/swagger";
 
-import { NotFoundError } from "../errors/NotFound.error";
-import { BadRequestError } from "../errors/BadRequest.error";
 import { PatientsService } from "./patients.service";
 import { CreatePatientDTO } from "./dto/create.dto";
 import { UpdatePatientDTO } from "./dto/update.dto";
@@ -54,7 +54,7 @@ export class PatientsController {
   })
   @ApiNotFoundResponse({
     description: "Paciente não econtrado.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   async get(@Param("id") id: string): Promise<Patient> {
     return this.patientService.findOne(id);
@@ -82,7 +82,7 @@ export class PatientsController {
   })
   @ApiBadRequestResponse({
     description: "A requisição não combina com o esperado.",
-    type: BadRequestError,
+    type: BadRequestException,
   })
   @ApiUnprocessableEntityResponse({
     description: "Erro ao criar o paciente.",
@@ -104,7 +104,7 @@ export class PatientsController {
   })
   @ApiBadRequestResponse({
     description: "A requisição não combina com o esperado.",
-    type: BadRequestError,
+    type: BadRequestException,
   })
   @ApiUnprocessableEntityResponse({
     description: "Erro ao criar o paciente.",
@@ -129,7 +129,7 @@ export class PatientsController {
   })
   @ApiNotFoundResponse({
     description: "Paciente não econtrado.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   async remove(@Param("id") id: string): Promise<DeleteResult> {
     return this.patientService.remove(id);

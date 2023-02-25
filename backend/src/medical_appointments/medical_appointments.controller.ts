@@ -1,4 +1,14 @@
-import { Controller, Post, Body, Patch, Param, Delete, Get, UseGuards } from "@nestjs/common";
+import {
+  NotFoundException,
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Get,
+  UseGuards,
+} from "@nestjs/common";
 import { MedicalAppointmentsService } from "./medical_appointments.service";
 import { CreateMedicalAppointmentDto } from "./dto/create.dto";
 import { UpdateMedicalAppointmentDto } from "./dto/update.dto";
@@ -11,7 +21,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from "@nestjs/swagger";
-import { NotFoundError } from "../errors/NotFound.error";
+
 import { MedicalAppointmentDTO } from "./dto/medical_appointments.dto";
 import { UUIDVersion } from "class-validator";
 import { JwtAuthGuard } from "../auth/jwt.guard";
@@ -33,7 +43,7 @@ export class MedicalAppointmentsController {
   })
   @ApiNotFoundResponse({
     description: "Paciente não econtrado.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   create(@Body() createMedicalAppointmentDto: CreateMedicalAppointmentDto) {
     return this.medicalAppointmentsService.create(createMedicalAppointmentDto);
@@ -54,7 +64,7 @@ export class MedicalAppointmentsController {
   })
   @ApiNotFoundResponse({
     description: "Paciente não econtrado.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   update(
     @Param("id") id: UUIDVersion,
@@ -75,7 +85,7 @@ export class MedicalAppointmentsController {
   })
   @ApiNotFoundResponse({
     description: "Agendamento de consulta não econtrado.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   remove(@Param("id") id: UUIDVersion) {
     return this.medicalAppointmentsService.remove(id);
@@ -90,7 +100,7 @@ export class MedicalAppointmentsController {
   })
   @ApiNotFoundResponse({
     description: "Agendamento de consulta não econtrado.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   @Get()
   findAll() {
@@ -106,7 +116,7 @@ export class MedicalAppointmentsController {
   })
   @ApiNotFoundResponse({
     description: "Agendamento de consulta não econtrado.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   @Get("/by-doctor")
   findAllByDoctor() {

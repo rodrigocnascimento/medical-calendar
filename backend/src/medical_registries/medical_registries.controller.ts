@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  NotFoundException,
+} from "@nestjs/common";
 import { MedicalRegistriesService } from "./medical_registries.service";
 import { CreateMedicalRegistryDTO } from "./dto/create.dto";
 import { UpdateMedicalRegistryDTO } from "./dto/update.dto";
@@ -12,7 +21,6 @@ import {
   ApiParam,
   ApiBearerAuth,
 } from "@nestjs/swagger";
-import { NotFoundError } from "../errors/NotFound.error";
 import { UUIDVersion } from "class-validator";
 import { JwtAuthGuard } from "../auth/jwt.guard";
 
@@ -37,7 +45,7 @@ export class MedicalRegistriesController {
   })
   @ApiNotFoundResponse({
     description: "Consulta não econtrada.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   create(@Body() createMedicalRegistryDto: CreateMedicalRegistryDTO) {
     return this.medicalRegistriesService.create(createMedicalRegistryDto);
@@ -59,7 +67,7 @@ export class MedicalRegistriesController {
   })
   @ApiNotFoundResponse({
     description: "Consulta não econtrada.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   update(@Param("id") id: UUIDVersion, @Body() updateMedicalRegistryDto: UpdateMedicalRegistryDTO) {
     return this.medicalRegistriesService.update(id, updateMedicalRegistryDto);
@@ -81,7 +89,7 @@ export class MedicalRegistriesController {
   })
   @ApiNotFoundResponse({
     description: "Consulta não econtrada.",
-    type: NotFoundError,
+    type: NotFoundException,
   })
   remove(@Param("id") id: UUIDVersion) {
     return this.medicalRegistriesService.remove(id);

@@ -9,6 +9,7 @@ import {
   Param,
   UseGuards,
   Query,
+  BadRequestException,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -22,7 +23,6 @@ import {
   ApiBearerAuth,
 } from "@nestjs/swagger";
 
-import { BadRequestError } from "../errors/BadRequest.error";
 import { UsersService } from "./users.service";
 import { CreateUserDTO } from "./dto/create.dto";
 import { UpdateUserDTO } from "./dto/update.dto";
@@ -52,7 +52,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "A requisição não combina com o esperado.",
-    type: BadRequestError,
+    type: BadRequestException,
   })
   @ApiUnprocessableEntityResponse({
     description: "Erro ao criar o paciente.",
@@ -78,7 +78,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "A requisição não combina com o esperado.",
-    type: BadRequestError,
+    type: BadRequestException,
   })
   @ApiUnprocessableEntityResponse({
     description: "Erro ao criar o paciente.",
@@ -122,7 +122,7 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "A requisição não combina com o esperado.",
-    type: BadRequestError,
+    type: BadRequestException,
   })
   @ApiUnprocessableEntityResponse({
     description: "Erro ao criar o paciente.",
@@ -135,12 +135,11 @@ export class UsersController {
     return this.userService.update(userId, updatedUser);
   }
 
-  // Here also needs to be an administrator do delete aa user
   @Delete(":id")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("access-token")
   @ApiOperation({
-    summary: "Edita um usuário.",
+    summary: "Remove um usuário.",
   })
   @ApiParam({
     name: "Id do usuário",
@@ -152,10 +151,10 @@ export class UsersController {
   })
   @ApiBadRequestResponse({
     description: "A requisição não combina com o esperado.",
-    type: BadRequestError,
+    type: BadRequestException,
   })
   @ApiUnprocessableEntityResponse({
-    description: "Erro ao criar o paciente.",
+    description: "Erro ao criar o usuário.",
     type: UnprocessableEntityException,
   })
   async removeUser(@Param("id") userId: UUIDVersion): Promise<User | DeleteResult> {
