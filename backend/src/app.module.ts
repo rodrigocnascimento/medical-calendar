@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, Scope } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import { PatientsModule } from "./patients/patients.module";
@@ -9,6 +9,8 @@ import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import typeormConfig from "./database/typeorm.config";
 import { AppController } from "./app.controller";
+import { APP_FILTER } from "@nestjs/core";
+import { HttpErrorFilter } from "./filter-error.http";
 
 @Module({
   imports: [
@@ -25,5 +27,12 @@ import { AppController } from "./app.controller";
     UsersModule,
   ],
   controllers: [AppController],
+  providers: [
+    {
+      provide: APP_FILTER,
+      scope: Scope.REQUEST,
+      useClass: HttpErrorFilter,
+    },
+  ],
 })
 export class AppModule {}

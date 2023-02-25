@@ -34,8 +34,7 @@ export class AppController {
     type: UnauthorizedException,
   })
   @ApiTags("Login")
-  async login(@Request() req: any) {
-    console.log(req.user);
+  async login(@Request() req: AuthDTO) {
     return this.authService.login(req.user);
   }
 
@@ -45,7 +44,7 @@ export class AppController {
   }
 
   @ApiOperation({
-    summary: "Apenas para validar o token o login de um usuário.",
+    summary: "Apenas para validar o token gerado.",
   })
   @ApiOkResponse({
     description: "PING-PONG.",
