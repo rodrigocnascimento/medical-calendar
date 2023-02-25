@@ -2,78 +2,80 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
+import { ValidationError } from "yup";
+import { mapperYupErrorsToErrorMessages } from "../../domain/yup.mapper-errors";
+import {
+  CreateUserDTO,
+  UpdateUserDTO,
+  UserDTO,
+  UserRoles,
+  UsersComponentProps,
+} from "./user.interfaces";
+import ErrorMessage, { TErrorMessage } from "../../components/error";
+import { userValidation } from "./users.validation";
+import SuccessMessage from "../../components/success";
 
-export default function UsersCreate({ repository: userRepository }: any) {
-  let { id } = useParams<{ id?: string }>();
+export default function UsersCreate({ repository }: UsersComponentProps) {
+  const { user: userRepository } = repository;
+
+  let { id } = useParams<{ id: string }>();
   const history = useHistory();
-  const [inputs, setInputs] = useState<any>({});
-  const [error, setError] = useState<any>();
+
+  const [formInput, setFormInput] = useState<CreateUserDTO | UpdateUserDTO>({
+    id: "",
+    name: "",
+    email: "",
+    role: UserRoles.DOCTOR,
+    password: "",
+    passwordConfirmation: "",
+  });
+  const [error, setError] = useState<TErrorMessage>();
+  const [success, setSuccess] = useState<string>("");
 
   const handleChange = (event: any) => {
     const name = event.target.name;
     let value = event.target.value;
 
-    setInputs((values: any) => ({ ...values, [name]: value }));
+    setFormInput((values: any) => ({ ...values, [name]: value }));
   };
 
   const loadUser = useCallback(async () => {
     userRepository
       .getById(id)
-      .then((response: any) => {
-        console.log("loadUser response", response);
-        setInputs(response);
-      })
-      .catch((error: any) => {
-        setError(JSON.parse(error.message).message);
-      });
+      .then((user: UserDTO) => setFormInput(user))
+      .catch((error: Error) =>
+        setError({
+          title: error.message,
+          errors: error.cause,
+        })
+      );
   }, [id, userRepository]);
 
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-    console.log({ inputs });
+  const handleSubmit = () => {
+    const userManager = id === "new" ? userRepository.createUser : userRepository.editUser;
 
-    if (
-      inputs.password !== inputs.rePass ||
-      inputs.password === "" ||
-      inputs.rePass === "" ||
-      !inputs.rePass ||
-      !inputs.password
-    ) {
-      setError([
-        {
-          password: ["As duas senhas não são iguais!"],
-        },
-      ]);
-      return;
-    }
-
-    setError(null);
-
-    userRepository
-      .createUser(inputs)
-      .then((response: any) => {
-        console.log("response", response);
-        history.push("/users");
-      })
-      .catch((error: any) => {
-        setError(JSON.parse(error.message).message);
-      });
-  };
-
-  const handleUserEdition = (event: any) => {
-    event.preventDefault();
-
-    setError(null);
-
-    userRepository
-      .editUser(inputs.id, inputs)
-      .then((response: any) => {
-        console.log("response", response);
-        history.push("/users");
-      })
-      .catch((error: any) => {
-        setError(JSON.parse(error.message).message);
-      });
+    userValidation
+      .validate(formInput, { abortEarly: false })
+      .then(() =>
+        userManager
+          .call(userRepository, formInput)
+          .then(() => {
+            setSuccess("Usuário criado com sucesso!");
+            setTimeout(() => history.push("/users"), 35e2);
+          })
+          .catch((error: Error) =>
+            setError({
+              title: error.message,
+              errors: error.cause,
+            })
+          )
+      )
+      .catch((validationErrors: ValidationError) =>
+        setError({
+          title: "Erro ao criar o usuário.",
+          errors: mapperYupErrorsToErrorMessages(validationErrors),
+        })
+      );
   };
 
   useEffect(() => {
@@ -95,29 +97,13 @@ export default function UsersCreate({ repository: userRepository }: any) {
     >
       <FormControl style={{ backgroundColor: "white" }}>
         <h3 className="form-title">Usuário</h3>
-        {error && (
-          <ul
-            style={{
-              border: "3px solid red",
-              borderRadius: 5,
-              padding: 30,
-              backgroundColor: "pink",
-            }}
-          >
-            {Object.keys(error[0])?.map((err: any, i: number) => {
-              return (
-                <li key={i++}>
-                  {err}: {error[0][err]}
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        {error && <ErrorMessage {...error} />}
+        {success && <SuccessMessage message={success} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
             id="name"
             label="Nome do usuário"
-            value={inputs.name || ""}
+            value={formInput.name || ""}
             type="text"
             name="name"
             style={{ marginRight: 0 }}
@@ -126,7 +112,7 @@ export default function UsersCreate({ repository: userRepository }: any) {
           <TextField
             id="email"
             label="Email do usuário"
-            value={inputs.email || ""}
+            value={formInput.email || ""}
             type="text"
             name="email"
             style={{ marginLeft: 20, marginRight: 0 }}
@@ -138,7 +124,7 @@ export default function UsersCreate({ repository: userRepository }: any) {
             select
             id="role"
             name="role"
-            value={inputs.role || ""}
+            value={formInput.role || ""}
             label="Role"
             onChange={handleChange}
             style={{ width: 250 }}
@@ -152,30 +138,33 @@ export default function UsersCreate({ repository: userRepository }: any) {
           <TextField
             id="password"
             label="Senha do usuário"
-            value={inputs.password || ""}
+            value={formInput.password || ""}
             type="text"
             name="password"
             style={{ marginRight: 0 }}
             onChange={handleChange}
           />
           <TextField
-            id="rePass"
+            id="passwordConfirmation"
             label="Confirme a senha do usuário"
-            value={inputs.rePass || ""}
+            value={formInput.passwordConfirmation || ""}
             type="text"
-            name="rePass"
+            name="passwordConfirmation"
             style={{ marginLeft: 20, marginRight: 0 }}
             onChange={handleChange}
           />
         </Grid>
-        {id !== "new" && <input value={inputs.id || ""} type="hidden" name="id" />}
+        {id !== "new" && <input value={formInput.id || ""} type="hidden" name="id" />}
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
           <Button
             type="submit"
             variant="contained"
-            onClick={(e) => (id !== "new" ? handleUserEdition(e) : handleSubmit(e))}
+            onClick={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
           >
-            <SaveAsIcon style={{ verticalAlign: "bottom", marginRight: 15 }} />
+            <SaveAsIcon style={{ marginRight: 15 }} />
             {id !== "new" ? "Editar Usuário" : "Salvar Usuário"}
           </Button>
         </div>

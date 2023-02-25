@@ -7,7 +7,7 @@ import LoginRoute from "../login";
 import PatientsCreate from "../patients/patient.create";
 import PatientsHome from "../patients/patient.home";
 import UsersHome from "../users/user.home";
-import UsersCreate from "../users/user.create";
+import UsersCreate from "../users/user.create-edit";
 // import AuthVerify from "../auth-verifier";
 import { Button } from "@mui/material";
 import "./index.css";
@@ -70,9 +70,12 @@ export default function ApplicationRoutes() {
             children={<PatientsCreate repository={patient} />}
           />
           <Route exact path={"/users"}>
-            <UsersHome repository={user} />
+            <UsersHome repository={{ user }} />
           </Route>
-          <Route path={["/users/:id", "/users/new"]} children={<UsersCreate repository={user} />} />
+          <Route
+            path={["/users/:id", "/users/new"]}
+            children={<UsersCreate repository={{ user }} />}
+          />
           <Route exact path={"/appointments"}>
             <AppointmentsHome repository={[appointments, medicalRegistries]} />
           </Route>

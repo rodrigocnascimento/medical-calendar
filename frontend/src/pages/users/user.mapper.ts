@@ -1,7 +1,7 @@
 import ListMapper from "../../domain/mapper";
-import { DoctorUserDTO, DoctorDropDownListDTO } from "./user.dto";
+import { DoctorUserDTO, DoctorDropDownListDTO } from "./user.interfaces";
 
-export function MapperDoctorDropDownList(user: DoctorUserDTO): DoctorDropDownListDTO {
+function MapperDoctorDropDownList(user: DoctorUserDTO): DoctorDropDownListDTO {
   return {
     id: user.id,
     label: user.name,

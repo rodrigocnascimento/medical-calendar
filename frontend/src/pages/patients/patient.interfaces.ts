@@ -14,6 +14,6 @@ export interface PatientDTO {
 export interface CreatePatientDTO extends Omit<PatientDTO, "id"> {}
 export interface UpdatePatientDTO extends PatientDTO {}
 
-export type PatientsHomeProps = {
-  repository: Omit<IRepositories, "medicalRegistries">;
+export type PatientsComponentProps = {
+  repository: Pick<IRepositories, "patient" | "appointments" | "user">;
 };

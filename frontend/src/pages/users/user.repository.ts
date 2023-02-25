@@ -1,12 +1,12 @@
 import { IHttp } from "../../infrastructure/adapter/http";
 import TokenStorage from "../../infrastructure/adapter/storage/token";
-import { CreateUserDTO, UserDTO, UpdateUserDTO, FilterUserDTO } from "./user.dto";
+import { CreateUserDTO, UserDTO, UpdateUserDTO, FilterUserDTO } from "./user.interfaces";
 
 export interface IUserRepository {
   createUser(user: CreateUserDTO): Promise<UserDTO>;
-  editUser(userId: string, user: UpdateUserDTO): Promise<UserDTO>;
+  editUser(user: UpdateUserDTO): Promise<UserDTO>;
   removeUser(id: string): Promise<UserDTO>;
-  getAll(queryFilter: FilterUserDTO): Promise<UserDTO[]>;
+  getAll(queryFilter?: FilterUserDTO): Promise<UserDTO[]>;
   getById(id: string): Promise<UserDTO>;
 }
 
@@ -47,6 +47,7 @@ export class UserRepository implements IUserRepository {
    * @memberof UserRepository
    */
   async createUser(user: CreateUserDTO): Promise<UserDTO> {
+    delete user.id;
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,
@@ -56,7 +57,10 @@ export class UserRepository implements IUserRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      console.error(jsonResponse);
+      throw new Error("Erro ao criar o usuário!", {
+        cause: jsonResponse.message,
+      });
     }
 
     return jsonResponse;
@@ -67,17 +71,20 @@ export class UserRepository implements IUserRepository {
    * @param user user UpdateUserDTO
    * @returns
    */
-  async editUser(userId: string, user: UpdateUserDTO): Promise<UserDTO> {
+  async editUser(user: UpdateUserDTO): Promise<UserDTO> {
     const response = await this.http.request({
       method: "PATCH",
-      url: this.baseUrl + `/${userId}`,
+      url: this.baseUrl + `/${user.id}`,
       body: user,
     });
 
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      console.error(jsonResponse);
+      throw new Error("Erro ao editar o usuário!", {
+        cause: jsonResponse.message,
+      });
     }
 
     return jsonResponse;
@@ -97,7 +104,10 @@ export class UserRepository implements IUserRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      console.error(jsonResponse);
+      throw new Error("Erro ao remove o usuário!", {
+        cause: jsonResponse.message,
+      });
     }
 
     return jsonResponse;
@@ -108,13 +118,13 @@ export class UserRepository implements IUserRepository {
    * @param {FilterUserDTO} queryFilter filter to query the user
    * @returns
    */
-  async getAll(queryFilter: FilterUserDTO): Promise<UserDTO[]> {
+  async getAll(queryFilter?: FilterUserDTO): Promise<UserDTO[]> {
     const queryUrl = new URL(this.baseUrl);
 
     if (queryFilter) {
-      for (const [name, value] of Object.entries(queryFilter)) {
-        queryUrl.searchParams.set(name, value as string);
-      }
+      Object.entries(queryFilter).forEach(([key, value]) => {
+        queryUrl.searchParams.set(key, value as string);
+      });
     }
 
     const response = await this.http.request({
@@ -124,7 +134,10 @@ export class UserRepository implements IUserRepository {
     const jsonResponse = await response.json();
 
     if (!response.ok) {
-      throw new Error(JSON.stringify(jsonResponse));
+      console.error(jsonResponse);
+      throw new Error("Erro ao buscar o usuário!", {
+        cause: jsonResponse.message,
+      });
     }
 
     return jsonResponse;
@@ -140,6 +153,15 @@ export class UserRepository implements IUserRepository {
       url: this.baseUrl + `/${id}`,
     });
 
-    return await response.json();
+    const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      console.error(jsonResponse);
+      throw new Error("Erro ao buscar o usuário!", {
+        cause: jsonResponse.message,
+      });
+    }
+
+    return jsonResponse;
   }
 }
