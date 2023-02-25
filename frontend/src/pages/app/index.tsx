@@ -1,6 +1,5 @@
-import React from "react";
-import { Switch, Route, Link, useHistory } from "react-router-dom";
-import Dashboard from "../dashboard";
+import React, { useEffect, useState } from "react";
+import { Switch, Route, Link, useHistory, useLocation } from "react-router-dom";
 import repository, { IRepositories } from "../../domain/repository";
 import { useAuth } from "../../context/auth/use-auth";
 import LoginRoute from "../login";
@@ -10,8 +9,9 @@ import UsersHome from "../users/user.home";
 import UsersForm from "../users/user.form";
 // import AuthVerify from "../auth-verifier";
 import { Button } from "@mui/material";
-import "./index.css";
 import AppointmentsHome from "../appointments/appointments.home";
+import "./index.css";
+import "../../root.css";
 
 const { patient, appointments, user, medicalRegistries }: IRepositories = repository();
 
@@ -19,31 +19,44 @@ export default function ApplicationRoutes() {
   let history = useHistory();
   let auth = useAuth();
 
+  const location = useLocation<any>();
+
+  const [activePath, setActivePath] = useState<string>("/");
+
   function handleUserLogout() {
     auth.signout();
     history.push("/");
   }
+
+  useEffect(() => {
+    setActivePath(location.pathname);
+  }, [location.pathname]);
 
   return (
     <>
       <div id="sidebar">
         <nav>
           Bem vindo, {auth.user.userName}
+          <br />
+          active: {activePath}
           <ul>
             <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/patients">Pacientes</Link>
+              <Link className={activePath === "/patients" ? "active" : ""} to="/patients">
+                Pacientes
+              </Link>
             </li>
             {auth.user.userRole === "admin" && (
               <li>
-                <Link to="/users">Administrar usuários</Link>
+                <Link className={activePath === "/users" ? "active" : ""} to="/users">
+                  Administrar usuários
+                </Link>
               </li>
             )}
             {auth.user.userRole === "doctor" && (
               <li>
-                <Link to="/appointments">Minhas consultas</Link>
+                <Link className={activePath === "/appointments" ? "active" : ""} to="/appointments">
+                  Minhas consultas
+                </Link>
               </li>
             )}
           </ul>
@@ -56,13 +69,10 @@ export default function ApplicationRoutes() {
       </div>
       <div id="detail" style={{ overflow: "scroll" }}>
         <Switch>
-          <Route exact path="/">
-            <Dashboard />
-          </Route>
           <Route path="/login">
             <LoginRoute />
           </Route>
-          <Route exact path={"/patients"}>
+          <Route exact path={["/patients", "/"]}>
             <PatientsHome repository={{ patient, appointments, user }} />
           </Route>
           <Route
