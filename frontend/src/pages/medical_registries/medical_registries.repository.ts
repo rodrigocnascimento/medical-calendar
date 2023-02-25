@@ -1,5 +1,5 @@
 import { IHttp } from "../../infrastructure/adapter/http";
-import TokenStorage from "../../infrastructure/adapter/storage/token";
+import { ITokenStorage } from "../../infrastructure/adapter/storage/token";
 import {
   MedicallRegistriesDTO,
   CreateMedicallRegistriesDTO,
@@ -39,7 +39,7 @@ export class MedicalRegistryRepository {
    * @param {IHttp} http http client
    * @memberof MedicalRegistriesRepository
    */
-  constructor(baseUrl: string, http: IHttp, userToken: TokenStorage) {
+  constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
     this.baseUrl = baseUrl + "/medical-registries";
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());

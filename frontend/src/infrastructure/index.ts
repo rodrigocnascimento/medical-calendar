@@ -1,10 +1,10 @@
 import Http from "./adapter/http";
 import Storage from "./adapter/storage";
-import TokenStorage from "./adapter/storage/token";
+import TokenStorage, { ITokenStorage } from "./adapter/storage/token";
 
 interface IStorageConcrete {
   local: Storage;
-  token: TokenStorage;
+  token: ITokenStorage;
 }
 
 export interface IInfrastructures {

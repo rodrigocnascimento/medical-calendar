@@ -1,5 +1,5 @@
 import { IHttp } from "../../infrastructure/adapter/http";
-import TokenStorage from "../../infrastructure/adapter/storage/token";
+import { ITokenStorage } from "../../infrastructure/adapter/storage/token";
 import {
   CreatePatientDTO,
   FilterPatientDTO,
@@ -38,7 +38,7 @@ export class PatientRepository implements IPatientRepository {
    * @param {IHttp} http http client
    * @memberof PatientRepository
    */
-  constructor(baseUrl: string, http: IHttp, userToken: TokenStorage) {
+  constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
     this.baseUrl = baseUrl + "/patients";
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());

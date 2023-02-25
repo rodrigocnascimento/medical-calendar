@@ -1,5 +1,5 @@
 import { IHttp } from "../../infrastructure/adapter/http";
-import TokenStorage from "../../infrastructure/adapter/storage/token";
+import { ITokenStorage } from "../../infrastructure/adapter/storage/token";
 import { CreateUserDTO, UserDTO, UpdateUserDTO, FilterUserDTO } from "./user.interfaces";
 
 export interface IUserRepository {
@@ -33,7 +33,7 @@ export class UserRepository implements IUserRepository {
    * @param {IHttp} http http client
    * @memberof UserRepository
    */
-  constructor(baseUrl: string, http: IHttp, userToken: TokenStorage) {
+  constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
     this.baseUrl = baseUrl + "/users";
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());

@@ -1,4 +1,12 @@
+import { JWTUser } from "../../../context/auth/use-auth";
 import Storage from "./index";
+
+export interface ITokenStorage {
+  getRawToken(name?: string): string;
+  get(name?: string): JWTUser | undefined;
+  set(value: string, name?: string): void;
+  remove(name?: string): void;
+}
 
 export default class TokenStorage {
   /**
@@ -28,11 +36,11 @@ export default class TokenStorage {
    * Returns the token in raw state
    *
    * @param {string} [name=user] name storage name where the token is stored. Default is "user".
-   * @return {*} the accessToken property request payload
+   * @return {string} the accessToken property request payload
    * @memberof TokenStorage
    */
-  public getRawToken(name: string = "") {
-    return this.storage.get(this.name || name);
+  public getRawToken(name?: string): string {
+    return this.storage.get(name ?? this.name);
   }
 
   /**
@@ -42,10 +50,10 @@ export default class TokenStorage {
    * @return {*}
    * @memberof TokenStorage
    */
-  public get(name: string = ""): any | null {
-    const tokenStore = this.storage.get(this.name || name);
+  public get(name?: string): JWTUser | undefined {
+    const tokenStore = this.storage.get(name ?? this.name);
 
-    if (!tokenStore) return null;
+    if (!tokenStore) return undefined;
 
     return this.parseJwt(tokenStore);
   }
@@ -58,8 +66,8 @@ export default class TokenStorage {
    * @param {string} [name=user] name of the storage. Default is "user".
    * @memberof TokenStorage
    */
-  public set(value: string, name: string = ""): void {
-    this.storage.set(this.name || name, value);
+  public set(value: string, name?: string): void {
+    this.storage.set(name ?? this.name, value);
   }
 
   /**
@@ -68,11 +76,16 @@ export default class TokenStorage {
    * @param {string} [name=user] the store. Default is user.
    * @memberof TokenStorage
    */
-  remove(name: string = "") {
-    this.storage.remove(this.name || name);
+  public remove(name?: string): void {
+    this.storage.remove(name ?? this.name);
   }
 
-  private tokenIsExpired(decodedToken: any) {
+  /**
+   * Validate a JWT token verifying if it's expired.
+   * @param {JWTUser} decodedToken the JWT parsed
+   * @returns
+   */
+  private tokenIsExpired(decodedToken: JWTUser): JWTUser {
     const { exp } = decodedToken;
 
     const expired = Date.now() >= exp * 1000;
@@ -88,7 +101,7 @@ export default class TokenStorage {
    * @param token the JWT token
    * @returns Parsed JWT
    */
-  parseJwt(token: string) {
+  private parseJwt(token: string): JWTUser {
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(

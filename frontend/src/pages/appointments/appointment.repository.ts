@@ -1,5 +1,5 @@
 import { IHttp } from "../../infrastructure/adapter/http";
-import TokenStorage from "../../infrastructure/adapter/storage/token";
+import { ITokenStorage } from "../../infrastructure/adapter/storage/token";
 import {
   AppointmentDTO,
   CreateAppointmentDTO,
@@ -37,7 +37,7 @@ export class AppointmentRepository implements IAppointmentRepository {
    * @param {IHttp} http http client
    * @memberof AppointmentRepository
    */
-  constructor(baseUrl: string, http: IHttp, userToken: TokenStorage) {
+  constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
     this.baseUrl = baseUrl + "/medical-appointments";
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());

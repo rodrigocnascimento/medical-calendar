@@ -6,10 +6,12 @@ import { useAuth } from "../../context/auth/use-auth";
 import { TextField, Button } from "@mui/material";
 
 import "./login.css";
+import ErrorMessage, { TErrorMessage } from "../../components/error";
 export default function NotLoggedRoute() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [response, setResponse] = useState<string>("");
+
+  const [error, setError] = useState<TErrorMessage>();
 
   let history = useHistory();
   let location = useLocation();
@@ -23,14 +25,18 @@ export default function NotLoggedRoute() {
     auth
       .signin(email, password)
       .then(() => history.replace(from))
-      .catch((error: any) => {
-        setResponse(error.message);
-      });
+      .catch((error: Error) =>
+        setError({
+          title: error.message,
+          errors: error.cause,
+        })
+      );
   }
 
   return (
     <div className="form-container">
       <form className="form" method="post" onSubmit={handleUserLogin}>
+        {error && <ErrorMessage {...error} />}
         <div className="form-content">
           <h3 className="form-title">Sign In</h3>
           <img src={logo} className="App-logo" alt="Logo" />
@@ -62,7 +68,6 @@ export default function NotLoggedRoute() {
               Entrar
             </Button>
           </div>
-          {response && <p style={{ clear: "both", color: "red" }}>{response}</p>}
         </div>
       </form>
     </div>
