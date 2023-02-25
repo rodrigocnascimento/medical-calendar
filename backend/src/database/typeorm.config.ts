@@ -14,6 +14,7 @@ export default {
   database: process.env.DATABASE_DB,
   migrationsTableName: "medapp_migrations",
   entities: ["dist/**/*.entity{.js,.ts}"],
+  subscribers: ["dist/**/*.subscriber{.js,.ts}"],
   migrations: ["dist/database/migrations/*{.js,.ts}"],
   autoLoadEntities: true,
   logging: true,

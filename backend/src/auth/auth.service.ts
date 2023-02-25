@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "src/users/user.entity";
+import * as bcrypt from "bcrypt";
+import { UsersDTO } from "src/users/dto/user.dto";
 
 export const jwtConstants = {
   secret: "05e9eadd-d1c7-490c-a74f-0f8ec2b67beb",
@@ -13,7 +15,10 @@ export class AuthService {
 
   async validateUser(userEmail: string, pass: string): Promise<Omit<User, "password">> {
     const user = await this.usersService.findOne(userEmail);
-    if (user && user.password === pass) {
+
+    const isPasswordValid = await bcrypt.compare(pass, user.password);
+
+    if (user && isPasswordValid) {
       // eslint-disable-next-line
       const { password, ...result } = user;
       return result;
@@ -21,7 +26,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(user: UsersDTO) {
     const payload = {
       sub: user.id,
       userEmail: user.email,

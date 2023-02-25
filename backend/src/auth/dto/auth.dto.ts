@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { UsersDTO } from "src/users/dto/user.dto";
 
 export class AuthDTO {
   @Expose()
@@ -7,14 +9,25 @@ export class AuthDTO {
     description: "O username do usuário. Nesse caso, o email do usuário.",
     example: "email@mail.com",
   })
+  @IsString({ message: "Email inválido." })
+  @IsNotEmpty({
+    message: "Precisa informar um email.",
+  })
+  @IsEmail({}, { message: "Email inválido." })
+  @MaxLength(64)
   username: string;
 
   @Expose()
   @ApiProperty({
-    description: "O email do usuário.",
+    description: "A senha do usuário.",
     example: "SECRET",
   })
+  @IsNotEmpty({
+    message: "Precisa informar a senha.",
+  })
   password: string;
+
+  user: UsersDTO;
 }
 
 export class BearerTokenDTO {
