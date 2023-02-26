@@ -5,7 +5,12 @@ import AdapterDateFns from "@date-io/date-fns";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import ErrorMessage, { TErrorMessage } from "components/error";
-import { CreatePatientDTO, Genre, PatientDTO, UpdatePatientDTO, patientValidation } from "./index";
+import {
+  Genre,
+  PatientDTO,
+  UpdatePatientDTO,
+  patientValidation,
+} from "./index";
 import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import SuccessMessage from "components/success";
@@ -21,12 +26,12 @@ import { useRepository } from "context";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Form Element
  */
-export function PatientsForm(): JSX.Element {
+export function UpdatePatient(): JSX.Element {
   const { patient: patientRepository } = useRepository();
   const history = useHistory();
   let { id } = useParams<{ id: string }>();
 
-  const [formInput, setFormInput] = useState<CreatePatientDTO | UpdatePatientDTO>({
+  const [formInput, setFormInput] = useState<UpdatePatientDTO>({
     id: "",
     name: "",
     email: "",
@@ -61,13 +66,11 @@ export function PatientsForm(): JSX.Element {
   }, [id, patientRepository]);
 
   const handleSubmit = () => {
-    const formManager = id === "new" ? patientRepository.create : patientRepository.edit;
-
     patientValidation
       .validate(formInput, { abortEarly: false })
       .then(() =>
-        formManager
-          .call(patientRepository, formInput)
+        patientRepository
+          .edit(formInput)
           .then(() => {
             setSuccess("Paciente criado com sucesso!");
             setTimeout(() => history.push("/patients"), 25e2);
@@ -185,7 +188,7 @@ export function PatientsForm(): JSX.Element {
             <MenuItem value={"M"}>Masculino</MenuItem>
           </TextField>
         </Grid>
-        {id !== "new" && <input value={formInput.id || ""} type="hidden" name="id" />}
+        <input value={formInput.id || ""} type="hidden" name="id" />
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
           <Button
             type="submit"
@@ -196,7 +199,7 @@ export function PatientsForm(): JSX.Element {
             }}
           >
             <SaveAsIcon style={{ verticalAlign: "bottom", marginRight: 15 }} />
-            {id !== "new" ? "Editar Paciente" : "Salvar Paciente"}
+            Editar Paciente
           </Button>
         </div>
       </FormControl>

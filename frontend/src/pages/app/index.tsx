@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, useLocation } from "react-router-dom";
 import { useAuth } from "context";
 import LoginRoute from "pages/login";
-import { PatientsForm, PatientsHome } from "pages/patients";
+import { ListPatients, CreatePatient, UpdatePatient } from "pages/patients";
 import { ListUsers, CreateUser, UpdateUser } from "pages/users";
 import AuthVerify from "context/auth-verifier";
 import { Button } from "@mui/material";
@@ -75,13 +75,14 @@ export default function ApplicationRoutes() {
           <Route path="/login">
             <LoginRoute />
           </Route>
-          <Route exact path={["/patients", "/"]}>
-            <PatientsHome />
+
+          <Route exact path={"/patients"} children={<ListPatients />} />
+          <Route path={"/patients/new"}>
+            <CreatePatient />
           </Route>
-          <Route
-            path={["/patients/:id", "/patients/new"]}
-            children={<PatientsForm />}
-          />
+          <Route path={"/patients/:id"}>
+            <UpdatePatient />
+          </Route>
 
           <Route exact path={"/users"} children={<ListUsers />} />
           <Route path={"/users/new"}>

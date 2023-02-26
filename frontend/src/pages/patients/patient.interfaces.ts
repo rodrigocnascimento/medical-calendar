@@ -26,7 +26,7 @@ export interface PatientDTO {
 
 export interface CreatePatientDTO
   extends Partial<
-    Omit<PatientDTO, "createdAt" | "updatedAt" | "appointments">
+    Omit<PatientDTO, "id" | "createdAt" | "updatedAt" | "appointments">
   > {}
 export interface UpdatePatientDTO
   extends Partial<

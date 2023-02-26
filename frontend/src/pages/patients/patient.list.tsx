@@ -11,7 +11,12 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-import { Create, PermContactCalendar, CalendarMonth, HighlightOff } from "@mui/icons-material";
+import {
+  Create,
+  PermContactCalendar,
+  CalendarMonth,
+  HighlightOff,
+} from "@mui/icons-material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
 
@@ -23,7 +28,10 @@ import { AppointmentDTO } from "../appointments";
 import ErrorMessage, { TErrorMessage } from "components/error";
 import SuccessMessage from "components/success";
 
-import { DeleteConfirmation, TDeleteConfirmation } from "components/delete-confirmation";
+import {
+  DeleteConfirmation,
+  TDeleteConfirmation,
+} from "components/delete-confirmation";
 
 import "./patients.css";
 
@@ -33,7 +41,7 @@ import "./patients.css";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-export function PatientsHome(): JSX.Element {
+export function ListPatients(): JSX.Element {
   const {
     appointments: appointmentRepository,
     patient: patientRepository,
@@ -50,10 +58,13 @@ export function PatientsHome(): JSX.Element {
   const [selectedPatient, setSelectedPatient] = useState<Partial<PatientDTO>>({
     id: "",
   });
-  const [deleteConfirmation, setDeleteConfirmation] = useState<TDeleteConfirmation>();
+  const [deleteConfirmation, setDeleteConfirmation] =
+    useState<TDeleteConfirmation>();
 
   const [open, setOpen] = useState(false);
-  const [appointmentDate, setAppointmentDate] = useState(new Date().toISOString());
+  const [appointmentDate, setAppointmentDate] = useState(
+    new Date().toISOString()
+  );
   const [appointmentDoctor, setAppointmentDoctor] = useState<{
     id: string;
     label: string;
@@ -216,7 +227,9 @@ export function PatientsHome(): JSX.Element {
                   >
                     Data de aniversário:{" "}
                   </span>
-                  {new Intl.DateTimeFormat("pt-BR").format(new Date(patient.dob))}
+                  {new Intl.DateTimeFormat("pt-BR").format(
+                    new Date(patient.dob)
+                  )}
                   <br />
                   <span
                     style={{
@@ -225,25 +238,29 @@ export function PatientsHome(): JSX.Element {
                   >
                     Criado em:
                   </span>{" "}
-                  {new Intl.DateTimeFormat("pt-BR").format(new Date(patient.createdAt))}
+                  {new Intl.DateTimeFormat("pt-BR").format(
+                    new Date(patient.createdAt)
+                  )}
                 </Typography>
                 <Typography variant="h6">Agendamentos do Paciente</Typography>
                 <ul>
                   {patient.appointments &&
-                    patient.appointments.map((appointment: AppointmentDTO, i: number) => (
-                      <li key={i++}>
-                        Data/Horário:{" "}
-                        {new Intl.DateTimeFormat("pt-BR", {
-                          year: "numeric",
-                          month: "numeric",
-                          day: "numeric",
-                          hour: "numeric",
-                          minute: "numeric",
-                          second: "numeric",
-                          hour12: false,
-                        }).format(new Date(appointment.date))}
-                      </li>
-                    ))}
+                    patient.appointments.map(
+                      (appointment: AppointmentDTO, i: number) => (
+                        <li key={i++}>
+                          Data/Horário:{" "}
+                          {new Intl.DateTimeFormat("pt-BR", {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                            second: "numeric",
+                            hour12: false,
+                          }).format(new Date(appointment.date))}
+                        </li>
+                      )
+                    )}
                 </ul>
               </CardContent>
               <CardActions>
@@ -350,7 +367,9 @@ export function PatientsHome(): JSX.Element {
                 options={mapperDoctorListDropDown(doctors)}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={(e: any, value: any) => setAppointmentDoctor(value)}
-                renderInput={(params) => <TextField {...params} label="Selecione um Médico" />}
+                renderInput={(params) => (
+                  <TextField {...params} label="Selecione um Médico" />
+                )}
               />
             )}
           </div>
