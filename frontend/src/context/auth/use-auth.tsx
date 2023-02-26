@@ -1,6 +1,13 @@
-import React, { useState, useEffect, useContext, createContext, ReactNode } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  ReactNode,
+} from "react";
 import { serverEndpoint } from "env-constants";
 import BaseInfrastructure, { IInfrastructures } from "infrastructure";
+import { UserRoles } from "pages/users";
 
 type Auth = any | null;
 
@@ -16,7 +23,11 @@ export type JWTUser = {
 
 const AuthContext = createContext<Auth>(false);
 
-export function ProvideAuth({ children }: { children: ReactNode }): JSX.Element {
+export function ProvideAuth({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element {
   const { http, storage } = BaseInfrastructure();
 
   const auth = useProvideAuth({ http, storage });
@@ -26,6 +37,13 @@ export function ProvideAuth({ children }: { children: ReactNode }): JSX.Element 
 
 function useProvideAuth({ http, storage }: IInfrastructures) {
   const [user, setUser] = useState<JWTUser>();
+
+  const postLoginRedirect = (role: string) =>
+    ({
+      [UserRoles.ADMIN]: "/users",
+      [UserRoles.DOCTOR]: "/appointments",
+      [UserRoles.PATIENT]: "/appointments",
+    }[role]);
 
   const signin = async (username: string, password: string) => {
     const response = await http.request({
@@ -47,7 +65,11 @@ function useProvideAuth({ http, storage }: IInfrastructures) {
 
     storage.token.set(accessToken);
 
-    setUser(storage.token.get());
+    const loggedUser = storage.token.get();
+
+    setUser(loggedUser);
+
+    return postLoginRedirect(loggedUser?.userRole || "");
   };
 
   const signup = async (username: string, password: string) => {

@@ -76,7 +76,7 @@ export default function ApplicationRoutes() {
             <LoginRoute />
           </Route>
 
-          <Route exact path={"/patients"} children={<ListPatients />} />
+          <Route exact path={["/patients", "/"]} children={<ListPatients />} />
           <Route path={"/patients/new"}>
             <CreatePatient />
           </Route>

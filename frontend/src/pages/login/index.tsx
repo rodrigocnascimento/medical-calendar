@@ -18,14 +18,16 @@ export default function LoginRoute(): JSX.Element {
   let location = useLocation();
   let auth = useAuth();
 
-  let { from }: any = location.pathname || { from: { pathname: "/" } };
-
   async function handleUserLogin(e: any) {
     e.preventDefault();
 
     auth
       .signin(email, password)
-      .then(() => history.replace(from))
+      .then((redirectPath: string) => {
+        let previousPath = location.pathname !== "/" && location.pathname;
+
+        history.replace(previousPath || { pathname: redirectPath });
+      })
       .catch((error: Error) =>
         setError({
           title: error.message,
@@ -65,7 +67,12 @@ export default function LoginRoute(): JSX.Element {
             />
           </div>
           <div className="form-group">
-            <Button type="submit" variant="contained" color="primary" style={{ float: "right" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ float: "right" }}
+            >
               Entrar
             </Button>
           </div>
