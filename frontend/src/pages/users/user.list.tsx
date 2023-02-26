@@ -16,7 +16,7 @@ import {
   TDeleteConfirmation,
 } from "components/delete-confirmation";
 
-import SuccessMessage from "components/success";
+import SuccessMessage, { TSuccessMessageProps } from "components/success";
 import { useAuth } from "context/auth/use-auth";
 
 import "./users.css";
@@ -33,7 +33,7 @@ export function ListUsers(): JSX.Element {
   const auth = useAuth();
   const [users, setUsers] = useState<UserDTO[]>([]);
   const [error, setError] = useState<TErrorMessage>();
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<TSuccessMessageProps>();
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<TDeleteConfirmation>();
 
@@ -43,15 +43,24 @@ export function ListUsers(): JSX.Element {
     setUsers(users);
   }, [userRepository]);
 
+  const reset = () => {
+    setError(undefined);
+    setSuccess(undefined);
+  };
+
   const handleUserDeletion = (user: UserDTO) => {
     userRepository
       .remove(user.id)
       .then(async () => {
-        setSuccess("Usuário removido com sucesso.");
+        setSuccess({
+          message: "Usuário removido com sucesso.",
+          handlerOnClose: () => {
+            reset();
+          },
+        });
         await loadUsers();
       })
       .catch((error: Error) => {
-        setSuccess("");
         setError({
           title: error.message,
           errors: error.cause,
@@ -76,7 +85,7 @@ export function ListUsers(): JSX.Element {
           </Link>
         </div>
         {error && <ErrorMessage {...error} />}
-        {success && <SuccessMessage message={success} />}
+        {success && <SuccessMessage {...success} />}
         {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
       {users &&

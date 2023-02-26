@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Box,
-  Modal,
-  TextField,
-  Autocomplete,
   Card,
   CardActions,
   CardContent,
@@ -17,16 +13,19 @@ import {
   CalendarMonth,
   HighlightOff,
 } from "@mui/icons-material";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import AdapterDateFns from "@date-io/date-fns";
 
 import { useAuth, useRepository } from "context";
-import { UserDTO, UserRoles, mapperDoctorListDropDown } from "../users";
+import {
+  DoctorMUIDropDownListDTO,
+  UserDTO,
+  UserRoles,
+  mapperDoctorListDropDown,
+} from "../users";
 import { PatientDTO } from "./index";
 import { AppointmentDTO } from "../appointments";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
-import SuccessMessage from "components/success";
+import SuccessMessage, { TSuccessMessageProps } from "components/success";
 
 import {
   DeleteConfirmation,
@@ -34,6 +33,13 @@ import {
 } from "components/delete-confirmation";
 
 import "./patients.css";
+import {
+  PatientAppointmentModal,
+  TPatientAppointmentModalProps,
+} from "./patient-appointment.modal";
+import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
+import { appointmentCreationValidation } from "pages/appointments/appointments.validation";
+import { ValidationError } from "yup";
 
 /**
  * This page is the dashboard of the module.
@@ -49,83 +55,26 @@ export function ListPatients(): JSX.Element {
   } = useRepository();
 
   const auth = useAuth();
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<TSuccessMessageProps>();
   const [error, setError] = useState<TErrorMessage>();
-  const [modalError, setErrorModal] = useState<TErrorMessage>();
-
-  const [patients, setPatients] = useState<PatientDTO[]>([]);
-  const [doctors, setDoctors] = useState<UserDTO[]>([]);
-  const [selectedPatient, setSelectedPatient] = useState<Partial<PatientDTO>>({
-    id: "",
-  });
+  const [errorModal, setErrorModal] = useState<TErrorMessage>();
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<TDeleteConfirmation>();
 
-  const [open, setOpen] = useState(false);
-  const [appointmentDate, setAppointmentDate] = useState(
-    new Date().toISOString()
-  );
-  const [appointmentDoctor, setAppointmentDoctor] = useState<{
-    id: string;
-    label: string;
-  }>({
-    id: "",
-    label: "",
-  });
+  const [modalState, setModalState] = useState<TPatientAppointmentModalProps>();
 
-  const handleAppointmentConfirmation = () => {
-    const [date, hours] = appointmentDate.split("T");
-    const [hour, minute] = hours.split(":");
+  const [patients, setPatients] = useState<PatientDTO[]>([]);
 
-    // if the userRole is "doctor", than ir should
-    // assign the appointment to himself
-    auth.user.userRoles === UserRoles.DOCTOR &&
-      setAppointmentDoctor({
-        id: auth.user.sub,
-        label: auth.user.userName,
-      });
+  const [doctorDropDownList, setDoctorDropDownList] = useState<
+    DoctorMUIDropDownListDTO[]
+  >([]);
 
-    if (appointmentDoctor.id === "") {
-      setErrorModal({
-        title: "Erro ao fazer agendamento",
-        errors: {
-          Medico: ["Precisa selecionar o médico que fará a consulta."],
-        },
-      });
-      return false;
-    }
-
-    appointmentRepository
-      .create({
-        patient: selectedPatient.id,
-        doctor: appointmentDoctor.id,
-        date: new Date(`${date}T${hour}:${minute}`),
-      })
-      .then(async () => {
-        setSuccess("Agendamento criado com sucesso!");
-        setOpen(false);
-        await loadPatients();
-      })
-      .catch((error: Error) => {
-        setOpen(false);
-        setSuccess("");
-        setError({
-          title: error.message,
-          errors: error.cause,
-        });
-      });
-  };
-
-  const handlePatientAppointmentModalOpen = (patient: PatientDTO) => {
-    setOpen(true);
-    setSelectedPatient(patient);
-  };
-
-  const handlePatientAppointmentModalClose = () => {
-    setOpen(false);
-    setSelectedPatient({
-      id: "",
-    });
+  const reset = () => {
+    setError(undefined);
+    setErrorModal(undefined);
+    setSuccess(undefined);
+    setDeleteConfirmation(undefined);
+    setModalState(undefined);
   };
 
   const loadPatients = useCallback(async () => {
@@ -134,12 +83,98 @@ export function ListPatients(): JSX.Element {
     setPatients(patients);
   }, [patientRepository]);
 
+  const handlePatientAppointmentCreationModal = useCallback(
+    (patient: Partial<PatientDTO>) => {
+      setModalState({
+        open: !!patient.id,
+        patient,
+        handleAppointmentCreation: (appointmentDoctor, appointmentDate) => {
+          const [date, fullhour] = new Date(appointmentDate)
+            .toISOString()
+            .split("T");
+          const [hour, minute] = fullhour.split(":");
+
+          const createAppointment = {
+            patient: patient.id,
+            doctor: appointmentDoctor.id,
+            date: new Date(`${date}T${hour}:${minute}`),
+          };
+
+          // if the userRole is "doctor", than ir should
+          // assign the appointment to himself
+          if (auth.user.userRole === UserRoles.DOCTOR) {
+            createAppointment.doctor = auth.user.sub;
+          }
+
+          appointmentCreationValidation
+            .validate(createAppointment, { abortEarly: false })
+            .then(() =>
+              appointmentRepository
+                .create(createAppointment)
+                .then(async () => {
+                  setSuccess({
+                    message: "Agendamento criado com sucesso!",
+                    handlerOnClose: () => reset(),
+                  });
+                  await loadPatients();
+                })
+                .catch((error: Error) => {
+                  setError({
+                    title: error.message,
+                    errors: error.cause,
+                  });
+                })
+            )
+            .catch((validationErrors: ValidationError) =>
+              setErrorModal({
+                title: "Erro ao criar o agendamento.",
+                errors: mapperYupErrorsToErrorMessages(validationErrors),
+              })
+            );
+        },
+        onCloseHandler: () => {
+          console.log("aqui");
+          reset();
+        },
+      });
+    },
+    [appointmentRepository, auth, loadPatients]
+  );
+
+  const handlePatienteDeletion = (patient: PatientDTO) => {
+    setDeleteConfirmation({
+      message: `Confirmando essa ação, você irá excluir o registro ${patient.name}. Tem certeza disso?`,
+      onConfirmation: {
+        title: "Sim, tenho certeza.",
+        fn: () => {
+          patientRepository
+            .remove(patient.id)
+            .then(async () => {
+              setSuccess({
+                message: "Paciente removido com sucesso.",
+              });
+              await loadPatients();
+            })
+            .catch((error: Error) =>
+              setError({
+                title: error.message,
+                errors: error.cause,
+              })
+            );
+        },
+      },
+      onFinally: () => reset(),
+    });
+  };
+
   const loadDoctors = useCallback(async () => {
     userRepository
       .getAll({
         role: UserRoles.DOCTOR,
       })
-      .then((doctors: UserDTO[]) => setDoctors(doctors))
+      .then((doctors: UserDTO[]) =>
+        setDoctorDropDownList(mapperDoctorListDropDown(doctors))
+      )
       .catch((error: Error) =>
         setError({
           title: error.message,
@@ -147,21 +182,6 @@ export function ListPatients(): JSX.Element {
         })
       );
   }, [userRepository]);
-
-  const handlePatienteDeletion = (patient: PatientDTO) => {
-    patientRepository
-      .remove(patient.id)
-      .then(async () => {
-        setSuccess("Paciente removido com sucesso.");
-        await loadPatients();
-      })
-      .catch((error: Error) =>
-        setError({
-          title: error.message,
-          errors: error.cause,
-        })
-      );
-  };
 
   useEffect(() => {
     loadPatients();
@@ -180,7 +200,7 @@ export function ListPatients(): JSX.Element {
             </Button>
           </Link>
         </div>
-        {success && <SuccessMessage message={success} />}
+        {success && <SuccessMessage {...success} />}
         {error && <ErrorMessage {...error} />}
         {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
@@ -274,10 +294,7 @@ export function ListPatients(): JSX.Element {
                 <Button
                   style={{ margin: 10 }}
                   variant="contained"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePatientAppointmentModalOpen(patient);
-                  }}
+                  onClick={() => handlePatientAppointmentCreationModal(patient)}
                 >
                   <CalendarMonth />
                   Agendar horário
@@ -287,17 +304,7 @@ export function ListPatients(): JSX.Element {
                     style={{ margin: 10 }}
                     variant="contained"
                     color="error"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setDeleteConfirmation({
-                        message: `Confirmando essa ação, você irá excluir o registro ${patient.name}. Tem certeza disso?`,
-                        onConfirmation: {
-                          title: "Sim, tenho certeza.",
-                          fn: () => handlePatienteDeletion(patient),
-                        },
-                        onFinally: () => setDeleteConfirmation(undefined),
-                      });
-                    }}
+                    onClick={() => handlePatienteDeletion(patient)}
                   >
                     <HighlightOff />
                     Excluir Paciente
@@ -307,87 +314,13 @@ export function ListPatients(): JSX.Element {
             </Card>
           );
         })}
-      <Modal
-        open={open}
-        onClose={handlePatientAppointmentModalClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          display="flex-row"
-          sx={{
-            position: "absolute" as "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          {modalError && <ErrorMessage {...modalError} />}
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Reserva de consulta para {selectedPatient && selectedPatient.name}
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Confirme a data da reserva da consulta.
-          </Typography>
-          <div style={{ display: "block" }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DateTimePicker
-                views={["year", "month", "day", "hours", "minutes"]}
-                label="Data do agendamento"
-                value={appointmentDate}
-                onChange={(newValue: any) => {
-                  setAppointmentDate(new Date(newValue).toISOString());
-                }}
-                inputFormat="dd/MM/yyyy, hh:mm"
-                renderInput={(params) => (
-                  <TextField
-                    style={{
-                      marginLeft: 0,
-                      marginTop: 25,
-                      marginBottom: 30,
-                    }}
-                    fullWidth={true}
-                    {...params}
-                  />
-                )}
-              />
-            </LocalizationProvider>
-          </div>
-          <div style={{ display: "block", marginBottom: 30 }}>
-            {auth.user.userRoles !== UserRoles.DOCTOR && (
-              <Autocomplete
-                disablePortal
-                id="doctor"
-                noOptionsText={"Médico não encontrado."}
-                options={mapperDoctorListDropDown(doctors)}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                onChange={(e: any, value: any) => setAppointmentDoctor(value)}
-                renderInput={(params) => (
-                  <TextField {...params} label="Selecione um Médico" />
-                )}
-              />
-            )}
-          </div>
-          <div style={{ float: "right" }}>
-            <Button
-              style={{ margin: 10 }}
-              variant="contained"
-              onClick={(e) => {
-                e.preventDefault();
-                handleAppointmentConfirmation();
-              }}
-            >
-              <CalendarMonth />
-              Confirmar agendamento
-            </Button>
-          </div>
-        </Box>
-      </Modal>
+      <PatientAppointmentModal
+        {...{
+          ...modalState,
+          errorMessage: errorModal,
+          doctorDropDownList,
+        }}
+      />
     </div>
   );
 }

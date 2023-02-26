@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, useLocation } from "react-router-dom";
+import { Button } from "@mui/material";
+
 import { useAuth } from "context";
 import LoginRoute from "pages/login";
 import { ListPatients, CreatePatient, UpdatePatient } from "pages/patients";
 import { ListUsers, CreateUser, UpdateUser } from "pages/users";
 import AuthVerify from "context/auth-verifier";
-import { Button } from "@mui/material";
-import { AppointmentsHome } from "pages/appointments";
+import { ListAppointments } from "pages/appointments";
 import "./index.css";
 import "root.css";
 
@@ -93,7 +94,7 @@ export default function ApplicationRoutes() {
           </Route>
 
           <Route exact path={"/appointments"}>
-            <AppointmentsHome />
+            <ListAppointments />
           </Route>
         </Switch>
       </div>
