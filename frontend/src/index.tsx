@@ -6,7 +6,7 @@ import { createTheme } from "@mui/material/styles";
 
 import { ProvideAuth } from "context";
 
-import RootRoute from "pages/router";
+import RootRoute from "modules/router";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -41,7 +41,9 @@ const theme = createTheme({
   },
 });
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>

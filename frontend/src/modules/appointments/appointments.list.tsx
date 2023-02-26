@@ -31,9 +31,9 @@ import {
 import {
   CreateMedicallRegistriesDTO,
   UpdateMedicallRegistriesDTO,
-} from "pages/medical_registries";
+} from "modules/medical_registries";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import { medicalRegistriesValidation } from "pages/medical_registries/medical_registries.validation";
+import { medicalRegistriesValidation } from "modules/medical_registries/medical_registries.validation";
 import { ValidationError } from "yup";
 
 /**

@@ -8,7 +8,7 @@ import { AppointmentDTO } from "./appointment.interfaces";
 import {
   CreateMedicallRegistriesDTO,
   UpdateMedicallRegistriesDTO,
-} from "pages/medical_registries";
+} from "modules/medical_registries";
 
 export type TAppointmentObservationModalProps = {
   errorMessage?: TErrorMessage;
@@ -20,11 +20,11 @@ export type TAppointmentObservationModalProps = {
 
 /**
  *
- * @param {TAppointmentObservationModalProps["errorMessage"]TErrorMessage} errorMessage Error message TErrorMessage type.
- * @param {TAppointmentObservationModalProps["open"]} open controls wheter the modal is open or not
- * @param {TAppointmentObservationModalProps["appointment"]} appointment The selected appointment
- * @param {TAppointmentObservationModalProps["handleMedicalRegistryCreation"]} handleMedicalRegistryCreation The callback methiod to save the observation
- * @param {TAppointmentObservationModalProps["onCloseHandler"]} onCloseHandler Callback method to be executed when closes the modal
+ * @param errorMessage Error message TErrorMessage type.
+ * @param open controls wheter the modal is open or not
+ * @param appointment The selected appointment
+ * @param handleMedicalRegistryCreation The callback methiod to save the observation
+ * @param onCloseHandler Callback method to be executed when closes the modal
  * @returns {JSX.Element} The Modal MUI React component
  */
 export function AppointmentObservationModal({

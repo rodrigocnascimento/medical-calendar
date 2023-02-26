@@ -3,11 +3,11 @@ import { Switch, Route, Link, useLocation } from "react-router-dom";
 import { Button } from "@mui/material";
 
 import { useAuth } from "context";
-import LoginRoute from "pages/login";
-import { ListPatients, CreatePatient, UpdatePatient } from "pages/patients";
-import { ListUsers, CreateUser, UpdateUser } from "pages/users";
-import AuthVerify from "context/auth-verifier";
-import { ListAppointments } from "pages/appointments";
+import LoginRoute from "modules/login";
+import { ListPatients, CreatePatient, UpdatePatient } from "modules/patients";
+import { ListUsers, CreateUser, UpdateUser } from "modules/users";
+import { AuthVerifier } from "modules/auth";
+import { ListAppointments } from "modules/appointments";
 import "./index.css";
 import "root.css";
 
@@ -24,7 +24,7 @@ export default function ApplicationRoutes() {
 
   return (
     <>
-      <AuthVerify />
+      <AuthVerifier />
       <div id="sidebar">
         <nav>
           Bem vindo, {auth.user.userName}
