@@ -38,7 +38,7 @@ import {
   TPatientAppointmentModalProps,
 } from "./patient-appointment.modal";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import { appointmentCreationValidation } from "pages/appointments/appointments.validation";
+import { appointmentCreationValidation } from "modules/appointments/appointments.validation";
 import { ValidationError } from "yup";
 
 /**

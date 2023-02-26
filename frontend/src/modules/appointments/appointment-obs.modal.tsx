@@ -8,7 +8,7 @@ import { AppointmentDTO } from "./appointment.interfaces";
 import {
   CreateMedicallRegistriesDTO,
   UpdateMedicallRegistriesDTO,
-} from "pages/medical_registries";
+} from "modules/medical_registries";
 
 export type TAppointmentObservationModalProps = {
   errorMessage?: TErrorMessage;

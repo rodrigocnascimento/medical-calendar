@@ -1,4 +1,4 @@
-import { MedicallRegistriesDTO } from "pages/medical_registries";
+import { MedicallRegistriesDTO } from "modules/medical_registries";
 
 export interface AppointmentDTO {
   id: string;
