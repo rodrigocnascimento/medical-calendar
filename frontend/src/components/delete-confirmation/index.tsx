@@ -1,4 +1,11 @@
-import { Button, IconButton, Snackbar, Alert, Typography, Box } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Snackbar,
+  Alert,
+  Typography,
+  Box,
+} from "@mui/material";
 
 import React, { Fragment, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
@@ -13,7 +20,7 @@ export type TDeleteConfirmation = {
     title: string;
     fn: () => void;
   };
-  onFinally: () => void;
+  onFinally?: () => void;
 };
 
 /**
@@ -37,18 +44,26 @@ export function DeleteConfirmation({
 }: TDeleteConfirmation): JSX.Element {
   const [open, setOpen] = useState(true);
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === "clickaway") {
       return;
     }
 
     setOpen(false);
-    onFinally();
+    onFinally && onFinally();
   };
 
   const onCloseAction = (
     <Fragment>
-      <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
         <CloseIcon fontSize="small" />
       </IconButton>
     </Fragment>
