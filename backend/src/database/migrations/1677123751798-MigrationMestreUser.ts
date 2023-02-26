@@ -15,7 +15,7 @@ export class MigrationMestreUser1677123751798 implements MigrationInterface {
     await queryRunner.query(`
         INSERT INTO users 
             (id,name,email,"role","password",created_at,updated_at) 
-        VALUES ('7d184f2f-cac4-48e8-be05-8d0a5dbb3ba9','Medico 0','medico0@email.com','doctor','123123','2023-02-23 11:27:55.87583','2023-02-23 11:27:55.87583');
+        VALUES ('7d184f2f-cac4-48e8-be05-8d0a5dbb3ba9','Medico 0','medico0@email.com','doctor','${hashedPassword}','2023-02-23 11:27:55.87583','2023-02-23 11:27:55.87583');
     `);
   }
 
