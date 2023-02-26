@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import ErrorMessage, { TErrorMessage } from "components/error";
-import { CreatePatientDTO, Genre, PatientDTO, UpdatePatientDTO, patientValidation } from "./index";
+import { CreatePatientDTO, Genre, patientValidation } from "./index";
 import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import SuccessMessage from "components/success";
@@ -21,13 +21,11 @@ import { useRepository } from "context";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Form Element
  */
-export function PatientsForm(): JSX.Element {
+export function CreatePatient(): JSX.Element {
   const { patient: patientRepository } = useRepository();
   const history = useHistory();
-  let { id } = useParams<{ id: string }>();
 
-  const [formInput, setFormInput] = useState<CreatePatientDTO | UpdatePatientDTO>({
-    id: "",
+  const [formInput, setFormInput] = useState<CreatePatientDTO>({
     name: "",
     email: "",
     dob: new Date(),
@@ -48,26 +46,12 @@ export function PatientsForm(): JSX.Element {
     setFormInput((values: any) => ({ ...values, [name]: value }));
   };
 
-  const loadPatient = useCallback(async () => {
-    patientRepository
-      .getById(id)
-      .then((patient: PatientDTO) => setFormInput(patient))
-      .catch((error: Error) =>
-        setError({
-          title: error.message,
-          errors: error.cause,
-        })
-      );
-  }, [id, patientRepository]);
-
   const handleSubmit = () => {
-    const formManager = id === "new" ? patientRepository.create : patientRepository.edit;
-
     patientValidation
       .validate(formInput, { abortEarly: false })
       .then(() =>
-        formManager
-          .call(patientRepository, formInput)
+        patientRepository
+          .create(formInput)
           .then(() => {
             setSuccess("Paciente criado com sucesso!");
             setTimeout(() => history.push("/patients"), 25e2);
@@ -86,12 +70,6 @@ export function PatientsForm(): JSX.Element {
         })
       );
   };
-
-  useEffect(() => {
-    if (id !== "new") {
-      loadPatient();
-    }
-  }, [id, loadPatient]);
 
   return (
     <Grid
@@ -185,7 +163,7 @@ export function PatientsForm(): JSX.Element {
             <MenuItem value={"M"}>Masculino</MenuItem>
           </TextField>
         </Grid>
-        {id !== "new" && <input value={formInput.id || ""} type="hidden" name="id" />}
+
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
           <Button
             type="submit"
@@ -196,7 +174,7 @@ export function PatientsForm(): JSX.Element {
             }}
           >
             <SaveAsIcon style={{ verticalAlign: "bottom", marginRight: 15 }} />
-            {id !== "new" ? "Editar Paciente" : "Salvar Paciente"}
+            Salvar Paciente
           </Button>
         </div>
       </FormControl>

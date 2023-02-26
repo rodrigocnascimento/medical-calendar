@@ -52,7 +52,6 @@ export class PatientRepository implements IPatientRepository {
    * @memberof PatientRepository
    */
   async create(patient: CreatePatientDTO): Promise<PatientDTO> {
-    delete patient.id;
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,

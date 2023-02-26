@@ -60,6 +60,7 @@ export function AppointmentsHome(): JSX.Element {
   const [medicalRegistry, setMedicalRegistry] = useState<
     CreateMedicallRegistriesDTO | UpdateMedicallRegistriesDTO
   >({
+    id: "",
     observation: "",
     medicalAppointment: "",
   });

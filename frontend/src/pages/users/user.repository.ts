@@ -47,7 +47,6 @@ export class UserRepository implements IUserRepository {
    * @memberof UserRepository
    */
   async create(user: CreateUserDTO): Promise<UserDTO> {
-    delete user.id;
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,

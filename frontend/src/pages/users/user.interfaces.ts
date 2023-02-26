@@ -24,7 +24,7 @@ export interface UserDTO {
 }
 
 export interface CreateUserDTO
-  extends Partial<Omit<UserDTO, "createdAt" | "updatedAt">> {}
+  extends Partial<Omit<UserDTO, "id" | "createdAt" | "updatedAt">> {}
 export interface UpdateUserDTO
   extends Partial<Omit<UserDTO, "createdAt" | "updatedAt">> {}
 
