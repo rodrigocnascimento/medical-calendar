@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, Logger } from "@nestjs/common";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus, Logger } from "@nestjs/common";
 import { ServiceLayerError } from "./errors/ServiceException.error";
 
 @Catch(ServiceLayerError)
@@ -13,6 +13,29 @@ export class HttpErrorFilter implements ExceptionFilter {
       message: exception.message,
       name: exception.name,
       statusCode: exception.statusCode,
+    });
+  }
+}
+
+@Catch()
+export class GlobalCatcher implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalCatcher.name);
+
+  async catch(exception: any, host: ArgumentsHost) {
+    const response = host.switchToHttp().getResponse();
+    this.logger.log(JSON.stringify(exception, null, 2));
+
+    const message = {
+      [exception.name || "unknown"]: [exception.message],
+    };
+
+    const globalExceptionCode =
+      exception.response.statusCode || exception.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+    response.status().json({
+      message,
+      name: exception.name,
+      statusCode: globalExceptionCode,
     });
   }
 }
