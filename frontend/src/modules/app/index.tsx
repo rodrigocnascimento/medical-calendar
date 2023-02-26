@@ -6,7 +6,7 @@ import { useAuth } from "context";
 import LoginRoute from "modules/login";
 import { ListPatients, CreatePatient, UpdatePatient } from "modules/patients";
 import { ListUsers, CreateUser, UpdateUser } from "modules/users";
-import AuthVerify from "context/auth-verifier";
+import { AuthVerifier } from "modules/auth";
 import { ListAppointments } from "modules/appointments";
 import "./index.css";
 import "root.css";
@@ -24,7 +24,7 @@ export default function ApplicationRoutes() {
 
   return (
     <>
-      <AuthVerify />
+      <AuthVerifier />
       <div id="sidebar">
         <nav>
           Bem vindo, {auth.user.userName}

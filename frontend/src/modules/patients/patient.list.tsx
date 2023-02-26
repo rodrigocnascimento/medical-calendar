@@ -19,7 +19,7 @@ import {
   DoctorMUIDropDownListDTO,
   UserDTO,
   UserRoles,
-  mapperDoctorListDropDown,
+  mapDoctorDropDownList,
 } from "../users";
 import { PatientDTO } from "./index";
 import { AppointmentDTO } from "../appointments";
@@ -173,7 +173,7 @@ export function ListPatients(): JSX.Element {
         role: UserRoles.DOCTOR,
       })
       .then((doctors: UserDTO[]) =>
-        setDoctorDropDownList(mapperDoctorListDropDown(doctors))
+        setDoctorDropDownList(mapDoctorDropDownList(doctors))
       )
       .catch((error: Error) =>
         setError({
@@ -263,7 +263,7 @@ export function ListPatients(): JSX.Element {
                   )}
                 </Typography>
                 <Typography variant="h6">Agendamentos do Paciente</Typography>
-                <ul>
+                <ul style={{ height: 250, overflow: "scroll" }}>
                   {patient.appointments &&
                     patient.appointments.map(
                       (appointment: AppointmentDTO, i: number) => (

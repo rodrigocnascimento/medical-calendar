@@ -13,4 +13,4 @@ function MapperDoctorDropDownList(user: UserDTO): DoctorMUIDropDownListDTO {
     label: user.name,
   };
 }
-export const mapperDoctorListDropDown = ListMapper(MapperDoctorDropDownList);
+export const mapDoctorDropDownList = ListMapper(MapperDoctorDropDownList);
