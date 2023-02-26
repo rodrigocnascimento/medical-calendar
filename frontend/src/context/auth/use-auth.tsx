@@ -5,9 +5,11 @@ import React, {
   createContext,
   ReactNode,
 } from "react";
-import { serverEndpoint } from "env-constants";
+
 import BaseInfrastructure, { IInfrastructures } from "infrastructure";
-import { UserRoles } from "pages/users";
+import { UserRoles } from "modules/users";
+import { useRepository } from "context/repository/use-repository";
+import { JWTToken } from "modules/auth";
 
 type Auth = any | null;
 
@@ -36,7 +38,8 @@ export function ProvideAuth({
 }
 
 function useProvideAuth({ http, storage }: IInfrastructures) {
-  const [user, setUser] = useState<JWTUser>();
+  const [user, setUser] = useState<JWTToken>();
+  const { auth: authRepository } = useRepository();
 
   const postLoginRedirect = (role: string) =>
     ({
@@ -46,22 +49,10 @@ function useProvideAuth({ http, storage }: IInfrastructures) {
     }[role]);
 
   const signin = async (username: string, password: string) => {
-    const response = await http.request({
-      method: "POST",
-      url: `${serverEndpoint}/auth/login`,
-      body: { username, password },
+    const { accessToken } = await authRepository.checkCredentials({
+      username,
+      password,
     });
-
-    const jsonResponse = await response.json();
-
-    if (!response.ok) {
-      console.error(jsonResponse);
-      throw new Error("Erro ao realizar o login!", {
-        cause: jsonResponse.message,
-      });
-    }
-
-    const { accessToken } = jsonResponse;
 
     storage.token.set(accessToken);
 

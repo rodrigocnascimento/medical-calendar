@@ -10,7 +10,7 @@ import { UsersModule } from "./users/users.module";
 import typeormConfig from "./database/typeorm.config";
 import { AppController } from "./app.controller";
 import { APP_FILTER } from "@nestjs/core";
-import { HttpErrorFilter } from "./filter-error.http";
+import { GlobalCatcher, HttpErrorFilter } from "./filter-error.http";
 
 @Module({
   imports: [
@@ -32,6 +32,11 @@ import { HttpErrorFilter } from "./filter-error.http";
       provide: APP_FILTER,
       scope: Scope.REQUEST,
       useClass: HttpErrorFilter,
+    },
+    {
+      provide: APP_FILTER,
+      scope: Scope.REQUEST,
+      useClass: GlobalCatcher,
     },
   ],
 })

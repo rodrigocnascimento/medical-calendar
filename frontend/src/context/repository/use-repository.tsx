@@ -8,12 +8,17 @@ export function RepositoryProvider({
 }: {
   children: ReactNode;
 }): JSX.Element {
-  const { patient, appointments, user, medicalRegistries }: IRepositories =
-    repository();
+  const {
+    patient,
+    appointments,
+    user,
+    medicalRegistries,
+    auth,
+  }: IRepositories = repository();
 
   return (
     <RepositoryContext.Provider
-      value={{ patient, appointments, user, medicalRegistries }}
+      value={{ patient, appointments, user, medicalRegistries, auth }}
     >
       {children}
     </RepositoryContext.Provider>

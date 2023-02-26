@@ -17,4 +17,4 @@ function AuthVerify() {
   return <></>;
 }
 
-export default withRouter(AuthVerify);
+export const AuthVerifier = withRouter(AuthVerify);

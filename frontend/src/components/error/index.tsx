@@ -7,24 +7,36 @@ export type TErrorMessage = {
   errors: any;
 };
 
+type a = {
+  errorList: Map<string, any>;
+};
+
+const ErrorsList = ({ errorList }: a) => {
+  let errorComponent;
+  errorList.forEach((messages: any, key: string) => {
+    errorComponent = (
+      <div key={key}>
+        <strong>{key}</strong>
+        <ul>
+          {messages.map((err: unknown, i: number) => (
+            <li key={i++}>{err as string}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  });
+
+  return <React.Fragment>{errorComponent}</React.Fragment>;
+};
+
 export default function ErrorMessage({ title, errors }: TErrorMessage) {
+  const mapErrors = new Map(Object.entries(errors));
   return (
     <Alert severity="error" style={{ marginBottom: 20 }}>
       <AlertTitle>
-        <strong>{title}</strong>
+        <strong>{title ?? errors.name}</strong>
       </AlertTitle>
-      {Object.keys(errors).map((error: any) => {
-        return (
-          <div key={error}>
-            <strong>{error}</strong>:{" "}
-            <ul>
-              {errors[error].map((err: string, i: any) => (
-                <li key={i++}>{err}</li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
+      <ErrorsList errorList={mapErrors} />
     </Alert>
   );
 }
