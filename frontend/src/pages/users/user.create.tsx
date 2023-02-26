@@ -6,7 +6,7 @@ import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import { CreateUserDTO, UserRoles, userValidation } from "./index";
 import ErrorMessage, { TErrorMessage } from "components/error";
-import SuccessMessage from "components/success";
+import SuccessMessage, { TSuccessMessageProps } from "components/success";
 import { useRepository } from "context";
 
 /**
@@ -16,17 +16,24 @@ import { useRepository } from "context";
 export function CreateUser(): JSX.Element {
   const { user: userRepository } = useRepository();
   const history = useHistory();
-
-  const [formInput, setFormInput] = useState<CreateUserDTO>({
+  const initialFormState = {
     name: "",
     email: "",
     role: UserRoles.DOCTOR,
     password: "",
     passwordConfirmation: "",
-  });
+  };
+
+  const [formInput, setFormInput] = useState<CreateUserDTO>(initialFormState);
 
   const [error, setError] = useState<TErrorMessage>();
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<TSuccessMessageProps>();
+
+  const reset = () => {
+    setError(undefined);
+    setSuccess(undefined);
+    setFormInput(initialFormState);
+  };
 
   const handleChange = (event: any) => {
     const name = event.target.name;
@@ -42,8 +49,14 @@ export function CreateUser(): JSX.Element {
         userRepository
           .create(formInput)
           .then(() => {
-            setSuccess("Usuário criado com sucesso!");
-            setTimeout(() => history.push("/users"), 25e2);
+            setSuccess({
+              message: "Usuário criado com sucesso!",
+              duration: 2500,
+              handlerOnClose: () => {
+                reset();
+                history.push("/users");
+              },
+            });
           })
           .catch((error: Error) =>
             setError({
@@ -74,7 +87,7 @@ export function CreateUser(): JSX.Element {
       <FormControl style={{ backgroundColor: "white" }}>
         <h3 className="form-title">Usuário</h3>
         {error && <ErrorMessage {...error} />}
-        {success && <SuccessMessage message={success} />}
+        {success && <SuccessMessage {...success} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
             id="name"

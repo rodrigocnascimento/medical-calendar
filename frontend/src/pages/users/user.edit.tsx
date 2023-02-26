@@ -6,7 +6,7 @@ import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import { UpdateUserDTO, UserDTO, UserRoles, userValidation } from "./index";
 import ErrorMessage, { TErrorMessage } from "components/error";
-import SuccessMessage from "components/success";
+import SuccessMessage, { TSuccessMessageProps } from "components/success";
 import { useRepository } from "context";
 
 /**
@@ -21,17 +21,19 @@ export function UpdateUser(): JSX.Element {
   let { id } = useParams<{ id: string }>();
   const history = useHistory();
 
-  const [formInput, setFormInput] = useState<UpdateUserDTO>({
+  const initialFormState = {
     id: "",
     name: "",
     email: "",
     role: UserRoles.DOCTOR,
     password: "",
     passwordConfirmation: "",
-  });
+  };
+
+  const [formInput, setFormInput] = useState<UpdateUserDTO>(initialFormState);
 
   const [error, setError] = useState<TErrorMessage>();
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<TSuccessMessageProps>();
 
   const handleChange = (event: any) => {
     const name = event.target.name;
@@ -52,6 +54,12 @@ export function UpdateUser(): JSX.Element {
       );
   }, [id, userRepository]);
 
+  const reset = () => {
+    setError(undefined);
+    setSuccess(undefined);
+    setFormInput(initialFormState);
+  };
+
   const handleSubmit = () => {
     userValidation
       .validate(formInput, { abortEarly: false })
@@ -59,8 +67,14 @@ export function UpdateUser(): JSX.Element {
         userRepository
           .edit(formInput)
           .then(() => {
-            setSuccess("Usuário criado com sucesso!");
-            setTimeout(() => history.push("/users"), 25e2);
+            setSuccess({
+              duration: 2500,
+              message: "Usuário atualizado com sucesso!",
+              handlerOnClose: () => {
+                reset();
+                history.push("/users");
+              },
+            });
           })
           .catch((error: Error) =>
             setError({
@@ -95,7 +109,7 @@ export function UpdateUser(): JSX.Element {
       <FormControl style={{ backgroundColor: "white" }}>
         <h3 className="form-title">Usuário</h3>
         {error && <ErrorMessage {...error} />}
-        {success && <SuccessMessage message={success} />}
+        {success && <SuccessMessage {...success} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
             id="name"

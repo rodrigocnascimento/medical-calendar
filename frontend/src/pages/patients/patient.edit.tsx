@@ -13,26 +13,19 @@ import {
 } from "./index";
 import { ValidationError } from "yup";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import SuccessMessage from "components/success";
+import SuccessMessage, { TSuccessMessageProps } from "components/success";
 import { useRepository } from "context";
 
 /**
- * The basic ideia of this page is to allow the creation and edidion of a form.
- *
- * The `"/path/:id"` param is a param that matches on the route and is treated as a value that needs to be fetched
- * as soons as possible the component allows it. If the value of that `"id"` is equal to `"new"` it will
- * assume that is a new entity that will be created.
- *
- * @param {UsersComponentProps} { repository } IRepository injected repository
- * @returns {JSX.Element} Form Element
+ * UpdatePatient form creation
+ * @returns {JSX.Element}
  */
 export function UpdatePatient(): JSX.Element {
   const { patient: patientRepository } = useRepository();
   const history = useHistory();
   let { id } = useParams<{ id: string }>();
 
-  const [formInput, setFormInput] = useState<UpdatePatientDTO>({
-    id: "",
+  const initialFormState = {
     name: "",
     email: "",
     dob: new Date(),
@@ -40,17 +33,27 @@ export function UpdatePatient(): JSX.Element {
     height: 0,
     weight: 0,
     genre: Genre.F,
-  });
+  };
+
+  const [formInput, setFormInput] =
+    useState<UpdatePatientDTO>(initialFormState);
 
   const [startDate, setStartDate] = useState(new Date());
   const [error, setError] = useState<TErrorMessage>();
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<TSuccessMessageProps>();
 
   const handleChange = (event: any) => {
     const name = event.target.name;
     let value = event.target.value;
 
     setFormInput((values: any) => ({ ...values, [name]: value }));
+  };
+
+  const reset = () => {
+    setError(undefined);
+    setSuccess(undefined);
+    setFormInput(initialFormState);
+    setStartDate(new Date());
   };
 
   const loadPatient = useCallback(async () => {
@@ -72,8 +75,14 @@ export function UpdatePatient(): JSX.Element {
         patientRepository
           .edit(formInput)
           .then(() => {
-            setSuccess("Paciente criado com sucesso!");
-            setTimeout(() => history.push("/patients"), 25e2);
+            setSuccess({
+              duration: 2500,
+              message: "Paciente atualizado com sucesso!",
+              handlerOnClose: () => {
+                reset();
+                history.push("/patients");
+              },
+            });
           })
           .catch((error: Error) =>
             setError({
@@ -91,9 +100,7 @@ export function UpdatePatient(): JSX.Element {
   };
 
   useEffect(() => {
-    if (id !== "new") {
-      loadPatient();
-    }
+    loadPatient();
   }, [id, loadPatient]);
 
   return (
@@ -110,7 +117,7 @@ export function UpdatePatient(): JSX.Element {
       <FormControl style={{ backgroundColor: "white" }}>
         <h3 className="form-title">👩‍⚕️ Ficha do paciente 👨‍⚕️</h3>
         {error && <ErrorMessage {...error} />}
-        {success && <SuccessMessage message={success} />}
+        {success && <SuccessMessage {...success} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
             id="name"

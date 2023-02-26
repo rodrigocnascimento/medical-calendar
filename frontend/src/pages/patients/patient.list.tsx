@@ -26,7 +26,7 @@ import { PatientDTO } from "./index";
 import { AppointmentDTO } from "../appointments";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
-import SuccessMessage from "components/success";
+import SuccessMessage, { TSuccessMessageProps } from "components/success";
 
 import {
   DeleteConfirmation,
@@ -49,7 +49,7 @@ export function ListPatients(): JSX.Element {
   } = useRepository();
 
   const auth = useAuth();
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<TSuccessMessageProps>();
   const [error, setError] = useState<TErrorMessage>();
   const [modalError, setErrorModal] = useState<TErrorMessage>();
 
@@ -72,6 +72,20 @@ export function ListPatients(): JSX.Element {
     id: "",
     label: "",
   });
+
+  const reset = () => {
+    setError(undefined);
+    setErrorModal(undefined);
+    setSuccess(undefined);
+    setOpen(false);
+    setSelectedPatient({
+      id: "",
+    });
+    setAppointmentDoctor({
+      id: "",
+      label: "",
+    });
+  };
 
   const handleAppointmentConfirmation = () => {
     const [date, hours] = appointmentDate.split("T");
@@ -102,13 +116,13 @@ export function ListPatients(): JSX.Element {
         date: new Date(`${date}T${hour}:${minute}`),
       })
       .then(async () => {
-        setSuccess("Agendamento criado com sucesso!");
-        setOpen(false);
+        setSuccess({
+          message: "Agendamento criado com sucesso!",
+          handlerOnClose: () => reset(),
+        });
         await loadPatients();
       })
       .catch((error: Error) => {
-        setOpen(false);
-        setSuccess("");
         setError({
           title: error.message,
           errors: error.cause,
@@ -152,7 +166,9 @@ export function ListPatients(): JSX.Element {
     patientRepository
       .remove(patient.id)
       .then(async () => {
-        setSuccess("Paciente removido com sucesso.");
+        setSuccess({
+          message: "Paciente removido com sucesso.",
+        });
         await loadPatients();
       })
       .catch((error: Error) =>
@@ -180,7 +196,7 @@ export function ListPatients(): JSX.Element {
             </Button>
           </Link>
         </div>
-        {success && <SuccessMessage message={success} />}
+        {success && <SuccessMessage {...success} />}
         {error && <ErrorMessage {...error} />}
         {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>

@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 
-import SuccessMessage from "components/success";
+import SuccessMessage, { TSuccessMessageProps } from "components/success";
 import ErrorMessage, { TErrorMessage } from "components/error";
 
 import { AppointmentDTO } from "./index";
@@ -40,7 +40,7 @@ export function AppointmentsHome(): JSX.Element {
     medicalRegistries: medicalRegistriesRepository,
   } = useRepository();
 
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<TSuccessMessageProps>();
   const [error, setError] = useState<TErrorMessage>();
   const [errorModal, setErrorModal] = useState<TErrorMessage>();
   const [deleteConfirmation, setDeleteConfirmation] =
@@ -64,6 +64,22 @@ export function AppointmentsHome(): JSX.Element {
     observation: "",
     medicalAppointment: "",
   });
+
+  const reset = () => {
+    setError(undefined);
+    setErrorModal(undefined);
+    setSuccess(undefined);
+    setOpen(false);
+    setMedicalRegistry({
+      observation: "",
+      medicalAppointment: "",
+    });
+    setSelectedAppointment({
+      id: "",
+      patient: "",
+    });
+    setAppointments([]);
+  };
 
   const loadAppointments = useCallback(async () => {
     const appointments = await appointmentRepository.getAll();
@@ -89,22 +105,19 @@ export function AppointmentsHome(): JSX.Element {
         medicalAppointment: selectedAppointment.id,
       })
       .then(async () => {
-        setSuccess("Registro criado com sucesso!");
-        setOpen(false);
-        setMedicalRegistry({
-          observation: "",
-          medicalAppointment: "",
+        setSuccess({
+          message: "Registro criado com sucesso!",
+          handlerOnClose: () => reset(),
         });
+
         await loadAppointments();
       })
-      .catch((error: Error) => {
-        setSuccess("");
-        setOpen(false);
+      .catch((error: Error) =>
         setError({
           title: error.message,
           errors: error.cause,
-        });
-      });
+        })
+      );
   };
 
   const handleAppointmentDeletion = (appointment: any) => {
@@ -135,7 +148,7 @@ export function AppointmentsHome(): JSX.Element {
             </Button>
           </Link>
         </div>
-        {success && <SuccessMessage message={success} />}
+        {success && <SuccessMessage {...success} />}
         {error && <ErrorMessage {...error} />}
         {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
