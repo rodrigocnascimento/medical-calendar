@@ -1,4 +1,4 @@
-import { AppointmentDTO } from "pages/appointments";
+import { AppointmentDTO } from "modules/appointments";
 
 /**
  * List of human genres
