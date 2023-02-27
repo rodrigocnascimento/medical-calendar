@@ -70,7 +70,10 @@ class Http implements IHttp {
 
     option.headers = new Headers(option.headers);
 
-    if (requestOption?.body && !["GET", "HEAD"].includes(option.method as string)) {
+    if (
+      requestOption?.body &&
+      !["GET", "HEAD"].includes(option.method as string)
+    ) {
       option = {
         ...option,
         body: JSON.stringify(requestOption?.body),

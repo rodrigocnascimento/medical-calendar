@@ -9,7 +9,9 @@ type ErrorObject = {
  * @returns {ErrorObject} The error object
  */
 
-export const mapperYupErrorsToErrorMessages = (err: ValidationError): ErrorObject => {
+export const mapperYupErrorsToErrorMessages = (
+  err: ValidationError
+): ErrorObject => {
   const errorObject: ErrorObject = {};
 
   err.inner.forEach((x) => {
