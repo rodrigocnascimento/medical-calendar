@@ -73,6 +73,10 @@ export class PatientsService {
   }
 
   async getEmailOrFail(patientEmail: string): Promise<Patient> {
+    if (!patientEmail) {
+      throw new UnprocessableEntityException("Precisa informar um email.");
+    }
+
     return this.patientsRepository.findOne({
       where: {
         email: patientEmail,

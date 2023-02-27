@@ -30,7 +30,7 @@ export class GlobalCatcher implements ExceptionFilter {
     };
 
     const globalExceptionCode =
-      exception.response.statusCode || exception.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      exception.response?.statusCode || exception.status || HttpStatus.INTERNAL_SERVER_ERROR;
 
     response.status(globalExceptionCode).json({
       message,
