@@ -19,6 +19,8 @@ Este projeto é desenvolvido utilizando as seguintes ferramentas:
 ❯ docker-compose up
 ```
 
+### ⚠️ Importante ⚠️
+
 - No diretório do backend, é necessário rodar as migrations. Isso irá criar o banco de dados e o primeiro usuário Administrador do sistema.
 
 ```bash
@@ -47,6 +49,7 @@ Pass: 123123
 
 ```bash
 ❯ docker volume rm medical-calendar_psql-data
+❯ sudo rm -rf database/psql-data # caso o comnado docker ñ tenha funcionado
 ```
 
 ## Migrations
@@ -89,3 +92,11 @@ Pass: 123123
 
 - A documentação do projeto é feita de maneira automatizada, usando a ferramente Swagger.
   - http://localhost:3420/docs
+
+### Compliance LGPD
+
+- Quando solicitada a DELEÇÃO do Paciente, os seus dados são completamente apagados do sistema. Porém
+  antes que isso aconteça, esses dados são criptografados, com uma criptografia de duas vias, onde é possível
+  descriptografar, caso seja necessário para algum tipo de resposta a algum órgão que exija. Esse registro, então,
+  é deletado usando um [`"softDelete"`](https://typeorm.io/delete-query-builder#soft-delete) para que seja possível recuperar a chave de descriptografia dos dados. Por fim, a Entity,
+  deixará de aparecer em todas as consultas, a menos que seja solicitada de maneira explícita ou seja feito um recover do dado.

@@ -16,8 +16,6 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
   async beforeInsert(event: InsertEvent<User>) {
     const entityChanged = await this.hashUserPasswordBeforeInsert(event);
 
-    console.log(entityChanged);
-
     const inserEvent = {
       ...event,
       entity: entityChanged,

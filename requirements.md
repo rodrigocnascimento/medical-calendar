@@ -34,7 +34,7 @@
   cadastrar mais de um paciente na mesma hora. ✅
 - Eu, como médico, quero poder excluir os dados pessoais do paciente por causa das
   novas regras do LGPD, mas mantendo o histórico de consulta por questões de
-  contabilidade.
+  contabilidade.✅
 
 ## Requisitos não funcionais
 
@@ -46,9 +46,9 @@
 
   - Sistema desenvolvido em NodeJS, com Typescript e o Framework NestJS
 
-- Documentação da interface da API gerada (swagger, open-api, RAML ou postman);
+- Documentação da interface da API gerada (swagger, open-api, RAML ou postman);✅
 
-  - Swagger ✅
+  - Swagger
 
 - Os dados devem ser validados (existência e formatos) na inserção/atualização para
   garantir consistência da base ✅

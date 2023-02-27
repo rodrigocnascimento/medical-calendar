@@ -28,7 +28,6 @@ export class MedicalAppointmentsService {
         createMedicalAppointmentDto as unknown as MedicalAppointmentDTO
       );
     } catch (error) {
-      console.log(error);
       if (error instanceof UnprocessableEntityException) {
         throw new UnprocessableEntityException("Já tem uma consulta nesse horário.");
       }
@@ -52,7 +51,6 @@ export class MedicalAppointmentsService {
   }
 
   findAllByDoctor() {
-    console.log("ue", this.request.user["userId"]);
     return this.medicalAppointmentRepo.find({
       relations: ["medicalRegistries", "patient", "doctor"],
       where: {

@@ -6,6 +6,7 @@ import {
   PatientDTO,
   UpdatePatientDTO,
 } from "./patient.interfaces";
+import { serverEndpoint } from "env-constants";
 
 export interface IPatientRepository {
   create(patient: CreatePatientDTO): Promise<PatientDTO>;
@@ -13,6 +14,11 @@ export interface IPatientRepository {
   remove(id: string): Promise<PatientDTO>;
   getAll(queryFilter?: FilterPatientDTO): Promise<PatientDTO[]>;
   getById(id: string): Promise<PatientDTO>;
+  lgpdDeletion(id: string): Promise<{
+    generatedMaps: [];
+    raw: [];
+    affected: number;
+  }>;
 }
 
 export class PatientRepository implements IPatientRepository {
@@ -161,6 +167,27 @@ export class PatientRepository implements IPatientRepository {
     if (!response.ok) {
       console.error(jsonResponse);
       throw new Error("Erro ao buscar o paciente!", {
+        cause: jsonResponse.message,
+      });
+    }
+
+    return jsonResponse;
+  }
+
+  async lgpdDeletion(id: string): Promise<{
+    generatedMaps: [];
+    raw: [];
+    affected: number;
+  }> {
+    const response = await this.http.request({
+      url: serverEndpoint + `/lgpd/deletion/${id}`,
+    });
+
+    const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      console.error(jsonResponse);
+      throw new Error("Erro ao excluir o paciente!", {
         cause: jsonResponse.message,
       });
     }

@@ -38,9 +38,6 @@ import { AppointmentDTO } from "modules/appointments";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
-const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
-
-console.log({ timeZone }, new Date());
 export function ListPatients(): JSX.Element {
   const {
     appointments: appointmentRepository,
@@ -83,20 +80,16 @@ export function ListPatients(): JSX.Element {
         open: !!patient.id,
         patient,
         handleAppointmentCreation: (appointmentDoctor, appointmentDate) => {
-          console.log("appointmentDate", appointmentDate);
           const [date, fullhour] = new Date(appointmentDate)
             .toISOString()
             .split("T");
           const [hour, minute] = fullhour.split(":");
-
-          console.log("new Date()", new Date(`${date}T${hour}:${minute}`));
 
           const createAppointment = {
             patient: patient.id,
             doctor: appointmentDoctor.id,
             date: new Date(`${date}T${hour}:${minute}`),
           };
-          console.log("createAppointment", createAppointment);
 
           // if the userRole is "doctor", than ir should
           // assign the appointment to himself
@@ -130,10 +123,7 @@ export function ListPatients(): JSX.Element {
               })
             );
         },
-        onCloseHandler: () => {
-          console.log("aqui");
-          reset();
-        },
+        onCloseHandler: () => reset(),
       });
     },
     [appointmentRepository, auth, loadPatients]
@@ -177,12 +167,12 @@ export function ListPatients(): JSX.Element {
 
   const patientDeletion = (patient: PatientDTO) => {
     setDeleteConfirmation({
-      message: `Confirmando essa ação, você irá excluir o registro ${patient.name}. Tem certeza disso?`,
+      message: `Atenção, esse registro do paciente ${patient.name} será permanenentemente excluídos sob normas da LGPD. Tem certeza disso?`,
       onConfirmation: {
         title: "Sim, tenho certeza.",
         fn: () => {
           patientRepository
-            .remove(patient.id)
+            .lgpdDeletion(patient.id)
             .then(async () => {
               setSuccess({
                 message: "Paciente removido com sucesso.",

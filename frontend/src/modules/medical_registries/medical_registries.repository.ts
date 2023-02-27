@@ -55,7 +55,6 @@ export class MedicalRegistryRepository {
   async create(
     registry: CreateMedicallRegistriesDTO
   ): Promise<MedicallRegistriesDTO> {
-    console.log("oi", registry);
     const response = await this.http.request({
       method: "POST",
       url: this.baseUrl,

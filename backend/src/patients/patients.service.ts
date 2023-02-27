@@ -1,16 +1,24 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Patient } from "./patient.entity";
 import { CreatePatientDTO } from "./dto/create.dto";
 import { PatientsRepository } from "./patients.repository";
 import { UpdatePatientDTO } from "./dto/update.dto";
 import { DeleteResult, UpdateResult } from "typeorm";
+import { CryptoService } from "src/crypto.service";
 
 @Injectable()
 export class PatientsService {
   constructor(
     @InjectRepository(Patient)
-    private patientsRepository: PatientsRepository
+    private patientsRepository: PatientsRepository,
+    @Inject(CryptoService)
+    private cryptoService: CryptoService
   ) {}
 
   async findAll(): Promise<Patient[]> {
@@ -33,7 +41,6 @@ export class PatientsService {
   }
 
   async remove(id: string): Promise<DeleteResult> {
-    console.log("backend reomvoe", id);
     return await this.patientsRepository.delete(id);
   }
 
@@ -82,5 +89,30 @@ export class PatientsService {
         email: patientEmail,
       },
     });
+  }
+
+  async lgpdDeletion(patientId) {
+    const lookupPatient = await this.patientsRepository.findOne({
+      where: {
+        id: patientId,
+        lgpdKey: null,
+      },
+    });
+
+    const cryptedData = this.cryptoService.encrypt(JSON.stringify(lookupPatient));
+
+    await this.patientsRepository.update(lookupPatient.id, {
+      ...lookupPatient,
+      lgpdKey: cryptedData,
+      name: null,
+      phone: null,
+      dob: null,
+      email: null,
+      height: null,
+      weight: null,
+      genre: null,
+    });
+
+    return this.patientsRepository.softDelete(lookupPatient.id);
   }
 }

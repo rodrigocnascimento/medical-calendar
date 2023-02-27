@@ -1,5 +1,13 @@
 import { MedicalAppointment } from "../medical_appointments/medical_appointments.entity";
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from "typeorm";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  OneToMany,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from "typeorm";
 
 /**
  * List of human genres
@@ -17,37 +25,39 @@ export class Patient {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({
-    length: 150,
-  })
+  @Column({ nullable: true, length: 150 })
   name: string;
 
-  @Column({
-    length: 20,
-  })
+  @Column({ nullable: true, length: 20 })
   phone?: string;
 
-  @Column()
+  @Column({ nullable: true })
   dob: Date;
 
-  @Column({ unique: true, length: 64 })
+  @Column({ nullable: true, unique: true, length: 64 })
   email: string;
 
-  @Column("decimal", { precision: 9, scale: 2 })
+  @Column("decimal", { precision: 9, scale: 2, nullable: true })
   height: number;
 
-  @Column("decimal", { precision: 9, scale: 2 })
+  @Column("decimal", { precision: 9, scale: 2, nullable: true })
   weight: number;
 
-  @Column({
-    type: "enum",
-    enum: Genre,
-  })
-  genre: Genre;
+  @Column({ nullable: true, type: "enum", enum: Genre })
+  genre?: Genre;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
 
+  @UpdateDateColumn({ name: "updated_at" })
+  updatedAt?: Date;
+
+  @DeleteDateColumn({ name: "deleted_at" })
+  deletedAt: Date;
+
   @OneToMany(() => MedicalAppointment, (appointments: MedicalAppointment) => appointments.patient)
   appointments?: MedicalAppointment[];
+
+  @Column({ type: "text", nullable: true })
+  lgpdKey: string;
 }
