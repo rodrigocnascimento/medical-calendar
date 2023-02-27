@@ -60,7 +60,7 @@ describe("PatientsController", () => {
     });
 
     it("Should create a patient and return the data", async () => {
-      const patient = patientMock() as unknown as CreatePatientDTO;
+      const patient = patientMock() as any;
 
       jest.spyOn(service, "save").mockResolvedValue(patient);
 
@@ -75,7 +75,7 @@ describe("PatientsController", () => {
       const patient = patientMock() as Patient;
       const patient_ = patientMock({
         customData: { ...patient },
-      }) as UpdatePatientDTO;
+      }) as any;
 
       patient_.name += " Editado";
 

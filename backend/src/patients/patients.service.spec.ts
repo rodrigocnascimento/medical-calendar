@@ -5,7 +5,6 @@ import { build as patientMock } from "../test/mocks/patients.mock";
 import { Patient } from "./patient.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { NotFoundException, UnprocessableEntityException } from "@nestjs/common";
-import { CreatePatientDTO } from "./dto/create.dto";
 import { UpdateResult } from "typeorm";
 import { UpdatePatientDTO } from "./dto/update.dto";
 
@@ -81,7 +80,7 @@ describe("PatientsService", () => {
   });
 
   it("Should create a patient an return itself", async () => {
-    const patient = patientMock() as CreatePatientDTO;
+    const patient = patientMock() as any;
 
     jest.spyOn(patientsRepository, "save").mockResolvedValue(patient);
 
@@ -92,7 +91,7 @@ describe("PatientsService", () => {
   });
 
   it("Should throw an error if a patient email already exists", async () => {
-    const patient = patientMock() as CreatePatientDTO;
+    const patient = patientMock() as any;
 
     jest.spyOn(service, "getEmailOrFail").mockResolvedValue(patient);
 
@@ -132,7 +131,7 @@ describe("PatientsService", () => {
         id: patient.id,
         name: patient.name + " Editado",
       },
-    }) as UpdatePatientDTO;
+    }) as any;
 
     jest.spyOn(patientsRepository, "findOne").mockResolvedValue(patient_);
     jest.spyOn(patientsRepository, "update").mockResolvedValue({
@@ -155,7 +154,7 @@ describe("PatientsService", () => {
   });
 
   it("Should throw a NotFoundException if the user is not found when trying to update the user", async () => {
-    const patient = patientMock() as UpdatePatientDTO;
+    const patient = patientMock() as unknown as UpdatePatientDTO;
 
     jest.spyOn(patientsRepository, "findOne").mockResolvedValue(null);
     jest.spyOn(patientsRepository, "update").mockResolvedValue({
