@@ -78,17 +78,6 @@ export default function PatientAppointmentsList({
                     scope="row"
                     align="right"
                   >
-                    <Tooltip title="Editar Agendamento">
-                      <IconButton
-                        size="medium"
-                        style={{ margin: 5 }}
-                        aria-label="close"
-                        color="inherit"
-                        // onClick={handleClose}
-                      >
-                        <EditIcon fontSize="medium" color="secondary" />
-                      </IconButton>
-                    </Tooltip>
                     <Tooltip title="Excluir Agendamento">
                       <IconButton
                         size="medium"
