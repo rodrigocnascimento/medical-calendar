@@ -10,12 +10,12 @@ import {
 } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
-import { DoctorMUIDropDownListDTO, UserRoles } from "../users";
+import { DoctorMUIDropDownListDTO, UserRoles } from "../../modules/users";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
 
 import { CalendarMonth } from "@mui/icons-material";
-import { PatientDTO } from "./patient.interfaces";
+import { PatientDTO } from "../../modules/patients/patient.interfaces";
 import { useAuth } from "context";
 
 export type TPatientAppointmentModalProps = {
@@ -113,6 +113,7 @@ export function PatientAppointmentModal({
                 label="Data do agendamento"
                 value={appointmentDate}
                 onChange={(newValue: any) => setAppointmentDate(newValue)}
+                disablePast
                 inputFormat="dd/MM/yyyy, hh:mm"
                 renderInput={(params) => (
                   <TextField

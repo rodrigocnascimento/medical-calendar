@@ -4,7 +4,7 @@ import { Button, Typography, Box, Modal, TextField } from "@mui/material";
 import { Medication } from "@mui/icons-material";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
-import { AppointmentDTO } from "./appointment.interfaces";
+import { AppointmentDTO } from "../../modules/appointments/appointment.interfaces";
 import {
   CreateMedicallRegistriesDTO,
   UpdateMedicallRegistriesDTO,

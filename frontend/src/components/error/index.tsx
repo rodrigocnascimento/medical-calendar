@@ -7,11 +7,11 @@ export type TErrorMessage = {
   errors: any;
 };
 
-type a = {
+type TErrorListMap = {
   errorList: Map<string, any>;
 };
 
-const ErrorsList = ({ errorList }: a) => {
+const ErrorsList = ({ errorList }: TErrorListMap) => {
   let errorComponent;
   errorList.forEach((messages: any, key: string) => {
     errorComponent = (

@@ -1,16 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
 
-import {
-  Create,
-  HighlightOff,
-  Medication,
-  PermContactCalendar,
-} from "@mui/icons-material";
+import { PermContactCalendar } from "@mui/icons-material";
 
 import SuccessMessage, { TSuccessMessageProps } from "components/success";
 import ErrorMessage, { TErrorMessage } from "components/error";
@@ -21,20 +12,23 @@ import {
   TDeleteConfirmation,
   DeleteConfirmation,
 } from "components/delete-confirmation";
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import "./appointments.css";
 import { useRepository } from "context";
 import {
   AppointmentObservationModal,
   TAppointmentObservationModalProps,
-} from "./appointment-obs.modal";
+} from "components/appointments/medical-registry.modal";
 import {
   CreateMedicallRegistriesDTO,
+  MedicallRegistriesDTO,
   UpdateMedicallRegistriesDTO,
 } from "modules/medical_registries";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import { medicalRegistriesValidation } from "modules/medical_registries/medical_registries.validation";
 import { ValidationError } from "yup";
+import AppointmentsCard from "components/appointments/card.list";
+import MedicalRegistriesAppointmentsList from "components/appointments/medical-registries.list";
 
 /**
  * This page is the dashboard of the module.
@@ -122,7 +116,7 @@ export function ListAppointments(): JSX.Element {
         message: `Confirmando essa ação, você irá excluir a consulta do Paciente ${appointment.patient.name}. Tem certeza disso?`,
         onConfirmation: {
           title: "Sim, tenho certeza.",
-          fn: () => (appointment: any) => {
+          fn: () => {
             appointmentRepository
               .remove(appointment.id)
               .then(async () => await loadAppointments())
@@ -139,6 +133,29 @@ export function ListAppointments(): JSX.Element {
     },
     [appointmentRepository, loadAppointments, reset]
   );
+
+  const deleteMedicalAppointmentObservation = (
+    medicalRecord: MedicallRegistriesDTO
+  ) => {
+    setDeleteConfirmation({
+      message: `Você irá excluir a observação da consulta. Tem certeza disso?`,
+      onConfirmation: {
+        title: "Sim, tenho certeza.",
+        fn: () => {
+          medicalRegistriesRepository
+            .remove(medicalRecord.id)
+            .then(async () => await loadAppointments())
+            .catch((error: any) =>
+              setError({
+                title: error.message,
+                errors: error.cause,
+              })
+            );
+        },
+      },
+      onFinally: () => reset(),
+    });
+  };
 
   useEffect(() => {
     loadAppointments();
@@ -161,104 +178,30 @@ export function ListAppointments(): JSX.Element {
         {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
       {!appointments?.length && <h2>Sem consultas até o momento.</h2>}
-      {appointments &&
-        appointments.map((appointment: AppointmentDTO, i: number) => {
-          if (!appointment.patient) {
-            appointment.patient = {
-              name: "LGPD COMPLIANCE",
-              genre: "LGPD COMPLIANCE",
-              weight: "LGPD COMPLIANCE",
-              height: "LGPD COMPLIANCE",
-            };
-          }
-          return (
-            <Card variant="outlined" key={i++} style={{ margin: 10 }}>
-              <CardContent>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  <span style={{ fontWeight: "bold" }}>Nome:</span>{" "}
-                  {appointment.patient.name} <br />
-                  <span style={{ fontWeight: "bold" }}>Gênero:</span>{" "}
-                  {appointment.patient.genre} <br />
-                  <span style={{ fontWeight: "bold" }}>
-                    Data de aniversário:{" "}
-                  </span>
-                  {(appointment.patient.dob &&
-                    new Intl.DateTimeFormat("pt-BR").format(
-                      new Date(appointment.patient.dob)
-                    )) ||
-                    "LGPD COMPLIANCE"}
-                  <br />
-                  <span style={{ fontWeight: "bold" }}>Peso: </span>
-                  {appointment.patient.weight}
-                  <br />
-                  <span style={{ fontWeight: "bold" }}>Altura: </span>
-                  {appointment.patient.height}
-                  <br />
-                </Typography>
-                <Typography variant="h6" component="div">
-                  Observações da consulta
-                </Typography>
-                <ul
-                  style={{
-                    margin: "0px 0px 20px 0px",
-                    listStyle: "none",
-                    overflow: "scroll",
-                    padding: "20px 10px 20px 10px",
-                    backgroundColor: "f1f1f1",
-                    maxHeight: 150,
+      <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        {appointments &&
+          appointments.map((appointment: AppointmentDTO, i: number) => {
+            return (
+              <Grid item xs={12} key={`Grid-12-${i++}`}>
+                <AppointmentsCard
+                  {...{
+                    appointment,
+                    handleAppointmentDeletion,
+                    handleMedicalAppointmentRecord,
                   }}
                 >
-                  {appointment.medicalRegistries &&
-                    appointment.medicalRegistries.map(
-                      (registry: any, i: number) => (
-                        <li style={{ marginBottom: 40 }} key={i++}>
-                          Data:{" "}
-                          {registry.createdAt &&
-                            new Intl.DateTimeFormat("pt-BR", {
-                              year: "numeric",
-                              month: "numeric",
-                              day: "numeric",
-                              hour: "numeric",
-                              minute: "numeric",
-                              second: "numeric",
-                              hour12: false,
-                            }).format(new Date(registry.createdAt))}
-                          <br />
-                          {registry.observation}
-                        </li>
-                      )
-                    )}
-                </ul>
-              </CardContent>
-              <CardActions>
-                <Link to={`/patients/`}>
-                  <Button variant="contained" style={{ margin: 10 }}>
-                    <Create />
-                    Editar
-                  </Button>
-                </Link>
-                <Button
-                  variant="contained"
-                  style={{ margin: 10 }}
-                  onClick={() => handleMedicalAppointmentRecord(appointment)}
-                >
-                  <Medication />
-                  Observação
-                </Button>
-                <Button
-                  style={{ margin: 10 }}
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleAppointmentDeletion(appointment)}
-                >
-                  <HighlightOff />
-                  Excluir Consulta
-                </Button>
-              </CardActions>
-            </Card>
-          );
-        })}
-
+                  <MedicalRegistriesAppointmentsList
+                    key={`medAppRegList-${i++}`}
+                    medicalRegistries={appointment.medicalRegistries || []}
+                    deleteMedicalAppointmentObservation={
+                      deleteMedicalAppointmentObservation
+                    }
+                  />
+                </AppointmentsCard>
+              </Grid>
+            );
+          })}
+      </Grid>
       <AppointmentObservationModal
         {...{ ...modalState, errorMessage: errorModal }}
       />

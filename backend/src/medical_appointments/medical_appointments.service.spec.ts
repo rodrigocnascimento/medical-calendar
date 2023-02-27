@@ -31,7 +31,7 @@ describe("MedicalAppointmentsService", () => {
       ],
     }).compile();
 
-    service = module.get<MedicalAppointmentsService>(MedicalAppointmentsService);
+    service = await module.resolve<MedicalAppointmentsService>(MedicalAppointmentsService);
     repo = module.get<MedicalAppointmentRepository>(
       getRepositoryToken(MedicalAppointmentRepository)
     );

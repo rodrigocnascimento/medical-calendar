@@ -1,18 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-  Button,
-} from "@mui/material";
-import {
-  Create,
-  PermContactCalendar,
-  CalendarMonth,
-  HighlightOff,
-} from "@mui/icons-material";
+import { Button, Grid } from "@mui/material";
+import { PermContactCalendar } from "@mui/icons-material";
 
 import { useAuth, useRepository } from "context";
 import {
@@ -22,7 +11,6 @@ import {
   mapDoctorDropDownList,
 } from "../users";
 import { PatientDTO } from "./index";
-import { AppointmentDTO } from "../appointments";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
 import SuccessMessage, { TSuccessMessageProps } from "components/success";
@@ -36,10 +24,13 @@ import "./patients.css";
 import {
   PatientAppointmentModal,
   TPatientAppointmentModalProps,
-} from "./patient-appointment.modal";
+} from "components/patient/appointment.modal";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import { appointmentCreationValidation } from "modules/appointments/appointments.validation";
 import { ValidationError } from "yup";
+import PatientCard from "components/patient/card.list";
+import PatientAppointmentsList from "components/patient/appointments.list";
+import { AppointmentDTO } from "modules/appointments";
 
 /**
  * This page is the dashboard of the module.
@@ -47,6 +38,9 @@ import { ValidationError } from "yup";
  * @param {UsersComponentProps} { repository } IRepository injected repository
  * @returns {JSX.Element} Dashboard Element
  */
+const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
+
+console.log({ timeZone }, new Date());
 export function ListPatients(): JSX.Element {
   const {
     appointments: appointmentRepository,
@@ -83,22 +77,26 @@ export function ListPatients(): JSX.Element {
     setPatients(patients);
   }, [patientRepository]);
 
-  const handlePatientAppointmentCreationModal = useCallback(
+  const createPatientAppointment = useCallback(
     (patient: Partial<PatientDTO>) => {
       setModalState({
         open: !!patient.id,
         patient,
         handleAppointmentCreation: (appointmentDoctor, appointmentDate) => {
+          console.log("appointmentDate", appointmentDate);
           const [date, fullhour] = new Date(appointmentDate)
             .toISOString()
             .split("T");
           const [hour, minute] = fullhour.split(":");
+
+          console.log("new Date()", new Date(`${date}T${hour}:${minute}`));
 
           const createAppointment = {
             patient: patient.id,
             doctor: appointmentDoctor.id,
             date: new Date(`${date}T${hour}:${minute}`),
           };
+          console.log("createAppointment", createAppointment);
 
           // if the userRole is "doctor", than ir should
           // assign the appointment to himself
@@ -119,8 +117,8 @@ export function ListPatients(): JSX.Element {
                   await loadPatients();
                 })
                 .catch((error: Error) => {
-                  setError({
-                    title: error.message,
+                  setErrorModal({
+                    title: "",
                     errors: error.cause,
                   });
                 })
@@ -141,7 +139,43 @@ export function ListPatients(): JSX.Element {
     [appointmentRepository, auth, loadPatients]
   );
 
-  const handlePatienteDeletion = (patient: PatientDTO) => {
+  const deletePatientAppointment = (appointment: AppointmentDTO) => {
+    const formatedDate = new Intl.DateTimeFormat("pt-BR", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hour12: false,
+    }).format(new Date(appointment.date));
+
+    setDeleteConfirmation({
+      message: `Você irá excluir o agendamento do dia ${formatedDate}. Tem certeza disso?`,
+      onConfirmation: {
+        title: "Sim, tenho certeza.",
+        fn: () => {
+          appointmentRepository
+            .remove(appointment.id)
+            .then(async () => {
+              setSuccess({
+                message: "Agendamento removido com sucesso.",
+              });
+              await loadPatients();
+            })
+            .catch((error: Error) =>
+              setError({
+                title: error.message,
+                errors: error.cause,
+              })
+            );
+        },
+      },
+      onFinally: () => reset(),
+    });
+  };
+
+  const patientDeletion = (patient: PatientDTO) => {
     setDeleteConfirmation({
       message: `Confirmando essa ação, você irá excluir o registro ${patient.name}. Tem certeza disso?`,
       onConfirmation: {
@@ -204,116 +238,28 @@ export function ListPatients(): JSX.Element {
         {error && <ErrorMessage {...error} />}
         {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
-      {patients &&
-        patients.map((patient: PatientDTO, i: number) => {
+      <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        {patients.map((patient: PatientDTO, i: number) => {
           return (
-            <Card variant="outlined" key={i++} style={{ margin: 10 }}>
-              <CardContent>
-                <Typography variant="h5" component="div">
-                  {patient.name}
-                </Typography>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  <span
-                    style={{
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Nome:
-                  </span>{" "}
-                  {patient.phone}
-                  <br />
-                  <span
-                    style={{
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Email:
-                  </span>{" "}
-                  {patient.email}
-                  <br />
-                  <span
-                    style={{
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Gênero:
-                  </span>{" "}
-                  {patient.genre}
-                  <br />
-                  <span
-                    style={{
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Data de aniversário:{" "}
-                  </span>
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(patient.dob)
-                  )}
-                  <br />
-                  <span
-                    style={{
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Criado em:
-                  </span>{" "}
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(patient.createdAt)
-                  )}
-                </Typography>
-                <Typography variant="h6">Agendamentos do Paciente</Typography>
-                <ul style={{ height: 250, overflow: "scroll" }}>
-                  {patient.appointments &&
-                    patient.appointments.map(
-                      (appointment: AppointmentDTO, i: number) => (
-                        <li key={i++}>
-                          Data/Horário:{" "}
-                          {new Intl.DateTimeFormat("pt-BR", {
-                            year: "numeric",
-                            month: "numeric",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "numeric",
-                            second: "numeric",
-                            hour12: false,
-                          }).format(new Date(appointment.date))}
-                        </li>
-                      )
-                    )}
-                </ul>
-              </CardContent>
-              <CardActions>
-                <Link to={`/patients/${patient.id}`}>
-                  <Button style={{ margin: 10 }} variant="contained">
-                    <Create />
-                    Editar
-                  </Button>
-                </Link>
-
-                <Button
-                  style={{ margin: 10 }}
-                  variant="contained"
-                  onClick={() => handlePatientAppointmentCreationModal(patient)}
-                >
-                  <CalendarMonth />
-                  Agendar horário
-                </Button>
-                {auth.user.userRole === UserRoles.ADMIN && (
-                  <Button
-                    style={{ margin: 10 }}
-                    variant="contained"
-                    color="error"
-                    onClick={() => handlePatienteDeletion(patient)}
-                  >
-                    <HighlightOff />
-                    Excluir Paciente
-                  </Button>
-                )}
-              </CardActions>
-            </Card>
+            <Grid item xs={6} key={`Grid-6-${i++}`}>
+              <PatientCard
+                key={`PatientCard-${i++}`}
+                {...{
+                  patient,
+                  createPatientAppointment,
+                  patientDeletion,
+                }}
+              >
+                <PatientAppointmentsList
+                  key={`PatientAppointmentsList-${i++}`}
+                  appointments={patient.appointments || []}
+                  deletePatientAppointment={deletePatientAppointment}
+                />
+              </PatientCard>
+            </Grid>
           );
         })}
+      </Grid>
       <PatientAppointmentModal
         {...{
           ...modalState,
