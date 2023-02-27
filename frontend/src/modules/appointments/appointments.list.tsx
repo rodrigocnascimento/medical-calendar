@@ -183,21 +183,23 @@ export function ListAppointments(): JSX.Element {
           appointments.map((appointment: AppointmentDTO, i: number) => {
             return (
               <Grid item xs={12} key={`Grid-12-${i++}`}>
-                <AppointmentsCard
-                  {...{
-                    appointment,
-                    handleAppointmentDeletion,
-                    handleMedicalAppointmentRecord,
-                  }}
-                >
-                  <MedicalRegistriesAppointmentsList
-                    key={`medAppRegList-${i++}`}
-                    medicalRegistries={appointment.medicalRegistries || []}
-                    deleteMedicalAppointmentObservation={
-                      deleteMedicalAppointmentObservation
-                    }
-                  />
-                </AppointmentsCard>
+                {appointment.patient && (
+                  <AppointmentsCard
+                    {...{
+                      appointment,
+                      handleAppointmentDeletion,
+                      handleMedicalAppointmentRecord,
+                    }}
+                  >
+                    <MedicalRegistriesAppointmentsList
+                      key={`medAppRegList-${i++}`}
+                      medicalRegistries={appointment.medicalRegistries || []}
+                      deleteMedicalAppointmentObservation={
+                        deleteMedicalAppointmentObservation
+                      }
+                    />
+                  </AppointmentsCard>
+                )}
               </Grid>
             );
           })}
