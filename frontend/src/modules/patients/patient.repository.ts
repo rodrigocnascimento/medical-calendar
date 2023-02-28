@@ -19,6 +19,8 @@ export interface IPatientRepository {
     raw: [];
     affected: number;
   }>;
+  repoUrl: string;
+  setSearchParams(searchParams: FilterPatientDTO): void;
 }
 
 export class PatientRepository implements IPatientRepository {
@@ -28,15 +30,14 @@ export class PatientRepository implements IPatientRepository {
    * @type {string}
    * @memberof PatientRepository
    */
-  readonly baseUrl: string = "";
-
+  private readonly _repoUrl: URL;
   /**
    * http client
    *
    * @type {IHttp}
    * @memberof PatientRepository
    */
-  readonly http: IHttp;
+  private readonly http: IHttp;
 
   /**
    * Creates an instance of PatientRepository.
@@ -45,9 +46,35 @@ export class PatientRepository implements IPatientRepository {
    * @memberof PatientRepository
    */
   constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
-    this.baseUrl = baseUrl + "/patients";
+    this._repoUrl = new URL("/patients", baseUrl);
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());
+  }
+
+  /**
+   * The repository URLK
+   *
+   * @readonly
+   * @type {string}
+   * @memberof PatientRepository
+   */
+  get repoUrl(): string {
+    return this._repoUrl.toString();
+  }
+
+  /**
+   * Set the url search params
+   *
+   * @private
+   * @param {FilterPatientDTO} searchParams the search params
+   * @memberof PatientRepository
+   */
+  setSearchParams(searchParams: FilterPatientDTO) {
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        this._repoUrl.searchParams.set(key, value as string);
+      });
+    }
   }
 
   /**
@@ -60,7 +87,7 @@ export class PatientRepository implements IPatientRepository {
   async create(patient: CreatePatientDTO): Promise<PatientDTO> {
     const response = await this.http.request({
       method: "POST",
-      url: this.baseUrl,
+      url: this.repoUrl,
       body: patient,
     });
 
@@ -84,7 +111,7 @@ export class PatientRepository implements IPatientRepository {
   async edit(patient: UpdatePatientDTO): Promise<PatientDTO> {
     const response = await this.http.request({
       method: "PATCH",
-      url: this.baseUrl,
+      url: this.repoUrl,
       body: patient,
     });
 
@@ -108,7 +135,7 @@ export class PatientRepository implements IPatientRepository {
   async remove(id: string): Promise<PatientDTO> {
     const response = await this.http.request({
       method: "DELETE",
-      url: this.baseUrl + `/${id}`,
+      url: this.repoUrl + `/${id}`,
     });
 
     const jsonResponse = await response.json();
@@ -128,16 +155,10 @@ export class PatientRepository implements IPatientRepository {
    * @returns All patientes
    */
   async getAll(queryFilter: FilterPatientDTO): Promise<PatientDTO[]> {
-    const queryUrl = new URL(this.baseUrl);
-
-    if (queryFilter) {
-      Object.entries(queryFilter).forEach(([key, value]) => {
-        queryUrl.searchParams.set(key, value as string);
-      });
-    }
+    this.setSearchParams(queryFilter);
 
     const response = await this.http.request({
-      url: queryUrl.toString(),
+      url: this.repoUrl,
     });
 
     const jsonResponse = await response.json();
@@ -159,7 +180,7 @@ export class PatientRepository implements IPatientRepository {
    */
   async getById(id: string): Promise<PatientDTO> {
     const response = await this.http.request({
-      url: this.baseUrl + `/${id}`,
+      url: this.repoUrl.concat(`/${id}`),
     });
 
     const jsonResponse = await response.json();
@@ -180,7 +201,7 @@ export class PatientRepository implements IPatientRepository {
     affected: number;
   }> {
     const response = await this.http.request({
-      url: serverEndpoint + `/lgpd/deletion/${id}`,
+      url: serverEndpoint.concat(`/lgpd/deletion/${id}`),
     });
 
     const jsonResponse = await response.json();

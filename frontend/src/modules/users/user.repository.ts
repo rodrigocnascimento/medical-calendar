@@ -8,6 +8,8 @@ export interface IUserRepository {
   remove(id: string): Promise<UserDTO>;
   getAll(queryFilter?: FilterUserDTO): Promise<UserDTO[]>;
   getById(id: string): Promise<UserDTO>;
+  repoUrl: string;
+  setSearchParams(searchParams: FilterUserDTO): void;
 }
 
 export class UserRepository implements IUserRepository {
@@ -17,7 +19,7 @@ export class UserRepository implements IUserRepository {
    * @type {string}
    * @memberof UserRepository
    */
-  readonly baseUrl: string = "";
+  private readonly _repoUrl: URL;
 
   /**
    * http client
@@ -25,7 +27,7 @@ export class UserRepository implements IUserRepository {
    * @type {IHttp}
    * @memberof UserRepository
    */
-  readonly http: IHttp;
+  private readonly http: IHttp;
 
   /**
    * Creates an instance of UserRepository.
@@ -34,9 +36,35 @@ export class UserRepository implements IUserRepository {
    * @memberof UserRepository
    */
   constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
-    this.baseUrl = baseUrl + "/users";
+    this._repoUrl = new URL("/users", baseUrl);
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());
+  }
+
+  /**
+   * The repository URLK
+   *
+   * @readonly
+   * @type {string}
+   * @memberof UserRepository
+   */
+  get repoUrl(): string {
+    return this._repoUrl.toString();
+  }
+
+  /**
+   * Set the url search params
+   *
+   * @private
+   * @param {FilterUserDTO} searchParams the search params
+   * @memberof UserRepository
+   */
+  setSearchParams(searchParams: FilterUserDTO) {
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        this._repoUrl.searchParams.set(key, value as string);
+      });
+    }
   }
 
   /**
@@ -49,7 +77,7 @@ export class UserRepository implements IUserRepository {
   async create(user: CreateUserDTO): Promise<UserDTO> {
     const response = await this.http.request({
       method: "POST",
-      url: this.baseUrl,
+      url: this.repoUrl,
       body: user,
     });
 
@@ -73,7 +101,7 @@ export class UserRepository implements IUserRepository {
   async edit(user: UpdateUserDTO): Promise<UserDTO> {
     const response = await this.http.request({
       method: "PATCH",
-      url: this.baseUrl + `/${user.id}`,
+      url: this.repoUrl.concat(`/${user.id}`),
       body: user,
     });
 
@@ -97,7 +125,7 @@ export class UserRepository implements IUserRepository {
   async remove(id: string): Promise<UserDTO> {
     const response = await this.http.request({
       method: "DELETE",
-      url: this.baseUrl + `/${id}`,
+      url: this.repoUrl.concat(`/${id}`),
     });
 
     const jsonResponse = await response.json();
@@ -117,17 +145,11 @@ export class UserRepository implements IUserRepository {
    * @param {FilterUserDTO} queryFilter filter to query the user
    * @returns
    */
-  async getAll(queryFilter?: FilterUserDTO): Promise<UserDTO[]> {
-    const queryUrl = new URL(this.baseUrl);
-
-    if (queryFilter) {
-      Object.entries(queryFilter).forEach(([key, value]) => {
-        queryUrl.searchParams.set(key, value as string);
-      });
-    }
+  async getAll(queryFilter: FilterUserDTO): Promise<UserDTO[]> {
+    this.setSearchParams(queryFilter);
 
     const response = await this.http.request({
-      url: queryUrl.toString(),
+      url: this.repoUrl,
     });
 
     const jsonResponse = await response.json();
@@ -149,7 +171,7 @@ export class UserRepository implements IUserRepository {
    */
   async getById(id: string): Promise<UserDTO> {
     const response = await this.http.request({
-      url: this.baseUrl + `/${id}`,
+      url: this.repoUrl.concat(`/${id}`),
     });
 
     const jsonResponse = await response.json();

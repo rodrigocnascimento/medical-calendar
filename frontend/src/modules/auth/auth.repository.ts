@@ -7,6 +7,7 @@ export interface IAuthRepository {
     username,
     password,
   }: AuthCredentials): Promise<JWTAccessToken>;
+  repoUrl: string;
 }
 
 export class AuthRepository implements IAuthRepository {
@@ -16,7 +17,7 @@ export class AuthRepository implements IAuthRepository {
    * @type {string}
    * @memberof AuthRepository
    */
-  readonly baseUrl: string = "";
+  private readonly _repoUrl: URL;
 
   /**
    * http client
@@ -24,7 +25,7 @@ export class AuthRepository implements IAuthRepository {
    * @type {IHttp}
    * @memberof AuthRepository
    */
-  readonly http: IHttp;
+  private readonly http: IHttp;
 
   /**
    * Creates an instance of AuthRepository.
@@ -33,9 +34,20 @@ export class AuthRepository implements IAuthRepository {
    * @memberof AuthRepository
    */
   constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
-    this.baseUrl = baseUrl + "/auth/login";
+    this._repoUrl = new URL("/auth/login", baseUrl);
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());
+  }
+
+  /**
+   * The repository URLK
+   *
+   * @readonly
+   * @type {string}
+   * @memberof AuthRepository
+   */
+  get repoUrl(): string {
+    return this._repoUrl.toString();
   }
 
   async checkCredentials({
@@ -44,7 +56,7 @@ export class AuthRepository implements IAuthRepository {
   }: AuthCredentials): Promise<JWTAccessToken> {
     const response = await this.http.request({
       method: "POST",
-      url: this.baseUrl,
+      url: this.repoUrl,
       body: { username, password },
     });
 
