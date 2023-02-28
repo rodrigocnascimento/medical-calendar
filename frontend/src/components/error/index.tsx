@@ -30,13 +30,23 @@ const ErrorsList = ({ errorList }: TErrorListMap) => {
 };
 
 export default function ErrorMessage({ title, errors }: TErrorMessage) {
-  const mapErrors = new Map(Object.entries(errors));
-  return (
-    <Alert severity="error" style={{ marginBottom: 20 }}>
-      <AlertTitle>
-        <strong>{title ?? errors.name}</strong>
-      </AlertTitle>
-      <ErrorsList errorList={mapErrors} />
-    </Alert>
-  );
+  try {
+    const mapErrors = new Map(Object.entries(errors));
+    return (
+      <Alert severity="error" style={{ marginBottom: 20 }}>
+        <AlertTitle>
+          <strong>{title ?? errors.name}</strong>
+        </AlertTitle>
+        <ErrorsList errorList={mapErrors} />
+      </Alert>
+    );
+  } catch (error: any) {
+    console.error(error);
+    return (
+      <ErrorMessage
+        title="Unknown"
+        errors={{ error: "unknown", cause: JSON.stringify(error.message) }}
+      />
+    );
+  }
 }

@@ -33,9 +33,8 @@ export default function AppointmentsCard({
         <span style={{ fontWeight: "bold" }}>Gênero:</span> {patient.genre}{" "}
         <br />
         <span style={{ fontWeight: "bold" }}>Data de aniversário: </span>
-        {(patient.dob &&
-          new Intl.DateTimeFormat("pt-BR").format(new Date(patient.dob))) ||
-          "LGPD COMPLIANCE"}
+        {patient.dob &&
+          new Intl.DateTimeFormat("pt-BR").format(new Date(patient.dob))}
         <br />
         <span style={{ fontWeight: "bold" }}>Peso: </span>
         {patient.weight}
