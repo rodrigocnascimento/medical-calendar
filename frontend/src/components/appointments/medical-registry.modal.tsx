@@ -6,8 +6,8 @@ import { Medication } from "@mui/icons-material";
 import ErrorMessage, { TErrorMessage } from "components/error";
 import { AppointmentDTO } from "../../modules/appointments/appointment.interfaces";
 import {
-  CreateMedicallRegistriesDTO,
-  UpdateMedicallRegistriesDTO,
+  CreateMedicalRegistriesDTO,
+  UpdateMedicalRegistriesDTO,
 } from "modules/medical_registries";
 
 export type TAppointmentObservationModalProps = {
@@ -35,7 +35,7 @@ export function AppointmentObservationModal({
   onCloseHandler,
 }: TAppointmentObservationModalProps): JSX.Element {
   const [medicalRegistry, setMedicalRegistry] = useState<
-    CreateMedicallRegistriesDTO | UpdateMedicallRegistriesDTO
+    CreateMedicalRegistriesDTO | UpdateMedicalRegistriesDTO
   >({
     observation: "",
     medicalAppointment: appointment?.id || "",

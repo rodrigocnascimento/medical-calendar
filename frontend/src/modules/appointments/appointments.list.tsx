@@ -20,9 +20,9 @@ import {
   TAppointmentObservationModalProps,
 } from "components/appointments/medical-registry.modal";
 import {
-  CreateMedicallRegistriesDTO,
-  MedicallRegistriesDTO,
-  UpdateMedicallRegistriesDTO,
+  CreateMedicalRegistriesDTO,
+  MedicalRegistriesDTO,
+  UpdateMedicalRegistriesDTO,
 } from "modules/medical_registries";
 import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
 import { medicalRegistriesValidation } from "modules/medical_registries/medical_registries.validation";
@@ -74,8 +74,8 @@ export function ListAppointments(): JSX.Element {
         appointment,
         handleMedicalRegistryCreation: (
           medicalRegistry:
-            | CreateMedicallRegistriesDTO
-            | UpdateMedicallRegistriesDTO
+            | CreateMedicalRegistriesDTO
+            | UpdateMedicalRegistriesDTO
         ) => {
           medicalRegistriesValidation
             .validate(medicalRegistry, { abortEarly: false })
@@ -135,7 +135,7 @@ export function ListAppointments(): JSX.Element {
   );
 
   const deleteMedicalAppointmentObservation = (
-    medicalRecord: MedicallRegistriesDTO
+    medicalRecord: MedicalRegistriesDTO
   ) => {
     setDeleteConfirmation({
       message: `Você irá excluir a observação da consulta. Tem certeza disso?`,

@@ -13,7 +13,7 @@ import { AppointmentDTO } from "modules/appointments";
 
 export type TPatientCardProps = {
   appointment: AppointmentDTO;
-  // medicalRegistries: MedicallRegistriesDTO;
+  // medicalRegistries: MedicalRegistriesDTO;
   handleMedicalAppointmentRecord: (appointment: AppointmentDTO) => void;
   handleAppointmentDeletion: (appointment: AppointmentDTO) => void;
   children: ReactNode;
