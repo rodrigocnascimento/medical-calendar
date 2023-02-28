@@ -11,13 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
-import { MedicallRegistriesDTO } from "modules/medical_registries";
+import { MedicalRegistriesDTO } from "modules/medical_registries";
 
 export type TMedicalRegistriesAppointmentsListProps = {
-  medicalRegistries: MedicallRegistriesDTO[];
-  deleteMedicalAppointmentObservation: (
-    registry: MedicallRegistriesDTO
-  ) => void;
+  medicalRegistries: MedicalRegistriesDTO[];
+  deleteMedicalAppointmentObservation: (registry: MedicalRegistriesDTO) => void;
 };
 
 export default function MedicalRegistriesAppointmentsList({

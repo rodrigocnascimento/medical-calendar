@@ -1,4 +1,4 @@
-import { MedicallRegistriesDTO } from "modules/medical_registries";
+import { MedicalRegistriesDTO } from "modules/medical_registries";
 
 export interface AppointmentDTO {
   id: string;
@@ -7,7 +7,7 @@ export interface AppointmentDTO {
   updatedAt: Date;
   patient: any;
   doctor: any;
-  medicalRegistries: MedicallRegistriesDTO[];
+  medicalRegistries: MedicalRegistriesDTO[];
 }
 
 export interface CreateAppointmentDTO

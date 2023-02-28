@@ -1,19 +1,22 @@
 import { IHttp } from "infrastructure/adapter/http";
 import { ITokenStorage } from "infrastructure/adapter/storage/token";
 import {
-  MedicallRegistriesDTO,
-  CreateMedicallRegistriesDTO,
-  UpdateMedicallRegistriesDTO,
+  MedicalRegistriesDTO,
+  CreateMedicalRegistriesDTO,
+  UpdateMedicalRegistriesDTO,
+  FilterMedicalRegistriesDTO,
 } from "./index";
 
 export interface IMedicalRegistryRepository {
-  create(registry: CreateMedicallRegistriesDTO): Promise<MedicallRegistriesDTO>;
+  create(registry: CreateMedicalRegistriesDTO): Promise<MedicalRegistriesDTO>;
   edit(
     medicalRegistryId: string,
-    medicalRegistry: UpdateMedicallRegistriesDTO
-  ): Promise<MedicallRegistriesDTO>;
-  remove(id: string): Promise<MedicallRegistriesDTO>;
-  getById(id: string): Promise<MedicallRegistriesDTO>;
+    medicalRegistry: UpdateMedicalRegistriesDTO
+  ): Promise<MedicalRegistriesDTO>;
+  remove(id: string): Promise<MedicalRegistriesDTO>;
+  getById(id: string): Promise<MedicalRegistriesDTO>;
+  repoUrl: string;
+  setSearchParams(searchParams: FilterMedicalRegistriesDTO): void;
 }
 
 export class MedicalRegistryRepository {
@@ -23,7 +26,7 @@ export class MedicalRegistryRepository {
    * @type {string}
    * @memberof MedicalRegistriesRepository
    */
-  readonly baseUrl: string = "";
+  private readonly _repoUrl: URL;
 
   /**
    * http client
@@ -31,33 +34,58 @@ export class MedicalRegistryRepository {
    * @type {IHttp}
    * @memberof MedicalRegistriesRepository
    */
-  readonly http: IHttp;
+  private readonly http: IHttp;
 
   /**
    * Creates an instance of MedicalRegistriesRepository.
-   * @param {string} baseUrl server url
+   * @param {string} repoUrl server url
    * @param {IHttp} http http client
    * @memberof MedicalRegistriesRepository
    */
   constructor(baseUrl: string, http: IHttp, userToken: ITokenStorage) {
-    this.baseUrl = baseUrl + "/medical-registries";
+    this._repoUrl = new URL("/medical-registries", baseUrl);
     this.http = http;
     this.http.setBearerTokenHeader(userToken.getRawToken());
   }
 
   /**
+   * The repository URLK
+   *
+   * @readonly
+   * @type {string}
+   * @memberof MedicalRegistriesRepository
+   */
+  get repoUrl(): string {
+    return this._repoUrl.toString();
+  }
+
+  /**
+   * Set the url search params
+   *
+   * @private
+   * @param {FilterMedicalRegistriesDTO} searchParams the search params
+   * @memberof MedicalRegistriesRepository
+   */
+  setSearchParams(searchParams: FilterMedicalRegistriesDTO) {
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        this._repoUrl.searchParams.set(key, value as string);
+      });
+    }
+  }
+  /**
    * Create an appoitnment
    *
-   * @param {CreateMedicallRegistriesDTO} registry medical registry data
+   * @param {CreateMedicalRegistriesDTO} registry medical registry data
    * @return {*}  {Promise<boolean>} returns true when the operation was succeded
    * @memberof MedicalRegistriesRepository
    */
   async create(
-    registry: CreateMedicallRegistriesDTO
-  ): Promise<MedicallRegistriesDTO> {
+    registry: CreateMedicalRegistriesDTO
+  ): Promise<MedicalRegistriesDTO> {
     const response = await this.http.request({
       method: "POST",
-      url: this.baseUrl,
+      url: this.repoUrl,
       body: registry,
     });
 
@@ -78,11 +106,11 @@ export class MedicalRegistryRepository {
    */
   async edit(
     medicalRegistryId: string,
-    medicalRegistry: UpdateMedicallRegistriesDTO
-  ): Promise<MedicallRegistriesDTO> {
+    medicalRegistry: UpdateMedicalRegistriesDTO
+  ): Promise<MedicalRegistriesDTO> {
     const response = await this.http.request({
       method: "PATCH",
-      url: this.baseUrl + `/${medicalRegistryId}`,
+      url: this.repoUrl.concat(`/${medicalRegistryId}`),
       body: medicalRegistry,
     });
 
@@ -100,10 +128,10 @@ export class MedicalRegistryRepository {
    * @param id appoitnment id
    * @returns
    */
-  async remove(id: string): Promise<MedicallRegistriesDTO> {
+  async remove(id: string): Promise<MedicalRegistriesDTO> {
     const response = await this.http.request({
       method: "DELETE",
-      url: this.baseUrl + `/${id}`,
+      url: this.repoUrl.concat(`/${id}`),
     });
 
     const jsonResponse = await response.json();
@@ -120,9 +148,9 @@ export class MedicalRegistryRepository {
    * @param id Appoitnment id
    * @returns
    */
-  async getById(id: string): Promise<MedicallRegistriesDTO> {
+  async getById(id: string): Promise<MedicalRegistriesDTO> {
     const response = await this.http.request({
-      url: this.baseUrl + `/${id}`,
+      url: this.repoUrl.concat(`/${id}`),
     });
 
     return await response.json();

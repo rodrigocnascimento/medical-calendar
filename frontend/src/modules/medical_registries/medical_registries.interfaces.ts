@@ -1,4 +1,4 @@
-export interface MedicallRegistriesDTO {
+export interface MedicalRegistriesDTO {
   id: string;
   date: Date;
   observation: any;
@@ -7,7 +7,10 @@ export interface MedicallRegistriesDTO {
   updatedAt: Date;
 }
 
-export interface CreateMedicallRegistriesDTO
-  extends Partial<Omit<MedicallRegistriesDTO, "createdAt" | "updatedAt">> {}
-export interface UpdateMedicallRegistriesDTO
-  extends Partial<Omit<MedicallRegistriesDTO, "createdAt" | "updatedAt">> {}
+export interface CreateMedicalRegistriesDTO
+  extends Partial<Omit<MedicalRegistriesDTO, "createdAt" | "updatedAt">> {}
+export interface UpdateMedicalRegistriesDTO
+  extends Partial<Omit<MedicalRegistriesDTO, "createdAt" | "updatedAt">> {}
+
+export interface FilterMedicalRegistriesDTO
+  extends Partial<MedicalRegistriesDTO> {}
