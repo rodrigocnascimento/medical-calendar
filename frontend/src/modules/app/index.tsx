@@ -6,7 +6,7 @@ import { useAuth } from "context";
 import LoginRoute from "modules/login";
 import { ListPatients, CreatePatient, UpdatePatient } from "modules/patients";
 import { ListUsers, CreateUser, UpdateUser } from "modules/users";
-import { AuthVerifier } from "modules/auth";
+import { AuthVerifier } from "components/auth/auth.verifier";
 import { ListAppointments } from "modules/appointments";
 import "./index.css";
 import "root.css";

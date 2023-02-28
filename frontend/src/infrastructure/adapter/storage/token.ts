@@ -1,9 +1,9 @@
-import { JWTUser } from "context/auth/use-auth";
+import { JWTUserToken } from "modules/auth";
 import Storage from "./index";
 
 export interface ITokenStorage {
   getRawToken(name?: string): string;
-  get(name?: string): JWTUser | undefined;
+  get(name?: string): JWTUserToken | undefined;
   set(value: string, name?: string): void;
   remove(name?: string): void;
 }
@@ -50,7 +50,7 @@ export default class TokenStorage {
    * @return {*}
    * @memberof TokenStorage
    */
-  public get(name?: string): JWTUser | undefined {
+  public get(name?: string): JWTUserToken | undefined {
     const tokenStore = this.storage.get(name ?? this.name);
 
     if (!tokenStore) return undefined;
@@ -82,10 +82,10 @@ export default class TokenStorage {
 
   /**
    * Validate a JWT token verifying if it's expired.
-   * @param {JWTUser} decodedToken the JWT parsed
+   * @param {JWTUserToken} decodedToken the JWT parsed
    * @returns
    */
-  private tokenIsExpired(decodedToken: JWTUser): JWTUser {
+  private tokenIsExpired(decodedToken: JWTUserToken): JWTUserToken {
     const { exp } = decodedToken;
 
     const expired = Date.now() >= exp * 1000;
@@ -101,7 +101,7 @@ export default class TokenStorage {
    * @param token the JWT token
    * @returns Parsed JWT
    */
-  private parseJwt(token: string): JWTUser {
+  private parseJwt(token: string): JWTUserToken {
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(

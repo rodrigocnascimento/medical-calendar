@@ -3,7 +3,7 @@ export type AuthCredentials = {
   password: string;
 };
 
-export type JWTToken = {
+export type JWTUserToken = {
   exp: EpochTimeStamp;
   iat: EpochTimeStamp;
   expired: boolean;
