@@ -7,6 +7,7 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { NotFoundException, UnprocessableEntityException } from "@nestjs/common";
 import { UpdateResult } from "typeorm";
 import { UpdatePatientDTO } from "./dto/update.dto";
+import { CryptoService } from "../crypto.service";
 
 describe("PatientsService", () => {
   let service: PatientsService;
@@ -16,6 +17,7 @@ describe("PatientsService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PatientsService,
+        CryptoService,
         {
           provide: getRepositoryToken(Patient),
           useValue: {

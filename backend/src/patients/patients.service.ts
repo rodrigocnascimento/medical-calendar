@@ -10,7 +10,7 @@ import { CreatePatientDTO } from "./dto/create.dto";
 import { PatientsRepository } from "./patients.repository";
 import { UpdatePatientDTO } from "./dto/update.dto";
 import { DeleteResult, UpdateResult } from "typeorm";
-import { CryptoService } from "src/crypto.service";
+import { CryptoService } from "../crypto.service";
 
 @Injectable()
 export class PatientsService {
