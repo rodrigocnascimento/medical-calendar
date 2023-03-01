@@ -91,7 +91,7 @@ export class PatientsService {
     });
   }
 
-  async lgpdDeletion(patientId) {
+  async lgpdDeletion(patientId: string) {
     const lookupPatient = await this.patientsRepository.findOne({
       where: {
         id: patientId,
