@@ -1,4 +1,4 @@
-import { DataSource, Entity, Repository } from "typeorm";
+import { Between, DataSource, Entity, Repository } from "typeorm";
 import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { MedicalAppointment } from "./medical_appointments.entity";
 
@@ -10,9 +10,13 @@ export class MedicalAppointmentRepository extends Repository<MedicalAppointment>
   }
 
   async alreadyHasAppointment(medicalAppointmentDate: Date) {
+    const pastHour = new Date(medicalAppointmentDate);
+
+    pastHour.setHours(medicalAppointmentDate.getHours() - 1);
+
     const hasAppointment = await this.find({
       where: {
-        date: medicalAppointmentDate,
+        date: Between(pastHour, medicalAppointmentDate),
       },
     });
 

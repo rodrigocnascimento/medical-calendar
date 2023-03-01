@@ -1,7 +1,7 @@
 import { MockDataOptions, createMockData } from "./autoMock";
 import { faker } from "@faker-js/faker";
-import { Genre, Patient } from "../../patients/patient.entity";
-import { MedicalAppointment } from "src/medical_appointments/medical_appointments.entity";
+import { MedicalAppointment } from "../../medical_appointments/medical_appointments.entity";
+import { User, UserRoles } from "../../users/user.entity";
 
 function defaultData(customData = {}, quantityToGenerate = 1) {
   return [...Array(quantityToGenerate).keys()].map(() => {
@@ -9,27 +9,23 @@ function defaultData(customData = {}, quantityToGenerate = 1) {
       id = faker.datatype.uuid(),
       name = faker.name.fullName(),
       email = faker.internet.email(),
-      dob = faker.date.birthdate({ min: 1900, max: 2000, mode: "year" }),
-      phone = faker.phone.number().substring(0, 19),
-      height = faker.datatype.float({ min: 130, max: 220, precision: 0.01 }),
-      weight = faker.datatype.float({ min: 65, max: 170, precision: 0.01 }),
-      genre = faker.helpers.arrayElement([Genre.M, Genre.F]),
+      role = faker.helpers.arrayElement([UserRoles.ADMIN, UserRoles.DOCTOR, UserRoles.PATIENT]),
+      password = faker.internet.password(),
       createdAt = new Date(),
-      appointments = [] as MedicalAppointment[],
-    }: Partial<Patient> = customData;
+      updatedAt = new Date(),
+      userAppointments = [] as MedicalAppointment[],
+    }: Partial<User> = customData;
 
     return {
       id,
       name,
       email,
-      dob,
-      phone,
-      height,
-      weight,
-      genre,
-      appointments,
+      role,
+      password,
       createdAt,
-    } as Patient;
+      updatedAt,
+      userAppointments,
+    } as User;
   });
 }
 
