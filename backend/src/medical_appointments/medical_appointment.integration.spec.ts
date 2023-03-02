@@ -98,41 +98,42 @@ describe("Medical Appointments integration Tests", () => {
     const doctor = userMock();
     const [patient1, patient2, patient3] = patientMock({
       quantityToGenerate: 3,
-    }) as Patient[];
-    // new Date(year, monthIndex, day, hours)
-    const appointmentDate = new Date(2023, 1, 28, 19, 30);
-    const nextAppointmentDate = new Date(2023, 1, 28, 20, 31);
-    const nextAppointmentDate2 = new Date(2023, 1, 28, 21, 32);
+    });
+
+    const appointmentDate = "2023-03-01T19:30:00.000Z";
+    const nextAppointmentDate = "2023-03-01T20:31:00.000Z";
+    const nextAppointmentDate2 = "2023-03-01T21:32:00.000Z";
 
     await userRepo.save(doctor);
     await patientRepo.save(patient1);
     await patientRepo.save(patient2);
+    await patientRepo.save(patient3);
 
     const firstMedicalApp = medicalAppointmentMock({
       customData: {
-        doctor: doctor["id"],
-        patient: patient1["id"] as unknown as Patient,
+        doctor: doctor.id,
+        patient: patient1.id,
         date: appointmentDate,
       },
-    }) as unknown as CreateMedicalAppointmentDto;
+    });
 
     const secondMedicalApp = medicalAppointmentMock({
       customData: {
-        doctor: doctor["id"],
-        patient: patient2["id"] as unknown as Patient,
+        doctor: doctor.id,
+        patient: patient2.id,
         date: nextAppointmentDate,
         createdAt: new Date(),
       },
-    }) as unknown as CreateMedicalAppointmentDto;
+    });
 
     const thirdMedicalApp = medicalAppointmentMock({
       customData: {
-        doctor: doctor["id"],
-        patient: patient3["id"] as unknown as Patient,
+        doctor: doctor.id,
+        patient: patient3.id,
         date: nextAppointmentDate2,
         createdAt: new Date(),
       },
-    }) as unknown as CreateMedicalAppointmentDto;
+    });
 
     await medAppService.create(firstMedicalApp);
     await medAppService.create(secondMedicalApp);

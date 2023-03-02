@@ -12,7 +12,7 @@ export class MedicalAppointmentRepository extends Repository<MedicalAppointment>
   async alreadyHasAppointment(medicalAppointmentDate: Date) {
     const pastHour = new Date(medicalAppointmentDate);
 
-    pastHour.setHours(medicalAppointmentDate.getHours() - 1);
+    pastHour.setHours(new Date(medicalAppointmentDate).getHours() - 1);
 
     const hasAppointment = await this.find({
       where: {
