@@ -1,10 +1,6 @@
 import { DataSourceOptions } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
-export interface DatabaseConfigInterface {
-  DATABASE: DataSourceOptions;
-}
-
 export default {
   type: process.env.DATABASE_TYPE as PostgresConnectionOptions["type"],
   host: process.env.DATABASE_HOST,
@@ -13,7 +9,6 @@ export default {
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_DB,
   migrationsTableName: "medapp_migrations",
-  entities: ["dist/**/*.entity{.js,.ts}"],
   subscribers: ["dist/**/*.subscriber{.js,.ts}"],
   migrations: ["dist/database/migrations/*{.js,.ts}"],
   autoLoadEntities: true,
