@@ -1,9 +1,9 @@
-export interface MockDataOptions<T> {
-  customData?: Partial<T>;
+export interface MockDataOptions {
+  customData?: Record<string, any>;
   quantityToGenerate?: number;
 }
 
-function customObjectPropertyOverload<T>(index: any, customData: any, mockedData: T) {
+function customObjectPropertyOverload(index: any, customData: any, mockedData: any) {
   const dataPropertyKeys = Object.keys(customData || {});
 
   for (const dataIndex of dataPropertyKeys) {
@@ -27,17 +27,17 @@ function customObjectPropertyOverload<T>(index: any, customData: any, mockedData
  * @param customData {Partial<T>} An object with custom data to be added to the entity
  * @returns
  */
-export function createMockData<T>(
-  entityObject: T[],
-  customData: MockDataOptions<T>["customData"] = {}
-): T | T[] {
-  let mockedData: T[] = [];
+export function createMockData(
+  entityObject: Record<string, any>,
+  customData: MockDataOptions["customData"] = {}
+) {
+  let mockedData = [];
   const quantityToGenerate = entityObject.length || 1;
 
   for (const [index, entity] of Object.entries(entityObject)) {
     mockedData.push(entity);
 
-    mockedData = customObjectPropertyOverload<T[]>(index, customData, mockedData);
+    mockedData = customObjectPropertyOverload(index, customData, mockedData);
   }
   return quantityToGenerate > 1 ? mockedData : mockedData.shift();
 }

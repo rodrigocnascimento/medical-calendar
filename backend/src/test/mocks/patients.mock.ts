@@ -1,9 +1,8 @@
 import { MockDataOptions, createMockData } from "./autoMock";
 import { faker } from "@faker-js/faker";
-import { Genre, Patient } from "../../patients/patient.entity";
-import { MedicalAppointment } from "src/medical_appointments/medical_appointments.entity";
+import { Genre } from "../../patients/patient.entity";
 
-function defaultData(customData = {}, quantityToGenerate = 1) {
+function defaultData(customData = {} as any, quantityToGenerate = 1) {
   return [...Array(quantityToGenerate).keys()].map(() => {
     const {
       id = faker.datatype.uuid(),
@@ -15,8 +14,8 @@ function defaultData(customData = {}, quantityToGenerate = 1) {
       weight = faker.datatype.float({ min: 65, max: 170, precision: 0.01 }),
       genre = faker.helpers.arrayElement([Genre.M, Genre.F]),
       createdAt = new Date(),
-      appointments = [] as MedicalAppointment[],
-    }: Partial<Patient> = customData;
+      appointments = [],
+    } = customData;
 
     return {
       id,
@@ -29,14 +28,14 @@ function defaultData(customData = {}, quantityToGenerate = 1) {
       genre,
       appointments,
       createdAt,
-    } as Patient;
+    };
   });
 }
 
-export function build<T>(options: MockDataOptions<T> = {}): T | T[] {
+export function build(options: MockDataOptions = {}) {
   const { customData, quantityToGenerate } = options;
 
   const entityObject = defaultData(customData, quantityToGenerate);
 
-  return createMockData(entityObject, customData) as T;
+  return createMockData(entityObject, customData);
 }
