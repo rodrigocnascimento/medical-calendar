@@ -61,7 +61,7 @@ export class UsersService {
 
   async remove(userId: UUIDVersion): Promise<User | DeleteResult> {
     try {
-      return await this.usersRepo.delete(userId);
+      return await this.usersRepo.softDelete(userId);
     } catch (error) {
       if (error instanceof TypeORMError) {
         throw new ServiceLayerError(HttpStatus.CONFLICT, "Erro ao excluidr o usuário.", {

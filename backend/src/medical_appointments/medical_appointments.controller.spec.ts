@@ -13,7 +13,7 @@ describe("MedicalAppointmentsController", () => {
       providers: [
         MedicalAppointmentsService,
         {
-          provide: MedicalAppointmentRepository, // getRepositoryToken(MedicalAppointment),
+          provide: MedicalAppointmentRepository,
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
