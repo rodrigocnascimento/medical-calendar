@@ -41,7 +41,7 @@ export default function LoginRoute(): JSX.Element {
       <form className="form" method="post" onSubmit={handleUserLogin}>
         {error && <ErrorMessage {...error} />}
         <div className="form-content">
-          <h3 className="form-title">Sign In</h3>
+          <h3 className="form-title">Medical Appointments</h3>
           <img src={logo} className="App-logo" alt="Logo" />
 
           <div className="form-group">
