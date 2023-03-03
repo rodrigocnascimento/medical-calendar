@@ -7,7 +7,7 @@ import { TextField, Button } from "@mui/material";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
 
-import "./login.css";
+import "./auth.css";
 export default function LoginRoute(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

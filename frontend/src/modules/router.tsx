@@ -1,7 +1,7 @@
 import React from "react";
 
 import ApplicationRoutes from "./app";
-import LoginRoute from "./login";
+import LoginRoute from "./auth/auth.login";
 import { useAuth } from "context/auth/use-auth";
 
 import { Router } from "react-router-dom";
