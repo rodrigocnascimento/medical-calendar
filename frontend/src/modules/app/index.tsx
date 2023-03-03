@@ -3,7 +3,7 @@ import { Switch, Route, Link, useLocation } from "react-router-dom";
 import { Button } from "@mui/material";
 
 import { useAuth } from "context";
-import LoginRoute from "modules/login";
+import LoginRoute from "modules/auth/auth.login";
 import { ListPatients, CreatePatient, UpdatePatient } from "modules/patients";
 import { ListUsers, CreateUser, UpdateUser } from "modules/users";
 import { AuthVerifier } from "components/auth/auth.verifier";
@@ -73,7 +73,7 @@ export default function ApplicationRoutes() {
       </div>
       <div id="detail" style={{ overflow: "scroll" }}>
         <Switch>
-          <Route path="/login">
+          <Route exact path="/login">
             <LoginRoute />
           </Route>
 
