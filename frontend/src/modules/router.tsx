@@ -2,11 +2,11 @@ import React from "react";
 
 import ApplicationRoutes from "./app";
 import LoginRoute from "./auth/auth.login";
-import { useAuth } from "context/auth/use-auth";
+import { useAuth } from "context/use-auth";
 
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import { RepositoryProvider } from "context";
+import { RepositoryProvider, UseCasesProvider } from "context";
 
 const history = createBrowserHistory();
 
@@ -17,7 +17,9 @@ export default function RootRoute() {
     <Router history={history}>
       {auth.user ? (
         <RepositoryProvider>
-          <ApplicationRoutes />
+          <UseCasesProvider>
+            <ApplicationRoutes />
+          </UseCasesProvider>
         </RepositoryProvider>
       ) : (
         <LoginRoute />
