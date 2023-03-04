@@ -20,7 +20,7 @@ export class CreateUserDTO extends PartialType(
   })
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message:
-      "Senha muito fraca. Entre os caracteres é obrigado uma letra maiúscula, uma minúsucula, um númer e uma caracter especial.",
+      "Senha muito fraca. Obrigatório uma letra maiúscula, uma minúsucula, um número e um caracter especial.",
   })
   password: string;
 }
