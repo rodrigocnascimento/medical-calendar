@@ -25,15 +25,11 @@ export class GlobalCatcher implements ExceptionFilter {
     const response = host.switchToHttp().getResponse();
     this.logger.log(JSON.stringify(exception, null, 2));
 
-    const message = {
-      [exception.name || "unknown"]: [exception.message],
-    };
-
     const globalExceptionCode =
       exception.response?.statusCode || exception.status || HttpStatus.INTERNAL_SERVER_ERROR;
 
     response.status(globalExceptionCode).json({
-      message,
+      message: exception.response ?? exception.message,
       name: exception.name,
       statusCode: globalExceptionCode,
     });

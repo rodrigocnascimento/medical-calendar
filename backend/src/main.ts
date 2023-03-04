@@ -22,7 +22,7 @@ async function bootstrap() {
           customErrors[el.property] = Object.values(el.constraints);
         });
 
-        return new BadRequestException([customErrors]);
+        return new BadRequestException(customErrors);
       },
     })
   );
