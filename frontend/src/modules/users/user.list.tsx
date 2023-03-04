@@ -17,10 +17,9 @@ import {
 } from "components/delete-confirmation";
 
 import SuccessMessage, { TSuccessMessageProps } from "components/success";
-import { useAuth } from "context/auth/use-auth";
+import { useAuth, useCases } from "context";
 
 import "./users.css";
-import { useRepository } from "context";
 
 /**
  * This page is the dashboard of the module.
@@ -28,7 +27,9 @@ import { useRepository } from "context";
  * @returns {JSX.Element} Dashboard Element
  */
 export function ListUsers(): JSX.Element {
-  const { user: userRepository } = useRepository();
+  const {
+    UserUseCases: { loadAll, remove },
+  } = useCases();
 
   const auth = useAuth();
   const [users, setUsers] = useState<UserDTO[]>([]);
@@ -37,35 +38,45 @@ export function ListUsers(): JSX.Element {
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<TDeleteConfirmation>();
 
-  const loadUsers = useCallback(async () => {
-    const users = await userRepository.getAll();
-
-    setUsers(users);
-  }, [userRepository]);
+  const loadUsers = useCallback(
+    () =>
+      loadAll(
+        {},
+        {
+          onSuccess: (user: UserDTO[]) => setUsers(user),
+          onError: ({ errors }: TErrorMessage) =>
+            setError({
+              title: "Erro ao carregar o usuário!",
+              errors,
+            }),
+        }
+      ),
+    [loadAll]
+  );
 
   const reset = () => {
     setError(undefined);
     setSuccess(undefined);
+    setDeleteConfirmation(undefined);
   };
 
   const handleUserDeletion = (user: UserDTO) => {
-    userRepository
-      .remove(user.id)
-      .then(async () => {
+    remove(user, {
+      onSuccess: () => {
         setSuccess({
           message: "Usuário removido com sucesso.",
           handlerOnClose: () => {
             reset();
+            loadUsers();
           },
         });
-        await loadUsers();
-      })
-      .catch((error: Error) => {
+      },
+      onError: ({ errors }: TErrorMessage) =>
         setError({
-          title: error.message,
-          errors: error.cause,
-        });
-      });
+          title: errors.message,
+          errors: errors.cause,
+        }),
+    });
   };
 
   useEffect(() => {
@@ -88,63 +99,61 @@ export function ListUsers(): JSX.Element {
         {success && <SuccessMessage {...success} />}
         {deleteConfirmation && <DeleteConfirmation {...deleteConfirmation} />}
       </div>
-      {users &&
-        users.map((user: UserDTO, i: number) => {
-          return (
-            <Card variant="outlined" key={i++} style={{ margin: 10 }}>
-              <CardContent>
-                <Typography variant="h5" component="div">
-                  {user.name}
-                </Typography>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  <span style={{ fontWeight: "bold" }}>Email:</span>
-                  {user.email}
-                  <br />
-                  <span style={{ fontWeight: "bold" }}>Role:</span> {user.role}
-                  <br />
-                  <span style={{ fontWeight: "bold" }}>Criado em:</span>
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(user.createdAt)
-                  )}
-                  <br />
-                  <span style={{ fontWeight: "bold" }}>Atualizado em:</span>
-                  {new Intl.DateTimeFormat("pt-BR").format(
-                    new Date(user.updatedAt)
-                  )}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Link to={`/users/${user.id}`}>
-                  <Button style={{ margin: 10 }} variant="contained">
-                    <Create />
-                    Editar
-                  </Button>
-                </Link>
-                {auth.user.sub !== user.id && (
-                  <Button
-                    style={{ margin: 10 }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setDeleteConfirmation({
-                        message: `Fazendo isso, você irá excluir o registro ${user.name}. Tem certeza disso?`,
-                        onConfirmation: {
-                          title: "Sim",
-                          fn: () => handleUserDeletion(user),
-                        },
-                        onFinally: () => setDeleteConfirmation(undefined),
-                      });
-                    }}
-                    color="error"
-                    variant="contained"
-                  >
-                    <HighlightOff />
-                    Excluir Usuário
-                  </Button>
+      {users.map((user: UserDTO, i: number) => {
+        return (
+          <Card variant="outlined" key={i++} style={{ margin: 10 }}>
+            <CardContent>
+              <Typography variant="h5" component="div">
+                {user.name}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                <span style={{ fontWeight: "bold" }}>Email:</span>
+                {user.email}
+                <br />
+                <span style={{ fontWeight: "bold" }}>Role:</span> {user.role}
+                <br />
+                <span style={{ fontWeight: "bold" }}>Criado em:</span>
+                {new Intl.DateTimeFormat("pt-BR").format(
+                  new Date(user.createdAt)
                 )}
-              </CardActions>
-            </Card>
-          );
-        })}
+                <br />
+                <span style={{ fontWeight: "bold" }}>Atualizado em:</span>
+                {new Intl.DateTimeFormat("pt-BR").format(
+                  new Date(user.updatedAt)
+                )}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Link to={`/users/${user.id}`}>
+                <Button style={{ margin: 10 }} variant="contained">
+                  <Create />
+                  Editar
+                </Button>
+              </Link>
+              {auth.user.sub !== user.id && (
+                <Button
+                  style={{ margin: 10 }}
+                  onClick={() =>
+                    setDeleteConfirmation({
+                      message: `Fazendo isso, você irá excluir o registro ${user.name}. Tem certeza disso?`,
+                      onConfirmation: {
+                        title: "Sim",
+                        fn: () => handleUserDeletion(user),
+                      },
+                      onFinally: () => reset(),
+                    })
+                  }
+                  color="error"
+                  variant="contained"
+                >
+                  <HighlightOff />
+                  Excluir Usuário
+                </Button>
+              )}
+            </CardActions>
+          </Card>
+        );
+      })}
     </div>
   );
 }

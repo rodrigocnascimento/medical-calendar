@@ -2,12 +2,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
-import { ValidationError } from "yup";
-import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import { UpdateUserDTO, UserDTO, UserRoles, userValidation } from "./index";
+import { UpdateUserDTO, UserDTO, UserRoles } from "./index";
 import ErrorMessage, { TErrorMessage } from "components/error";
 import SuccessMessage, { TSuccessMessageProps } from "components/success";
-import { useRepository } from "context";
+import { useCases } from "context";
 
 /**
  * The `"/path/:id"` param is a param that matches on the route and is treated as a value that needs to be fetched
@@ -16,21 +14,26 @@ import { useRepository } from "context";
  * @returns {JSX.Element} Form Element
  */
 export function UpdateUser(): JSX.Element {
-  const { user: userRepository } = useRepository();
+  const {
+    UserUseCases: { load, edit },
+  } = useCases();
 
   let { id } = useParams<{ id: string }>();
+
   const history = useHistory();
 
   const initialFormState = {
     id: "",
     name: "",
     email: "",
-    role: UserRoles.DOCTOR,
+    role: "",
     password: "",
     passwordConfirmation: "",
   };
 
   const [formInput, setFormInput] = useState<UpdateUserDTO>(initialFormState);
+  const [formInputErrors, setFormInputErrors] =
+    useState<UpdateUserDTO>(initialFormState);
 
   const [error, setError] = useState<TErrorMessage>();
   const [success, setSuccess] = useState<TSuccessMessageProps>();
@@ -42,57 +45,50 @@ export function UpdateUser(): JSX.Element {
     setFormInput((values: any) => ({ ...values, [name]: value }));
   };
 
-  const loadUser = useCallback(async () => {
-    userRepository
-      .getById(id)
-      .then((user: UserDTO) => setFormInput(user))
-      .catch((error: Error) =>
-        setError({
-          title: error.message,
-          errors: error.cause,
-        })
-      );
-  }, [id, userRepository]);
+  const loadUser = useCallback(
+    (id: UpdateUserDTO["id"]) =>
+      load(id, {
+        onSuccess: (user: UserDTO) => setFormInput(user),
+        onError: ({ errors }: TErrorMessage) =>
+          setError({
+            title: "Erro ao carregar o usuário!",
+            errors,
+          }),
+      }),
+    [load]
+  );
 
   const reset = () => {
     setError(undefined);
     setSuccess(undefined);
     setFormInput(initialFormState);
+    setFormInputErrors(initialFormState);
   };
 
   const handleSubmit = () => {
-    userValidation
-      .validate(formInput, { abortEarly: false })
-      .then(() =>
-        userRepository
-          .edit(formInput)
-          .then(() => {
-            setSuccess({
-              duration: 2500,
-              message: "Usuário atualizado com sucesso!",
-              handlerOnClose: () => {
-                reset();
-                history.push("/users");
-              },
-            });
-          })
-          .catch((error: Error) =>
-            setError({
-              title: error.message,
-              errors: error.cause,
-            })
-          )
-      )
-      .catch((validationErrors: ValidationError) =>
-        setError({
-          title: "Erro ao criar o usuário.",
-          errors: mapperYupErrorsToErrorMessages(validationErrors),
-        })
-      );
+    edit(formInput, {
+      onSuccess: () =>
+        setSuccess({
+          message: "Usuário criado com sucesso!",
+          duration: 2500,
+          handlerOnClose: () => {
+            reset();
+            history.push("/users");
+          },
+        }),
+      onError: ({ errors }: TErrorMessage) => {
+        setFormInputErrors({
+          name: errors.name,
+          email: errors.email,
+          role: errors.role,
+          password: errors.password,
+        });
+      },
+    });
   };
 
   useEffect(() => {
-    loadUser();
+    loadUser(id);
   }, [id, loadUser]);
 
   return (
@@ -114,18 +110,22 @@ export function UpdateUser(): JSX.Element {
           <TextField
             id="name"
             label="Nome do usuário"
-            value={formInput.name || ""}
+            value={formInput.name}
             type="text"
             name="name"
+            error={!!formInputErrors.name}
+            helperText={formInputErrors.name}
             style={{ marginRight: 0 }}
             onChange={handleChange}
           />
           <TextField
             id="email"
             label="Email do usuário"
-            value={formInput.email || ""}
+            value={formInput.email}
             type="text"
             name="email"
+            error={!!formInputErrors.email}
+            helperText={formInputErrors.email}
             style={{ marginLeft: 20, marginRight: 0 }}
             onChange={handleChange}
           />
@@ -135,46 +135,46 @@ export function UpdateUser(): JSX.Element {
             select
             id="role"
             name="role"
-            value={formInput.role || ""}
+            error={!!formInputErrors.role}
+            helperText={formInputErrors.role}
+            value={formInput.role}
             label="Role"
             onChange={handleChange}
             style={{ width: 250 }}
           >
-            <MenuItem value={"admin"}>Admin</MenuItem>
-            <MenuItem value={"doctor"}>Médico</MenuItem>
-            <MenuItem value={"patient"}>Paciente</MenuItem>
+            <MenuItem value={""}>Selecione</MenuItem>
+            <MenuItem value={UserRoles.ADMIN}>Admin</MenuItem>
+            <MenuItem value={UserRoles.DOCTOR}>Médico</MenuItem>
+            <MenuItem value={UserRoles.PATIENT}>Paciente</MenuItem>
           </TextField>
         </Grid>
         <Grid item style={{ margin: 10 }}>
           <TextField
             id="password"
             label="Senha do usuário"
-            value={formInput.password || ""}
+            value={formInput.password}
             type="text"
             name="password"
+            error={!!formInputErrors.name}
+            helperText={formInputErrors.name}
             style={{ marginRight: 0 }}
             onChange={handleChange}
           />
           <TextField
             id="passwordConfirmation"
             label="Confirme a senha do usuário"
-            value={formInput.passwordConfirmation || ""}
+            value={formInput.passwordConfirmation}
             type="text"
             name="passwordConfirmation"
+            error={!!formInputErrors.name}
+            helperText={formInputErrors.name}
             style={{ marginLeft: 20, marginRight: 0 }}
             onChange={handleChange}
           />
         </Grid>
-        <input value={formInput.id || ""} type="hidden" name="id" />
+        <input value={formInput.id} type="hidden" name="id" />
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
-          <Button
-            type="submit"
-            variant="contained"
-            onClick={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
+          <Button variant="contained" onClick={() => handleSubmit()}>
             <SaveAsIcon style={{ marginRight: 15 }} />
             Editar Usuário
           </Button>

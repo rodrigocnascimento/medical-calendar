@@ -16,7 +16,7 @@ export interface UserDTO {
   id: string;
   name: string;
   email: string;
-  role: UserRoles;
+  role: UserRoles | string;
   password: string;
   passwordConfirmation?: string;
   createdAt: Date;

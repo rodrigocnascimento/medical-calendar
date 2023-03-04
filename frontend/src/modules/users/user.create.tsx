@@ -2,37 +2,38 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
-import { ValidationError } from "yup";
-import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import { CreateUserDTO, UserRoles, userValidation } from "./index";
-import ErrorMessage, { TErrorMessage } from "components/error";
+import { CreateUserDTO, UserRoles } from "./index";
+import { TErrorMessage } from "components/error";
 import SuccessMessage, { TSuccessMessageProps } from "components/success";
-import { useRepository } from "context";
+import { useCases } from "context";
 
 /**
  * Users form creation
  * @returns {JSX.Element}
  */
 export function CreateUser(): JSX.Element {
-  const { user: userRepository } = useRepository();
+  const {
+    UserUseCases: { create },
+  } = useCases();
+
   const history = useHistory();
   const initialFormState = {
     name: "",
     email: "",
-    role: UserRoles.DOCTOR,
+    role: "",
     password: "",
     passwordConfirmation: "",
   };
 
   const [formInput, setFormInput] = useState<CreateUserDTO>(initialFormState);
-
-  const [error, setError] = useState<TErrorMessage>();
+  const [formInputErrors, setFormInputErrors] =
+    useState<CreateUserDTO>(initialFormState);
   const [success, setSuccess] = useState<TSuccessMessageProps>();
 
   const reset = () => {
-    setError(undefined);
     setSuccess(undefined);
     setFormInput(initialFormState);
+    setFormInputErrors(initialFormState);
   };
 
   const handleChange = (event: any) => {
@@ -43,34 +44,25 @@ export function CreateUser(): JSX.Element {
   };
 
   const handleSubmit = () => {
-    userValidation
-      .validate(formInput, { abortEarly: false })
-      .then(() =>
-        userRepository
-          .create(formInput)
-          .then(() => {
-            setSuccess({
-              message: "Usuário criado com sucesso!",
-              duration: 2500,
-              handlerOnClose: () => {
-                reset();
-                history.push("/users");
-              },
-            });
-          })
-          .catch((error: Error) =>
-            setError({
-              title: error.message,
-              errors: error.cause,
-            })
-          )
-      )
-      .catch((validationErrors: ValidationError) =>
-        setError({
-          title: "Erro ao criar o usuário.",
-          errors: mapperYupErrorsToErrorMessages(validationErrors),
-        })
-      );
+    create(formInput, {
+      onSuccess: () =>
+        setSuccess({
+          message: "Usuário criado com sucesso!",
+          duration: 2500,
+          handlerOnClose: () => {
+            reset();
+            history.push("/users");
+          },
+        }),
+      onError: ({ errors }: TErrorMessage) => {
+        setFormInputErrors({
+          name: errors.name,
+          email: errors.email,
+          role: errors.role,
+          password: errors.password,
+        });
+      },
+    });
   };
 
   return (
@@ -86,7 +78,6 @@ export function CreateUser(): JSX.Element {
     >
       <FormControl style={{ backgroundColor: "white" }}>
         <h3 className="form-title">Usuário</h3>
-        {error && <ErrorMessage {...error} />}
         {success && <SuccessMessage {...success} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
@@ -95,6 +86,8 @@ export function CreateUser(): JSX.Element {
             value={formInput.name}
             type="text"
             name="name"
+            error={!!formInputErrors.name}
+            helperText={formInputErrors.name}
             style={{ marginRight: 0 }}
             onChange={handleChange}
           />
@@ -104,6 +97,8 @@ export function CreateUser(): JSX.Element {
             value={formInput.email}
             type="text"
             name="email"
+            error={!!formInputErrors.email}
+            helperText={formInputErrors.email}
             style={{ marginLeft: 20, marginRight: 0 }}
             onChange={handleChange}
           />
@@ -115,12 +110,15 @@ export function CreateUser(): JSX.Element {
             name="role"
             value={formInput.role}
             label="Role"
+            error={!!formInputErrors.role}
+            helperText={formInputErrors.role}
             onChange={handleChange}
             style={{ width: 250 }}
           >
-            <MenuItem value={"admin"}>Admin</MenuItem>
-            <MenuItem value={"doctor"}>Médico</MenuItem>
-            <MenuItem value={"patient"}>Paciente</MenuItem>
+            <MenuItem value={""}>Selecione</MenuItem>
+            <MenuItem value={UserRoles.ADMIN}>Admin</MenuItem>
+            <MenuItem value={UserRoles.DOCTOR}>Médico</MenuItem>
+            <MenuItem value={UserRoles.PATIENT}>Paciente</MenuItem>
           </TextField>
         </Grid>
         <Grid item style={{ margin: 10 }}>
@@ -130,7 +128,9 @@ export function CreateUser(): JSX.Element {
             value={formInput.password}
             type="text"
             name="password"
-            style={{ marginRight: 0 }}
+            style={{ marginRight: 0, maxWidth: 250 }}
+            error={!!formInputErrors.password}
+            helperText={formInputErrors.password}
             onChange={handleChange}
           />
           <TextField
@@ -144,14 +144,7 @@ export function CreateUser(): JSX.Element {
           />
         </Grid>
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
-          <Button
-            type="submit"
-            variant="contained"
-            onClick={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
+          <Button variant="contained" onClick={() => handleSubmit()}>
             <SaveAsIcon style={{ marginRight: 15 }} />
             Salvar Usuário
           </Button>
