@@ -1,2 +1,2 @@
-export * from "./auth/use-auth";
-export * from "./repository/use-repository";
+export * from "./use-auth";
+export * from "./use-cases";

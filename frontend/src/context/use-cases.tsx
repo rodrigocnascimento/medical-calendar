@@ -1,17 +1,23 @@
 import React, { createContext, ReactNode, useContext } from "react";
 
-import {
-  create,
-  load,
-  edit,
-  loadAll,
-  remove,
-} from "modules/users/user.use-cases";
+import * as UserUseCases from "modules/users/user.use-cases";
+import * as PatientUseCases from "modules/patients/patients.use-cases";
+import * as AppointmentUseCases from "modules/appointments/appointments.use-cases";
+import * as MedicalRegistriesUseCases from "modules/medical_registries/medical_registries.use-cases";
+import * as AuthUseCases from "modules/auth/auth.use-cases";
 
 import type { TUserUseCase } from "modules/users/user.use-cases";
+import type { TPatientUseCase } from "modules/patients/patients.use-cases";
+import type { TAppointmentUseCases } from "modules/appointments/appointments.use-cases";
+import type { TMedicalRegistriesUseCases } from "modules/medical_registries/medical_registries.use-cases";
+import type { TAuthUseCases } from "modules/auth/auth.use-cases";
 
 interface IUseCase {
-  userUseCases: TUserUseCase;
+  UserUseCases: TUserUseCase;
+  PatientUseCases: TPatientUseCase;
+  AppointmentUseCases: TAppointmentUseCases;
+  MedicalRegistriesUseCases: TMedicalRegistriesUseCases;
+  AuthUseCases: TAuthUseCases;
 }
 
 const UseCasesContext = createContext<IUseCase | null>(null);
@@ -21,10 +27,16 @@ export function UseCasesProvider({
 }: {
   children: ReactNode;
 }): JSX.Element {
-  const userUseCases = { create, load, edit, loadAll, remove };
-
   return (
-    <UseCasesContext.Provider value={{ userUseCases }}>
+    <UseCasesContext.Provider
+      value={{
+        UserUseCases,
+        PatientUseCases,
+        AppointmentUseCases,
+        MedicalRegistriesUseCases,
+        AuthUseCases,
+      }}
+    >
       {children}
     </UseCasesContext.Provider>
   );
