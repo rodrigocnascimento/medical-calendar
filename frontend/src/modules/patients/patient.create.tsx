@@ -4,19 +4,21 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import AdapterDateFns from "@date-io/date-fns";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
-import ErrorMessage, { TErrorMessage } from "components/error";
-import { CreatePatientDTO, Genre, patientValidation } from "./index";
-import { ValidationError } from "yup";
-import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
+import { TErrorMessage } from "components/error";
+import { CreatePatientDTO, Genre } from "./index";
 import SuccessMessage, { TSuccessMessageProps } from "components/success";
-import { useRepository } from "context";
+
+import { useCases } from "context";
 
 /**
  * CreatePatient form creation
  * @returns {JSX.Element}
  */
 export function CreatePatient(): JSX.Element {
-  const { patient: patientRepository } = useRepository();
+  const {
+    PatientUseCases: { create },
+  } = useCases();
+
   const history = useHistory();
 
   const initialFormState = {
@@ -24,16 +26,17 @@ export function CreatePatient(): JSX.Element {
     email: "",
     dob: new Date(),
     phone: "",
-    height: 0,
-    weight: 0,
-    genre: Genre.F,
+    height: undefined,
+    weight: undefined,
+    genre: "",
   };
 
   const [formInput, setFormInput] =
     useState<CreatePatientDTO>(initialFormState);
+  const [formInputErrors, setFormInputErrors] =
+    useState<CreatePatientDTO>(initialFormState);
 
   const [startDate, setStartDate] = useState(new Date());
-  const [error, setError] = useState<TErrorMessage>();
   const [success, setSuccess] = useState<TSuccessMessageProps>();
 
   const handleChange = (event: any) => {
@@ -44,41 +47,34 @@ export function CreatePatient(): JSX.Element {
   };
 
   const reset = () => {
-    setError(undefined);
     setSuccess(undefined);
     setFormInput(initialFormState);
+    setFormInputErrors(initialFormState);
     setStartDate(new Date());
   };
 
   const handleSubmit = () => {
-    patientValidation
-      .validate(formInput, { abortEarly: false })
-      .then(() =>
-        patientRepository
-          .create(formInput)
-          .then(() => {
-            setSuccess({
-              duration: 25e2,
-              message: "Paciente criado com sucesso!",
-              handlerOnClose: () => {
-                reset();
-                history.push("/patients");
-              },
-            });
-          })
-          .catch((error: Error) =>
-            setError({
-              title: error.message,
-              errors: error.cause,
-            })
-          )
-      )
-      .catch((validationErrors: ValidationError) =>
-        setError({
-          title: "Erro ao criar o paciente.",
-          errors: mapperYupErrorsToErrorMessages(validationErrors),
-        })
-      );
+    create(formInput, {
+      onSuccess: () =>
+        setSuccess({
+          duration: 25e2,
+          message: "Paciente criado com sucesso!",
+          handlerOnClose: () => {
+            reset();
+            history.push("/patients");
+          },
+        }),
+      onError: ({ errors }: TErrorMessage) => {
+        setFormInputErrors({
+          name: errors.name,
+          email: errors.email,
+          phone: errors.phone,
+          height: errors.height,
+          weight: errors.weight,
+          genre: errors.genre,
+        });
+      },
+    });
   };
 
   return (
@@ -94,13 +90,14 @@ export function CreatePatient(): JSX.Element {
     >
       <FormControl style={{ backgroundColor: "white" }}>
         <h3 className="form-title">👩‍⚕️ Ficha do paciente 👨‍⚕️</h3>
-        {error && <ErrorMessage {...error} />}
         {success && <SuccessMessage {...success} />}
         <Grid item style={{ margin: 10 }}>
           <TextField
             id="name"
             label="Nome do paciente"
-            value={formInput.name || ""}
+            value={formInput.name}
+            error={!!formInputErrors.name}
+            helperText={formInputErrors.name}
             type="text"
             name="name"
             style={{ marginRight: 0 }}
@@ -109,7 +106,9 @@ export function CreatePatient(): JSX.Element {
           <TextField
             id="email"
             label="Email do paciente"
-            value={formInput.email || ""}
+            value={formInput.email}
+            error={!!formInputErrors.email}
+            helperText={formInputErrors.email}
             type="text"
             name="email"
             style={{ marginLeft: 20, marginRight: 0 }}
@@ -118,7 +117,9 @@ export function CreatePatient(): JSX.Element {
           <TextField
             id="phone"
             label="Telefone do paciente."
-            value={formInput.phone || ""}
+            value={formInput.phone}
+            error={!!formInputErrors.phone}
+            helperText={formInputErrors.phone}
             type="text"
             name="phone"
             style={{ marginLeft: 20, marginRight: 10 }}
@@ -131,9 +132,7 @@ export function CreatePatient(): JSX.Element {
               views={["year", "month", "day"]}
               label="Data de aniversário"
               value={startDate}
-              onChange={(newValue: any) => {
-                setStartDate(newValue);
-              }}
+              onChange={(newValue: any) => setStartDate(newValue)}
               inputFormat="dd/MM/yyyy"
               renderInput={(params) => (
                 <TextField style={{ marginRight: 0, width: 245 }} {...params} />
@@ -144,7 +143,9 @@ export function CreatePatient(): JSX.Element {
             id="height"
             label="Altura do paciente."
             style={{ marginLeft: 20, marginRight: 0 }}
-            value={formInput.height || ""}
+            value={formInput.height}
+            error={!!formInputErrors.height}
+            helperText={formInputErrors.height}
             type="text"
             name="height"
             onChange={handleChange}
@@ -153,7 +154,9 @@ export function CreatePatient(): JSX.Element {
             id="weight"
             label="Peso do paciente."
             style={{ marginLeft: 20, marginRight: 10 }}
-            value={formInput.weight || ""}
+            value={formInput.weight}
+            error={!!formInputErrors.weight}
+            helperText={formInputErrors.weight}
             type="text"
             name="weight"
             onChange={handleChange}
@@ -164,25 +167,21 @@ export function CreatePatient(): JSX.Element {
             select // tell TextField to render select
             id="genre"
             name="genre"
-            value={formInput.genre || ""}
+            value={formInput.genre}
+            error={!!formInputErrors.genre}
+            helperText={formInputErrors.genre}
             label="Gênero"
             onChange={handleChange}
             style={{ width: 250 }}
           >
-            <MenuItem value={"F"}>Feminino</MenuItem>
-            <MenuItem value={"M"}>Masculino</MenuItem>
+            <MenuItem value={""}>Selecione</MenuItem>
+            <MenuItem value={Genre.F}>Feminino</MenuItem>
+            <MenuItem value={Genre.M}>Masculino</MenuItem>
           </TextField>
         </Grid>
 
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
-          <Button
-            type="submit"
-            variant="contained"
-            onClick={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
+          <Button variant="contained" onClick={() => handleSubmit()}>
             <SaveAsIcon style={{ verticalAlign: "bottom", marginRight: 15 }} />
             Salvar Paciente
           </Button>

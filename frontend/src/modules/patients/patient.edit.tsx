@@ -5,23 +5,18 @@ import AdapterDateFns from "@date-io/date-fns";
 import { TextField, FormControl, Button, MenuItem, Grid } from "@mui/material";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import ErrorMessage, { TErrorMessage } from "components/error";
-import {
-  Genre,
-  PatientDTO,
-  UpdatePatientDTO,
-  patientValidation,
-} from "./index";
-import { ValidationError } from "yup";
-import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
+import { PatientDTO, UpdatePatientDTO } from "./index";
 import SuccessMessage, { TSuccessMessageProps } from "components/success";
-import { useRepository } from "context";
+import { useCases } from "context";
 
 /**
  * UpdatePatient form creation
  * @returns {JSX.Element}
  */
 export function UpdatePatient(): JSX.Element {
-  const { patient: patientRepository } = useRepository();
+  const {
+    PatientUseCases: { load, edit },
+  } = useCases();
   const history = useHistory();
   let { id } = useParams<{ id: string }>();
 
@@ -30,12 +25,14 @@ export function UpdatePatient(): JSX.Element {
     email: "",
     dob: new Date(),
     phone: "",
-    height: 0,
-    weight: 0,
-    genre: Genre.F,
+    height: undefined,
+    weight: undefined,
+    genre: "",
   };
 
   const [formInput, setFormInput] =
+    useState<UpdatePatientDTO>(initialFormState);
+  const [formInputErrors, setFormInputErrors] =
     useState<UpdatePatientDTO>(initialFormState);
 
   const [startDate, setStartDate] = useState(new Date());
@@ -53,54 +50,49 @@ export function UpdatePatient(): JSX.Element {
     setError(undefined);
     setSuccess(undefined);
     setFormInput(initialFormState);
+    setFormInputErrors(initialFormState);
     setStartDate(new Date());
   };
 
-  const loadPatient = useCallback(async () => {
-    patientRepository
-      .getById(id)
-      .then((patient: PatientDTO) => setFormInput(patient))
-      .catch((error: Error) =>
-        setError({
-          title: error.message,
-          errors: error.cause,
-        })
-      );
-  }, [id, patientRepository]);
+  const loadPatient = useCallback(
+    (id: UpdatePatientDTO["id"]) =>
+      load(id, {
+        onSuccess: (patient: PatientDTO) => setFormInput(patient),
+        onError: ({ errors }: TErrorMessage) =>
+          setError({
+            title: "Erro ao carregar o paciente!",
+            errors,
+          }),
+      }),
+    [load]
+  );
 
   const handleSubmit = () => {
-    patientValidation
-      .validate(formInput, { abortEarly: false })
-      .then(() =>
-        patientRepository
-          .edit(formInput)
-          .then(() => {
-            setSuccess({
-              duration: 2500,
-              message: "Paciente atualizado com sucesso!",
-              handlerOnClose: () => {
-                reset();
-                history.push("/patients");
-              },
-            });
-          })
-          .catch((error: Error) =>
-            setError({
-              title: error.message,
-              errors: error.cause,
-            })
-          )
-      )
-      .catch((validationErrors: ValidationError) =>
-        setError({
-          title: "Erro ao criar o paciente.",
-          errors: mapperYupErrorsToErrorMessages(validationErrors),
-        })
-      );
+    edit(formInput, {
+      onSuccess: () =>
+        setSuccess({
+          message: "Paciente atualizado com sucesso!",
+          duration: 2500,
+          handlerOnClose: () => {
+            reset();
+            history.push("/users");
+          },
+        }),
+      onError: ({ errors }: TErrorMessage) => {
+        setFormInputErrors({
+          name: errors.name,
+          email: errors.email,
+          phone: errors.phone,
+          height: errors.height,
+          weight: errors.weight,
+          genre: errors.genre,
+        });
+      },
+    });
   };
 
   useEffect(() => {
-    loadPatient();
+    loadPatient(id);
   }, [id, loadPatient]);
 
   return (
@@ -122,7 +114,9 @@ export function UpdatePatient(): JSX.Element {
           <TextField
             id="name"
             label="Nome do paciente"
-            value={formInput.name || ""}
+            value={formInput.name}
+            error={!!formInputErrors.name}
+            helperText={formInputErrors.name}
             type="text"
             name="name"
             style={{ marginRight: 0 }}
@@ -131,7 +125,9 @@ export function UpdatePatient(): JSX.Element {
           <TextField
             id="email"
             label="Email do paciente"
-            value={formInput.email || ""}
+            value={formInput.email}
+            error={!!formInputErrors.email}
+            helperText={formInputErrors.email}
             type="text"
             name="email"
             style={{ marginLeft: 20, marginRight: 0 }}
@@ -140,7 +136,9 @@ export function UpdatePatient(): JSX.Element {
           <TextField
             id="phone"
             label="Telefone do paciente."
-            value={formInput.phone || ""}
+            value={formInput.phone}
+            error={!!formInputErrors.phone}
+            helperText={formInputErrors.phone}
             type="text"
             name="phone"
             style={{ marginLeft: 20, marginRight: 10 }}
@@ -153,9 +151,7 @@ export function UpdatePatient(): JSX.Element {
               views={["year", "month", "day"]}
               label="Data de aniversário"
               value={startDate}
-              onChange={(newValue: any) => {
-                setStartDate(newValue);
-              }}
+              onChange={(newValue: any) => setStartDate(newValue)}
               inputFormat="dd/MM/yyyy"
               renderInput={(params) => (
                 <TextField style={{ marginRight: 0, width: 245 }} {...params} />
@@ -166,7 +162,10 @@ export function UpdatePatient(): JSX.Element {
             id="height"
             label="Altura do paciente."
             style={{ marginLeft: 20, marginRight: 0 }}
-            value={formInput.height || ""}
+            value={formInput.height}
+            error={!!formInputErrors.height}
+            helperText={formInputErrors.height}
+            InputLabelProps={{ shrink: true }}
             type="text"
             name="height"
             onChange={handleChange}
@@ -175,7 +174,10 @@ export function UpdatePatient(): JSX.Element {
             id="weight"
             label="Peso do paciente."
             style={{ marginLeft: 20, marginRight: 10 }}
-            value={formInput.weight || ""}
+            value={formInput.weight}
+            InputLabelProps={{ shrink: true }}
+            error={!!formInputErrors.weight}
+            helperText={formInputErrors.weight}
             type="text"
             name="weight"
             onChange={handleChange}
@@ -186,24 +188,24 @@ export function UpdatePatient(): JSX.Element {
             select // tell TextField to render select
             id="genre"
             name="genre"
-            value={formInput.genre || ""}
+            value={formInput.genre}
+            error={!!formInputErrors.genre}
+            helperText={formInputErrors.genre}
             label="Gênero"
             onChange={handleChange}
             style={{ width: 250 }}
           >
+            <MenuItem value={""}>Selecione</MenuItem>
             <MenuItem value={"F"}>Feminino</MenuItem>
             <MenuItem value={"M"}>Masculino</MenuItem>
           </TextField>
         </Grid>
-        <input value={formInput.id || ""} type="hidden" name="id" />
+        <input value={formInput.id} type="hidden" name="id" />
         <div className="button-right" style={{ margin: "20px 0 20px 0" }}>
           <Button
             type="submit"
             variant="contained"
-            onClick={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
+            onClick={() => handleSubmit()}
           >
             <SaveAsIcon style={{ verticalAlign: "bottom", marginRight: 15 }} />
             Editar Paciente

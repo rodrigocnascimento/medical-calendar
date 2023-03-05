@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button, Grid } from "@mui/material";
 import { PermContactCalendar } from "@mui/icons-material";
 
-import { useAuth, useRepository } from "context";
+import { useAuth, useCases } from "context";
 import {
   DoctorMUIDropDownListDTO,
   UserDTO,
@@ -25,9 +25,6 @@ import {
   PatientAppointmentModal,
   TPatientAppointmentModalProps,
 } from "components/patient/appointment.modal";
-import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import { appointmentCreationValidation } from "modules/appointments/appointments.validation";
-import { ValidationError } from "yup";
 import PatientCard from "components/patient/card.list";
 import PatientAppointmentsList from "components/patient/appointments.list";
 import { AppointmentDTO } from "modules/appointments";
@@ -40,10 +37,13 @@ import { AppointmentDTO } from "modules/appointments";
  */
 export function ListPatients(): JSX.Element {
   const {
-    appointments: appointmentRepository,
-    patient: patientRepository,
-    user: userRepository,
-  } = useRepository();
+    PatientUseCases: { loadAll: loadAllPatients, lgpdRemoval },
+    UserUseCases: { loadAll: loadAllDoctors },
+    AppointmentUseCases: {
+      create: createAppointment,
+      remove: removeAppointment,
+    },
+  } = useCases();
 
   const auth = useAuth();
   const [success, setSuccess] = useState<TSuccessMessageProps>();
@@ -68,11 +68,40 @@ export function ListPatients(): JSX.Element {
     setModalState(undefined);
   };
 
-  const loadPatients = useCallback(async () => {
-    const patients = await patientRepository.getAll();
+  const loadPatients = useCallback(
+    () =>
+      loadAllPatients(
+        {},
+        {
+          onSuccess: (patient: PatientDTO[]) => setPatients(patient),
+          onError: ({ errors }: TErrorMessage) =>
+            setError({
+              title: "Erro ao carregar o pacientes!",
+              errors,
+            }),
+        }
+      ),
+    [loadAllPatients]
+  );
 
-    setPatients(patients);
-  }, [patientRepository]);
+  const loadDoctors = useCallback(
+    async () =>
+      loadAllDoctors(
+        {
+          role: UserRoles.DOCTOR,
+        },
+        {
+          onSuccess: (doctors: UserDTO[]) =>
+            setDoctorDropDownList(mapDoctorDropDownList(doctors)),
+          onError: ({ title, errors }: TErrorMessage) =>
+            setError({
+              title: "Erro ao carregar os médicos!",
+              errors,
+            }),
+        }
+      ),
+    [loadAllDoctors]
+  );
 
   const createPatientAppointment = useCallback(
     (patient: Partial<PatientDTO>) => {
@@ -80,53 +109,32 @@ export function ListPatients(): JSX.Element {
         open: !!patient.id,
         patient,
         handleAppointmentCreation: (appointmentDoctor, appointmentDate) => {
-          const [date, fullhour] = new Date(appointmentDate)
-            .toISOString()
-            .split("T");
-          const [hour, minute] = fullhour.split(":");
-
-          const createAppointment = {
-            patient: patient.id,
-            doctor: appointmentDoctor.id,
-            date: new Date(`${date}T${hour}:${minute}`),
-          };
-
-          // if the userRole is "doctor", than ir should
-          // assign the appointment to himself
           if (auth.user.userRole === UserRoles.DOCTOR) {
-            createAppointment.doctor = auth.user.sub;
+            appointmentDoctor.id = auth.user.sub;
           }
 
-          appointmentCreationValidation
-            .validate(createAppointment, { abortEarly: false })
-            .then(() =>
-              appointmentRepository
-                .create(createAppointment)
-                .then(async () => {
-                  setSuccess({
-                    message: "Agendamento criado com sucesso!",
-                    handlerOnClose: () => reset(),
-                  });
-                  await loadPatients();
-                })
-                .catch((error: Error) => {
-                  setErrorModal({
-                    title: "",
-                    errors: error.cause,
-                  });
-                })
-            )
-            .catch((validationErrors: ValidationError) =>
+          createAppointment(patient, appointmentDoctor, appointmentDate, {
+            onSuccess: () => {
+              setSuccess({
+                message: "Agendamento criadon com sucesson bicha!",
+                handlerOnClose: () => {
+                  reset();
+                  loadPatients();
+                },
+              });
+            },
+            onError: ({ title, errors }: TErrorMessage) => {
               setErrorModal({
-                title: "Erro ao criar o agendamento.",
-                errors: mapperYupErrorsToErrorMessages(validationErrors),
-              })
-            );
+                title,
+                errors,
+              });
+            },
+          });
         },
         onCloseHandler: () => reset(),
       });
     },
-    [appointmentRepository, auth, loadPatients]
+    [auth, loadPatients, createAppointment]
   );
 
   const deletePatientAppointment = (appointment: AppointmentDTO) => {
@@ -144,22 +152,23 @@ export function ListPatients(): JSX.Element {
       message: `Você irá excluir o agendamento do dia ${formatedDate}. Tem certeza disso?`,
       onConfirmation: {
         title: "Sim, tenho certeza.",
-        fn: () => {
-          appointmentRepository
-            .remove(appointment.id)
-            .then(async () => {
+        fn: () =>
+          removeAppointment(appointment, {
+            onSuccess: () => {
               setSuccess({
                 message: "Agendamento removido com sucesso.",
+                handlerOnClose: () => {
+                  reset();
+                  loadPatients();
+                },
               });
-              await loadPatients();
-            })
-            .catch((error: Error) =>
+            },
+            onError: ({ title, errors }: TErrorMessage) =>
               setError({
-                title: error.message,
-                errors: error.cause,
-              })
-            );
-        },
+                title,
+                errors,
+              }),
+          }),
       },
       onFinally: () => reset(),
     });
@@ -171,41 +180,24 @@ export function ListPatients(): JSX.Element {
       onConfirmation: {
         title: "Sim, tenho certeza.",
         fn: () => {
-          patientRepository
-            .lgpdDeletion(patient.id)
-            .then(async () => {
+          lgpdRemoval(patient, {
+            onSuccess: () => {
               setSuccess({
                 message: "Paciente removido com sucesso.",
+                handlerOnClose: () => {
+                  reset();
+                  loadPatients();
+                },
               });
-              await loadPatients();
-            })
-            .catch((error: Error) =>
-              setError({
-                title: error.message,
-                errors: error.cause,
-              })
-            );
+            },
+            onError: ({ title, errors }: TErrorMessage) =>
+              setError({ title, errors }),
+          });
         },
       },
       onFinally: () => reset(),
     });
   };
-
-  const loadDoctors = useCallback(async () => {
-    userRepository
-      .getAll({
-        role: UserRoles.DOCTOR,
-      })
-      .then((doctors: UserDTO[]) =>
-        setDoctorDropDownList(mapDoctorDropDownList(doctors))
-      )
-      .catch((error: Error) =>
-        setError({
-          title: error.message,
-          errors: error.cause,
-        })
-      );
-  }, [userRepository]);
 
   useEffect(() => {
     loadPatients();
