@@ -4,8 +4,6 @@ import ReactDOM from "react-dom/client";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
-import { ProvideAuth } from "context";
-
 import RootRoute from "modules/router";
 
 import reportWebVitals from "./reportWebVitals";
@@ -48,9 +46,7 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ProvideAuth>
-        <RootRoute />
-      </ProvideAuth>
+      <RootRoute />
     </ThemeProvider>
   </React.StrictMode>
 );

@@ -22,7 +22,7 @@ export default function ApplicationRoutes() {
     setActivePath(location.pathname);
   }, [location.pathname]);
 
-  return (
+  return auth.user ? (
     <>
       <AuthVerifier />
       <div id="sidebar">
@@ -99,5 +99,7 @@ export default function ApplicationRoutes() {
         </Switch>
       </div>
     </>
+  ) : (
+    <LoginRoute />
   );
 }

@@ -143,7 +143,7 @@ export function CreatePatient(): JSX.Element {
             id="height"
             label="Altura do paciente."
             style={{ marginLeft: 20, marginRight: 0 }}
-            value={formInput.height}
+            value={formInput.height || ""}
             error={!!formInputErrors.height}
             helperText={formInputErrors.height}
             type="text"
@@ -154,7 +154,7 @@ export function CreatePatient(): JSX.Element {
             id="weight"
             label="Peso do paciente."
             style={{ marginLeft: 20, marginRight: 10 }}
-            value={formInput.weight}
+            value={formInput.weight || ""}
             error={!!formInputErrors.weight}
             helperText={formInputErrors.weight}
             type="text"
