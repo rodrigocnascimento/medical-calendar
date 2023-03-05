@@ -12,41 +12,36 @@ type TErrorListMap = {
 };
 
 const ErrorsList = ({ errorList }: TErrorListMap) => {
-  let errorComponent;
-  errorList.forEach((messages: any, key: string) => {
-    errorComponent = (
-      <div key={key}>
-        <strong>{key}</strong>
-        <ul>
-          {messages.map((err: unknown, i: number) => (
-            <li key={i++}>{err as string}</li>
-          ))}
-        </ul>
-      </div>
-    );
+  let errorComponent: any = [];
+  errorList.forEach((error: any, key: string) => {
+    if (!Array.isArray(error)) {
+      <ul>{errorComponent.push(<li key={key}>{error.message}</li>)}</ul>;
+    } else {
+      Array.isArray(error) &&
+        errorComponent.push(
+          <div key={key}>
+            <strong>{key}</strong>
+            <ul>
+              {error.map((message: unknown, i: number) => (
+                <li key={i++}>{message as string}</li>
+              ))}
+            </ul>
+          </div>
+        );
+    }
   });
 
   return <React.Fragment>{errorComponent}</React.Fragment>;
 };
 
 export default function ErrorMessage({ title, errors }: TErrorMessage) {
-  try {
-    const mapErrors = new Map(Object.entries(errors));
-    return (
-      <Alert severity="error" style={{ marginBottom: 20 }}>
-        <AlertTitle>
-          <strong>{title ?? errors.name}</strong>
-        </AlertTitle>
-        <ErrorsList errorList={mapErrors} />
-      </Alert>
-    );
-  } catch (error: any) {
-    console.error(error);
-    return (
-      <ErrorMessage
-        title="Unknown"
-        errors={{ error: "unknown", cause: JSON.stringify(error.message) }}
-      />
-    );
-  }
+  const mapErrors = new Map(Object.entries(errors));
+  return (
+    <Alert severity="error" style={{ marginBottom: 20 }}>
+      <AlertTitle>
+        <strong>{title ?? errors.name}</strong>
+      </AlertTitle>
+      <ErrorsList errorList={mapErrors} />
+    </Alert>
+  );
 }

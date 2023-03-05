@@ -9,15 +9,16 @@ import React, {
 
 import BaseInfrastructure from "infrastructure";
 import { UserRoles } from "modules/users";
-import { useRepository } from "context/repository/use-repository";
+
 import { JWTUserToken } from "modules/auth";
 import { ITokenStorage } from "infrastructure/adapter/storage/token";
+import { useCases } from "./use-cases";
 
 type Auth = any | null;
 
 const AuthContext = createContext<Auth>(null);
 
-export function ProvideAuth({
+export function AuthProvider({
   children,
 }: {
   children: ReactNode;
@@ -33,7 +34,7 @@ export function ProvideAuth({
 
 function useProvideAuth(token: ITokenStorage) {
   const [user, setUser] = useState<JWTUserToken>();
-  const { auth: authRepository } = useRepository();
+  const { AuthUseCases } = useCases();
 
   const postLoginRedirect = useMemo(
     () => (role: string) =>
@@ -65,18 +66,21 @@ function useProvideAuth(token: ITokenStorage) {
     username: string,
     password: string
   ): Promise<string> => {
-    const { accessToken } = await authRepository.checkCredentials({
-      username,
-      password,
-    });
+    AuthUseCases.login(
+      {
+        username,
+        password,
+      },
+      {
+        onSuccess: ({ accessToken }) => {
+          token.set(accessToken);
 
-    token.set(accessToken);
+          setUser(token.get());
+        },
+      }
+    );
 
-    const loggedUser = token.get();
-
-    setUser(loggedUser);
-
-    return postLoginRedirect(loggedUser?.userRole || "") as string;
+    return postLoginRedirect(user?.userRole || "") as string;
   };
 
   const signup = async (username: string, password: string) => {
