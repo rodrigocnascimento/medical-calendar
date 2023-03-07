@@ -7,7 +7,7 @@ import { TextField, Button } from "@mui/material";
 
 import ErrorMessage, { TErrorMessage } from "components/error";
 
-import "./login.css";
+import "./auth.css";
 export default function LoginRoute(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -41,7 +41,7 @@ export default function LoginRoute(): JSX.Element {
       <form className="form" method="post" onSubmit={handleUserLogin}>
         {error && <ErrorMessage {...error} />}
         <div className="form-content">
-          <h3 className="form-title">Sign In</h3>
+          <h3 className="form-title">Medical Appointments</h3>
           <img src={logo} className="App-logo" alt="Logo" />
 
           <div className="form-group">

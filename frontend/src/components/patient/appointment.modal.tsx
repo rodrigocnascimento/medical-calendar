@@ -69,13 +69,11 @@ export function PatientAppointmentModal({
     onCloseHandler && onCloseHandler();
   };
 
-  const [appointmentDoctor, setAppointmentDoctor] = useState<{
-    id: string;
-    label: string;
-  }>({
-    id: "",
-    label: "",
-  });
+  const [appointmentDoctor, setAppointmentDoctor] =
+    useState<DoctorMUIDropDownListDTO>({
+      id: "",
+      label: "",
+    });
 
   return (
     <div>

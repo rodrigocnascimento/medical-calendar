@@ -13,8 +13,7 @@ import {
   DeleteConfirmation,
 } from "components/delete-confirmation";
 import { Button, Grid } from "@mui/material";
-import "./appointments.css";
-import { useRepository } from "context";
+import { useCases } from "context";
 import {
   AppointmentObservationModal,
   TAppointmentObservationModalProps,
@@ -24,11 +23,10 @@ import {
   MedicalRegistriesDTO,
   UpdateMedicalRegistriesDTO,
 } from "modules/medical_registries";
-import { mapperYupErrorsToErrorMessages } from "domain/yup.mapper-errors";
-import { medicalRegistriesValidation } from "modules/medical_registries/medical_registries.validation";
-import { ValidationError } from "yup";
 import AppointmentsCard from "components/appointments/card.list";
 import MedicalRegistriesAppointmentsList from "components/appointments/medical-registries.list";
+
+import "./appointments.css";
 
 /**
  * This page is the dashboard of the module.
@@ -38,26 +36,41 @@ import MedicalRegistriesAppointmentsList from "components/appointments/medical-r
  */
 export function ListAppointments(): JSX.Element {
   const {
-    appointments: appointmentRepository,
-    medicalRegistries: medicalRegistriesRepository,
-  } = useRepository();
+    AppointmentUseCases: {
+      loadAll: loadAllAppointments,
+      remove: removeAppointment,
+    },
+    MedicalRegistriesUseCases: {
+      create: createMedicalRegistry,
+      remove: removeMedicalRegistry,
+    },
+  } = useCases();
 
   const [success, setSuccess] = useState<TSuccessMessageProps>();
   const [error, setError] = useState<TErrorMessage>();
   const [errorModal, setErrorModal] = useState<TErrorMessage>();
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<TDeleteConfirmation>();
-
   const [appointments, setAppointments] = useState<AppointmentDTO[]>([]);
-
-  const loadAppointments = useCallback(async () => {
-    const appointments = await appointmentRepository.getAll();
-
-    setAppointments(appointments);
-  }, [appointmentRepository]);
-
   const [modalState, setModalState] =
     useState<TAppointmentObservationModalProps>();
+
+  const loadAppointments = useCallback(
+    () =>
+      loadAllAppointments(
+        {},
+        {
+          onSuccess: (appointments: AppointmentDTO[]) =>
+            setAppointments(appointments),
+          onError: ({ errors }: TErrorMessage) =>
+            setError({
+              title: "Erro ao carregar os agendamentos!",
+              errors,
+            }),
+        }
+      ),
+    [loadAllAppointments]
+  );
 
   const reset = useCallback(() => {
     setModalState(undefined);
@@ -77,37 +90,28 @@ export function ListAppointments(): JSX.Element {
             | CreateMedicalRegistriesDTO
             | UpdateMedicalRegistriesDTO
         ) => {
-          medicalRegistriesValidation
-            .validate(medicalRegistry, { abortEarly: false })
-            .then(() =>
-              medicalRegistriesRepository
-                .create(medicalRegistry)
-                .then(async () => {
-                  setSuccess({
-                    message: "Registro criado com sucesso!",
-                    handlerOnClose: () => reset(),
-                  });
-
-                  await loadAppointments();
-                })
-                .catch((error: Error) =>
-                  setErrorModal({
-                    title: error.message,
-                    errors: error.cause,
-                  })
-                )
-            )
-            .catch((validationErrors: ValidationError) =>
+          createMedicalRegistry(medicalRegistry, {
+            onSuccess: () => {
+              setSuccess({
+                message: "Registro criado com sucesso!",
+                handlerOnClose: () => {
+                  reset();
+                  loadAppointments();
+                },
+              });
+            },
+            onError: ({ title, errors }: TErrorMessage) => {
               setErrorModal({
-                title: "Erro ao criar o observação.",
-                errors: mapperYupErrorsToErrorMessages(validationErrors),
-              })
-            );
+                title,
+                errors,
+              });
+            },
+          });
         },
         onCloseHandler: () => reset(),
       });
     },
-    [medicalRegistriesRepository, loadAppointments, reset]
+    [loadAppointments, createMedicalRegistry, reset]
   );
 
   const handleAppointmentDeletion = useCallback(
@@ -117,21 +121,25 @@ export function ListAppointments(): JSX.Element {
         onConfirmation: {
           title: "Sim, tenho certeza.",
           fn: () => {
-            appointmentRepository
-              .remove(appointment.id)
-              .then(async () => await loadAppointments())
-              .catch((error: any) =>
-                setError({
-                  title: error.message,
-                  errors: error.cause,
-                })
-              );
+            removeAppointment(appointment, {
+              onSuccess: () => {
+                setSuccess({
+                  message: "Agendamento removido com sucesso!",
+                  handlerOnClose: () => {
+                    reset();
+                    loadAppointments();
+                  },
+                });
+              },
+              onError: ({ title, errors }: TErrorMessage) =>
+                setError({ title, errors }),
+            });
           },
         },
         onFinally: () => reset(),
       });
     },
-    [appointmentRepository, loadAppointments, reset]
+    [loadAppointments, removeAppointment, reset]
   );
 
   const deleteMedicalAppointmentObservation = (
@@ -142,15 +150,11 @@ export function ListAppointments(): JSX.Element {
       onConfirmation: {
         title: "Sim, tenho certeza.",
         fn: () => {
-          medicalRegistriesRepository
-            .remove(medicalRecord.id)
-            .then(async () => await loadAppointments())
-            .catch((error: any) =>
-              setError({
-                title: error.message,
-                errors: error.cause,
-              })
-            );
+          removeMedicalRegistry(medicalRecord, {
+            onSuccess: () => loadAppointments(),
+            onError: ({ title, errors }: TErrorMessage) =>
+              setError({ title, errors }),
+          });
         },
       },
       onFinally: () => reset(),
@@ -179,30 +183,29 @@ export function ListAppointments(): JSX.Element {
       </div>
       {!appointments?.length && <h2>Sem consultas até o momento.</h2>}
       <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-        {appointments &&
-          appointments.map((appointment: AppointmentDTO, i: number) => {
-            return (
-              <Grid item xs={12} key={`Grid-12-${i++}`}>
-                {appointment.patient && (
-                  <AppointmentsCard
-                    {...{
-                      appointment,
-                      handleAppointmentDeletion,
-                      handleMedicalAppointmentRecord,
-                    }}
-                  >
-                    <MedicalRegistriesAppointmentsList
-                      key={`medAppRegList-${i++}`}
-                      medicalRegistries={appointment.medicalRegistries || []}
-                      deleteMedicalAppointmentObservation={
-                        deleteMedicalAppointmentObservation
-                      }
-                    />
-                  </AppointmentsCard>
-                )}
-              </Grid>
-            );
-          })}
+        {appointments.map((appointment: AppointmentDTO, i: number) => {
+          return (
+            <Grid item xs={12} key={`Grid-12-${i++}`}>
+              {appointment.patient && (
+                <AppointmentsCard
+                  {...{
+                    appointment,
+                    handleAppointmentDeletion,
+                    handleMedicalAppointmentRecord,
+                  }}
+                >
+                  <MedicalRegistriesAppointmentsList
+                    key={`medAppRegList-${i++}`}
+                    medicalRegistries={appointment.medicalRegistries || []}
+                    deleteMedicalAppointmentObservation={
+                      deleteMedicalAppointmentObservation
+                    }
+                  />
+                </AppointmentsCard>
+              )}
+            </Grid>
+          );
+        })}
       </Grid>
       <AppointmentObservationModal
         {...{ ...modalState, errorMessage: errorModal }}

@@ -4,8 +4,6 @@ import ReactDOM from "react-dom/client";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
-import { ProvideAuth } from "context";
-
 import RootRoute from "modules/router";
 
 import reportWebVitals from "./reportWebVitals";
@@ -13,10 +11,10 @@ import reportWebVitals from "./reportWebVitals";
 const theme = createTheme({
   palette: {
     background: {
-      default: "#79c288",
+      default: "#54B57A",
     },
     primary: {
-      main: "#79c288",
+      main: "#54B57A",
       dark: "#64be76",
       contrastText: "#fff",
     },
@@ -48,9 +46,7 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ProvideAuth>
-        <RootRoute />
-      </ProvideAuth>
+      <RootRoute />
     </ThemeProvider>
   </React.StrictMode>
 );

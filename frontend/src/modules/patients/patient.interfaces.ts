@@ -19,7 +19,7 @@ export interface PatientDTO {
   phone: string;
   height: number;
   weight: number;
-  genre: Genre;
+  genre: Genre | string;
   createdAt: Date;
   appointments: AppointmentDTO[];
 }
